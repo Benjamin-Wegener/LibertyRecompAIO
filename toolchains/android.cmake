@@ -70,6 +70,9 @@ set(LIBERTY_RECOMP_EMBEDDED_ASSETS ON CACHE BOOL "Package assets at build time (
 # 16 KB page-size alignment (Android 15+ / Google Play requirement).
 # NDK r28+ does this by default for its own toolchain, but the prebuilt
 # rex runtime and SDL3 get linked through this tree, so set it explicitly.
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-z,max-page-size=16384")
-set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -Wl,-z,max-page-size=16384")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-z,max-page-size=16384")
+# Append to both the *_INIT variables (which project() copies into the real
+# flags) and the plain variables (in case a subproject already set them).
+foreach(_kind IN ITEMS SHARED MODULE EXE)
+  string(APPEND CMAKE_${_kind}_LINKER_FLAGS_INIT " -Wl,-z,max-page-size=16384")
+  string(APPEND CMAKE_${_kind}_LINKER_FLAGS " -Wl,-z,max-page-size=16384")
+endforeach()
