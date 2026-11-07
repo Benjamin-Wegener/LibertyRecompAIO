@@ -6,6 +6,18 @@
 #include <cstdlib>
 #include <rex/logging.h>
 
+DEFINE_REX_FUNC(CCommandBuffer_Destroy) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function CCommandBuffer_Destroy called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(D3DResource_Release) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function D3DResource_Release called");
+	std::abort();
+}
+
 DEFINE_REX_FUNC(D3D_MemAllocAligned) {
 	REX_FUNC_PROLOGUE();
 	REXLOG_ERROR("PAL compat: missing function D3D_MemAllocAligned called");
@@ -717,6 +729,12 @@ DEFINE_REX_FUNC(sub_824450D0) {
 DEFINE_REX_FUNC(sub_82451928) {
 	REX_FUNC_PROLOGUE();
 	REXLOG_ERROR("PAL compat: missing function sub_82451928 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82477E30) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82477E30 called");
 	std::abort();
 }
 
@@ -1746,6 +1764,18 @@ DEFINE_REX_FUNC(sub_828D9768) {
 	std::abort();
 }
 
+DEFINE_REX_FUNC(sub_8296E310) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_8296E310 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_8296E480) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_8296E480 called");
+	std::abort();
+}
+
 DEFINE_REX_FUNC(sub_8297CE78) {
 	REX_FUNC_PROLOGUE();
 	REXLOG_ERROR("PAL compat: missing function sub_8297CE78 called");
@@ -1956,9 +1986,45 @@ DEFINE_REX_FUNC(sub_82A2BBD8) {
 	std::abort();
 }
 
+DEFINE_REX_FUNC(sub_82A355E0) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A355E0 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A3A890) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A3A890 called");
+	std::abort();
+}
+
 DEFINE_REX_FUNC(sub_82A3AA08) {
 	REX_FUNC_PROLOGUE();
 	REXLOG_ERROR("PAL compat: missing function sub_82A3AA08 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A3B540) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A3B540 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A3B690) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A3B690 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A3B7B0) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A3B7B0 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A3BAA8) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A3BAA8 called");
 	std::abort();
 }
 
@@ -1968,9 +2034,201 @@ DEFINE_REX_FUNC(sub_82A3BE18) {
 	std::abort();
 }
 
+DEFINE_REX_FUNC(sub_82A3BF50) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A3BF50 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A3C2B8) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A3C2B8 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A3CC68) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A3CC68 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A3DAB0) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A3DAB0 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A3DF50) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A3DF50 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A3DF60) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A3DF60 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A3E348) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A3E348 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A3E910) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A3E910 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A3EDA8) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A3EDA8 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A3F268) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A3F268 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A41520) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A41520 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A416B8) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A416B8 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A42168) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A42168 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A424A8) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A424A8 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A42760) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A42760 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A42930) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A42930 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A42AC0) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A42AC0 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A42BA8) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A42BA8 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A42CB8) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A42CB8 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A44168) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A44168 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A441F8) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A441F8 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A44850) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A44850 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A44970) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A44970 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A44B78) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A44B78 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A457B0) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A457B0 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A467D8) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A467D8 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A46D70) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A46D70 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A46DA0) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A46DA0 called");
+	std::abort();
+}
+
 DEFINE_REX_FUNC(sub_82A46EA8) {
 	REX_FUNC_PROLOGUE();
 	REXLOG_ERROR("PAL compat: missing function sub_82A46EA8 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A46FB0) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A46FB0 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A47E28) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A47E28 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A4A3C8) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A4A3C8 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A4A600) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A4A600 called");
 	std::abort();
 }
 
@@ -1983,6 +2241,12 @@ DEFINE_REX_FUNC(sub_82A4DAB0) {
 DEFINE_REX_FUNC(sub_82A4F0E0) {
 	REX_FUNC_PROLOGUE();
 	REXLOG_ERROR("PAL compat: missing function sub_82A4F0E0 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A4F7E0) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A4F7E0 called");
 	std::abort();
 }
 
