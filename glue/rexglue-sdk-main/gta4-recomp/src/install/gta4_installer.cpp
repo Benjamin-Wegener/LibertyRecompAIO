@@ -963,7 +963,10 @@ Result Install(const Selection& selection, const std::filesystem::path& install_
     result.error = "The supported retail 1.00 source requires the GTA IV v8 title update.";
     return result;
   }
-  if (game) {
+  // PATCHED (local experiment): skip the update entirely when none was chosen.
+  // The original code always called PrepareUpdateSource, which fails on an empty
+  // path with "The selected source does not exist."
+  if (game && !selection.update_source.empty()) {
     update = PrepareUpdateSource(selection.update_source, game->xex_info, result.error);
     if (!update) {
       return result;
