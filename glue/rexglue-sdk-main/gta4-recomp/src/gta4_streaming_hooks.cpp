@@ -391,6 +391,7 @@ void Initialize(uint8_t* base) {
 
 using namespace gta4::streaming;
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_8251D960(PPCContext& ctx, uint8_t* base) {
   if (!config.modern && !trace_enabled.load(std::memory_order_relaxed)) {
     __imp__sub_8251D960(ctx, base); return;
@@ -398,7 +399,9 @@ extern "C" void sub_8251D960(PPCContext& ctx, uint8_t* base) {
   WorldScope scope(base, ctx.r3.u32, ctx.r5.u32);
   __imp__sub_8251D960(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_8251D960
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_825120E8(PPCContext& ctx, uint8_t* base) {
   const uint32_t manager = ctx.r3.u32;
   const uint32_t index = ctx.r4.u32;
@@ -444,7 +447,9 @@ extern "C" void sub_825120E8(PPCContext& ctx, uint8_t* base) {
     }
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_825120E8
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82511890(PPCContext& ctx, uint8_t* base) {
   if (!config.modern && !trace_enabled.load(std::memory_order_relaxed)) {
     __imp__sub_82511890(ctx, base);
@@ -485,7 +490,9 @@ extern "C" void sub_82511890(PPCContext& ctx, uint8_t* base) {
     record.entity = 0; record.model = 0; record.release_time = now;
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82511890
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82511C50(PPCContext& ctx, uint8_t* base) {
   const uint32_t manager = ctx.r3.u32, requested = ctx.r4.u32;
   if (config.modern && manager == kManager) {
@@ -496,6 +503,8 @@ extern "C" void sub_82511C50(PPCContext& ctx, uint8_t* base) {
   if (manager == kManager) REXLOG_INFO("gta4-streaming: budget virtual original={} target={} effective={}",
                                      requested, target, REX_LOAD_U32(manager + 32));
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82511C50
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82511CD8(PPCContext& ctx, uint8_t* base) {
   const uint32_t manager = ctx.r3.u32, requested = ctx.r4.u32;
   if (config.modern && manager == kManager) {
@@ -514,6 +523,7 @@ extern "C" void sub_82511CD8(PPCContext& ctx, uint8_t* base) {
                 config.physical_reserve_bytes.load(), effective);
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82511CD8
 
 // Mechanically derived complete functions. Only the preload operand and queue
 // ranking sites differ; the generator verifies source hashes and site counts.

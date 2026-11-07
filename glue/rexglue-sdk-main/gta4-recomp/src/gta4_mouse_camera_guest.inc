@@ -2,6 +2,7 @@
 // Complete retail functions; only reviewed mouse integration sites differ.
 // Do not edit by hand. Run the derivation without --write to verify.
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_825337F0(PPCContext& ctx, uint8_t* base) {
   gta4::input::MouseRotation native_mouse{};
   uint32_t native_control = 0;
@@ -783,7 +784,9 @@ loc_82533CC0:
 	__restgprlr_25(ctx, base);
 	return;
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_825337F0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_825ED3C8(PPCContext& ctx, uint8_t* base) {
   gta4::input::MouseRotation native_mouse{};
   uint32_t native_control = 0;
@@ -2434,7 +2437,9 @@ loc_825EDE4C:
 	__restgprlr_23(ctx, base);
 	return;
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_825ED3C8
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82542F80(PPCContext& ctx, uint8_t* base) {
   gta4::input::MouseRotation native_mouse{};
   uint32_t native_control = 0;
@@ -4428,7 +4433,9 @@ loc_82543C04:
 	__restgprlr_14(ctx, base);
 	return;
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82542F80
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_8253EA00(PPCContext& ctx, uint8_t* base) {
   gta4::input::MouseRotation native_mouse{};
   uint32_t native_control = 0;
@@ -5060,7 +5067,9 @@ loc_8253ED74:
 	__restgprlr_27(ctx, base);
 	return;
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_8253EA00
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_8253AB20(PPCContext& ctx, uint8_t* base) {
   gta4::input::MouseRotation native_mouse{};
   uint32_t native_control = 0;
@@ -7747,7 +7756,9 @@ loc_8253BC54:
 	__restgprlr_14(ctx, base);
 	return;
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_8253AB20
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82538948(PPCContext& ctx, uint8_t* base) {
   gta4::input::MouseRotation native_mouse{};
   uint32_t native_control = 0;
@@ -9034,3 +9045,4 @@ loc_82539154:
 	__restgprlr_19(ctx, base);
 	return;
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82538948

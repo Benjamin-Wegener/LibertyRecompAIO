@@ -37,6 +37,7 @@ uint64_t ReadLoadingStateBits(uint8_t* base) {
 
 }  // namespace
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82144188(PPCContext& ctx, uint8_t* base) {
   rex::diagnostics::gta4_transition::NoteLoadingTick(
       0x82144188, static_cast<uint32_t>(ctx.lr),
@@ -50,7 +51,9 @@ extern "C" void sub_82144188(PPCContext& ctx, uint8_t* base) {
       REX_LOAD_U8(kLoadingActiveGlobal) != 0,
       REX_LOAD_U32(kLoadingScreenIndexGlobal), ReadLoadingStateBits(base));
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82144188
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_8214B640(PPCContext& ctx, uint8_t* base) {
   const uint32_t caller = static_cast<uint32_t>(ctx.lr);
   const uint32_t stored_state = REX_LOAD_U32(kFrontendStoredStateGlobal);
@@ -61,7 +64,9 @@ extern "C" void sub_8214B640(PPCContext& ctx, uint8_t* base) {
       false, 0x8214B640, caller, REX_LOAD_U32(kFrontendStoredStateGlobal),
       stored_state);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_8214B640
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82141F00(PPCContext& ctx, uint8_t* base) {
   rex::audio::handoff::Span handoff_world("world-activation",0x82141F00,ctx.lr,ctx.r3.u32);
   rex::audio::handoff::Record("world",0x82141F00,{ctx.lr,ctx.r3.u32},"begin");
@@ -77,7 +82,9 @@ extern "C" void sub_82141F00(PPCContext& ctx, uint8_t* base) {
   rex::diagnostics::gta4_transition::NoteWorldActivationEnd(
       0x82141F00, caller, ctx.r3.u64);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82141F00
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82145770(PPCContext& ctx, uint8_t* base) {
   const uint32_t caller = static_cast<uint32_t>(ctx.lr);
   const uint64_t argument = ctx.r3.u64;
@@ -94,7 +101,9 @@ extern "C" void sub_82145770(PPCContext& ctx, uint8_t* base) {
         false, 0x82145770, caller, argument);
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82145770
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_821BB3D8(PPCContext& ctx, uint8_t* base) {
   const uint32_t requested_size = ctx.r3.u32;
   const uint32_t caller = static_cast<uint32_t>(ctx.lr);
@@ -139,7 +148,9 @@ extern "C" void sub_821BB3D8(PPCContext& ctx, uint8_t* base) {
       (uint64_t{cursor_before} << 32) | cursor_after,
       (generation << 32) | uint32_t(elapsed));
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_821BB3D8
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_821BB2D0(PPCContext& ctx, uint8_t* base) {
   // This is the real deferred-DC execution boundary. The producer's phase
   // scope may have ended long before this list runs on the consuming thread.
@@ -184,6 +195,7 @@ extern "C" void sub_821BB2D0(PPCContext& ctx, uint8_t* base) {
       (g_command_arena_generation.load(std::memory_order_acquire) << 32) |
           rex::thread::current_thread_system_id());
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_821BB2D0
 
 namespace {
 std::array<char,80> HandoffGuestName(uint8_t* base,uint32_t address) {
@@ -201,6 +213,7 @@ std::array<char,80> HandoffGuestName(uint8_t* base,uint32_t address) {
   return text;
 }
 }
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82526268(PPCContext& ctx,uint8_t* base) {
   if(!rex::audio::handoff::Enabled()){__imp__sub_82526268(ctx,base);return;}
   const auto caller=uint32_t(ctx.lr),object=ctx.r3.u32,nameptr=ctx.r4.u32,arg=ctx.r5.u32;
@@ -210,11 +223,16 @@ extern "C" void sub_82526268(PPCContext& ctx,uint8_t* base) {
   __imp__sub_82526268(ctx,base);
   rex::audio::handoff::Record("cutscene",0x82526268,{caller,object,nameptr,arg,1,ctx.r3.u32},name.data());
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82526268
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82526578(PPCContext& ctx,uint8_t* base) {
   rex::audio::handoff::Span span("cutscene-blocking-prepare",0x82526578,ctx.lr,ctx.r4.u32);
   __imp__sub_82526578(ctx,base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82526578
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82526058(PPCContext& ctx,uint8_t* base) {
   rex::audio::handoff::Span span("cutscene-stop",0x82526058,ctx.r3.u32,ctx.r4.u32);
   __imp__sub_82526058(ctx,base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82526058

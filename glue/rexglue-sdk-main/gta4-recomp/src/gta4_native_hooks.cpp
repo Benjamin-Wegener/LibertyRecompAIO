@@ -4332,6 +4332,7 @@ void ApplyNativeShaderState(PPCContext& ctx, uint8_t* base, GuestFunction implem
   StoreU32(base, device + kPendingResourceMaskOffset, pending_resource_mask);
 }
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A42168(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode() || !rex::diagnostics::IsEnabled(rex::diagnostics::Category::kNativeTrace)) {
     __imp__sub_82A42168(ctx, base);
@@ -4401,6 +4402,7 @@ extern "C" void sub_82A42168(PPCContext& ctx, uint8_t* base) {
       transform_after[10], transform_after[11], transform_after[12], transform_after[13],
       transform_after[14], transform_after[15]);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A42168
 
 void LogKnownOffscreenTransformBoundary(std::string_view point, const PPCContext& ctx,
                                         uint8_t* base, uint32_t object,
@@ -4498,6 +4500,7 @@ void TraceKnownOffscreenTransformTransition(std::string_view point, PPCContext& 
   LogKnownOffscreenTransformTransition(point, base, device, caller, object, args, before, after);
 }
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_828C6568(PPCContext& ctx, uint8_t* base) {
   if (PhoneCaptureActive()) {
     g_phone_context.material = ctx.r3.u32;
@@ -4517,7 +4520,9 @@ extern "C" void sub_828C6568(PPCContext& ctx, uint8_t* base) {
                                            active_before);
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_828C6568
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_828C64C8(PPCContext& ctx, uint8_t* base) {
   if (PhoneCaptureActive()) {
     g_phone_context.material = ctx.r3.u32;
@@ -4543,13 +4548,17 @@ extern "C" void sub_828C64C8(PPCContext& ctx, uint8_t* base) {
   }
   __imp__sub_828C64C8(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_828C64C8
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_828C6620(PPCContext& ctx, uint8_t* base) {
   ScopedFireMaterial fire_scope(ctx, base);
   TraceKnownOffscreenTransformTransition("offscreen-transition-material-list-render", ctx, base,
                                          __imp__sub_828C6620);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_828C6620
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_828C4338(PPCContext& ctx, uint8_t* base) {
   // The executed model, not its outer model-list, distinguishes rigid submodels
   // that share a vertex stream. r5 is a material bucket in this entry point.
@@ -4559,7 +4568,9 @@ extern "C" void sub_828C4338(PPCContext& ctx, uint8_t* base) {
   TraceKnownOffscreenTransformTransition("offscreen-transition-model-materials", ctx, base,
                                          __imp__sub_828C4338);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_828C4338
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_828C4578(PPCContext& ctx, uint8_t* base) {
   // Skinned submodels retain the owning transform/skeleton from D4268 while
   // capturing the model actually being executed in this nested call.
@@ -4567,25 +4578,33 @@ extern "C" void sub_828C4578(PPCContext& ctx, uint8_t* base) {
                                       temporal_host::instance.pose);
   __imp__sub_828C4578(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_828C4578
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_821BE8A0(PPCContext& ctx, uint8_t* base) {
   TraceKnownOffscreenTransformTransition("offscreen-transition-model-materials-legacy-caller", ctx,
                                          base, __imp__sub_821BE8A0);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_821BE8A0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_828D41A8(PPCContext& ctx, uint8_t* base) {
   // This rigid-model entry passes r6 through as the material bucket, not a pose.
   temporal_host::Scope temporal_scope(ctx.r5.u32, ctx.r3.u32, 0);
   TraceKnownOffscreenTransformTransition("offscreen-transition-model-list-caller", ctx, base,
                                          __imp__sub_828D41A8);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_828D41A8
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_828D4268(PPCContext& ctx, uint8_t* base) {
   temporal_host::Scope temporal_scope(ctx.r5.u32?ctx.r5.u32:ctx.r6.u32,ctx.r3.u32,ctx.r6.u32);
   TraceKnownOffscreenTransformTransition("offscreen-transition-model-transform-caller", ctx, base,
                                          __imp__sub_828D4268);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_828D4268
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_828BD250(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode() || !rex::diagnostics::IsEnabled(rex::diagnostics::Category::kNativeTrace)) {
     __imp__sub_828BD250(ctx, base);
@@ -4628,38 +4647,51 @@ extern "C" void sub_828BD250(PPCContext& ctx, uint8_t* base) {
   LogKnownOffscreenTransformTransition("offscreen-transition-matrix-setter", base, device, caller,
                                        state, args, before, after);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_828BD250
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_828E7000(PPCContext& ctx, uint8_t* base) {
   LogKnownOffscreenTransformBoundary("offscreen-boundary-render-entry", ctx, base, ctx.r3.u32);
   __imp__sub_828E7000(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_828E7000
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_828BFC00(PPCContext& ctx, uint8_t* base) {
   LogKnownOffscreenTransformBoundary("offscreen-boundary-indexed-entry", ctx, base, ctx.r3.u32);
   __imp__sub_828BFC00(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_828BFC00
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_828C8DB0(PPCContext& ctx, uint8_t* base) {
   LogKnownOffscreenTransformBoundary("offscreen-boundary-material-vertex", ctx, base, ctx.r3.u32);
   __imp__sub_828C8DB0(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_828C8DB0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_828C8E80(PPCContext& ctx, uint8_t* base) {
   LogKnownOffscreenTransformBoundary("offscreen-boundary-material-pixel", ctx, base, ctx.r3.u32);
   __imp__sub_828C8E80(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_828C8E80
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_828C8F38(PPCContext& ctx, uint8_t* base) {
   FireMaterialPass(ctx, base, false);
   LogKnownOffscreenTransformBoundary("offscreen-boundary-material-apply", ctx, base, ctx.r3.u32);
   __imp__sub_828C8F38(ctx, base);
   FireMaterialPass(ctx, base, true);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_828C8F38
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_828DFF00(PPCContext& ctx, uint8_t* base) {
   LogKnownOffscreenTransformBoundary("offscreen-boundary-shader-select", ctx, base, ctx.r3.u32);
   __imp__sub_828DFF00(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_828DFF00
 
 SurfaceDescriptor CaptureSurfaceDescriptor(uint8_t* base, uint32_t surface) {
   SurfaceDescriptor descriptor;
@@ -4697,6 +4729,7 @@ int32_t TruncateViewportCoordinate(float value) {
 
 }  // namespace
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_822CD0E0(PPCContext& ctx, uint8_t* base) {
   static std::atomic<uint32_t> trace_counter{0};
   const uint32_t trace = BeginCloudGuestTrace(trace_counter);
@@ -4711,7 +4744,9 @@ extern "C" void sub_822CD0E0(PPCContext& ctx, uint8_t* base) {
                 FormatCloudGuestState(before), FormatCloudGuestState(after));
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_822CD0E0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82521D10(PPCContext& ctx, uint8_t* base) {
   static std::atomic<uint32_t> trace_counter{0};
   const uint32_t trace = BeginCloudGuestTrace(trace_counter);
@@ -4734,7 +4769,9 @@ extern "C" void sub_82521D10(PPCContext& ctx, uint8_t* base) {
         FormatCloudGuestState(before), FormatCloudGuestState(after));
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82521D10
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_8266F7D8(PPCContext& ctx, uint8_t* base) {
   static std::atomic<uint32_t> trace_counter{0};
   const uint32_t trace = BeginCloudGuestTrace(trace_counter);
@@ -4760,7 +4797,9 @@ extern "C" void sub_8266F7D8(PPCContext& ctx, uint8_t* base) {
         FormatCloudProceduralState(procedural_after));
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_8266F7D8
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82670840(PPCContext& ctx, uint8_t* base) {
   const uint32_t sky = ctx.r3.u32;
   const uint32_t render_context = ctx.r4.u32;
@@ -4792,16 +4831,20 @@ extern "C" void sub_82670840(PPCContext& ctx, uint8_t* base) {
   // Publish before deferred fog, rather than waiting until the final composite.
   if (render_context) SubmitEnvironmentalData(base, LoadU32(base, render_context + 24), 0);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82670840
 
 // sub_822CC388 interpolates the base cycle; sub_822CC940 then applies the
 // title's per-view far-clip modifiers. FusionFix's default baseline is 4500.
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_822CC388(PPCContext& ctx, uint8_t* base) {
   const uint32_t cycle = ctx.r3.u32;
   __imp__sub_822CC388(ctx, base);
   if (IsNativeMode() && cycle && REXCVAR_GET(gta4_modern_shaders))
     StoreU32(base, cycle + 68, std::bit_cast<uint32_t>(4500.0f));
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_822CC388
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_822CC940(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) { __imp__sub_822CC940(ctx, base); return; }
   FusionCycleCapture capture;
@@ -4827,13 +4870,17 @@ extern "C" void sub_822CC940(PPCContext& ctx, uint8_t* base) {
     }
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_822CC940
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_822C7A08(PPCContext& ctx, uint8_t* base) {
   if (g_fusion_cycle_capture && g_fusion_cycle_capture->valid)
     g_fusion_cycle_capture->temporary_modifiers[ctx.r3.u32] = g_fusion_cycle_capture->values;
   __imp__sub_822C7A08(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_822C7A08
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_822C7C00(PPCContext& ctx, uint8_t* base) {
   if (g_fusion_cycle_capture && g_fusion_cycle_capture->valid) {
     const auto* modifier = CapturedFusionModifier(base, ctx.r4.u32);
@@ -4843,7 +4890,9 @@ extern "C" void sub_822C7C00(PPCContext& ctx, uint8_t* base) {
   }
   __imp__sub_822C7C00(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_822C7C00
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_822C89D0(PPCContext& ctx, uint8_t* base) {
   if (g_fusion_cycle_capture && g_fusion_cycle_capture->valid &&
       ctx.r3.u32 == g_fusion_cycle_capture->destination) {
@@ -4852,7 +4901,9 @@ extern "C" void sub_822C89D0(PPCContext& ctx, uint8_t* base) {
   }
   __imp__sub_822C89D0(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_822C89D0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_821F1670(PPCContext& ctx, uint8_t* base) {
   const uint32_t rectangle = ctx.r3.u32;
   if (!IsNativeMode() || !REXCVAR_GET(gta4_native_pixel_snap_fonts) || !rectangle) {
@@ -4905,7 +4956,9 @@ extern "C" void sub_821F1670(PPCContext& ctx, uint8_t* base) {
     StoreU32(base, rectangle + kCoordinateOffsets[index], original[index]);
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_821F1670
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82270A08(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode() || ctx.r3.u32 != kOriginalShadowMapBaseSize) {
     __imp__sub_82270A08(ctx, base);
@@ -4941,7 +4994,9 @@ extern "C" void sub_82270A08(PPCContext& ctx, uint8_t* base) {
   __imp__sub_82270A08(ctx, base);
   ApplyShadowDistanceScale(base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82270A08
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_824F3418(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode() || !REXCVAR_GET(gta4_force_highest_lod) || !ctx.r4.u32) {
     __imp__sub_824F3418(ctx, base);
@@ -4977,11 +5032,13 @@ extern "C" void sub_824F3418(PPCContext& ctx, uint8_t* base) {
                 ctx.r4.u32);
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_824F3418
 
 // Complete local lifts keep the stock 300-unit remapping boundary in step
 // with the distance input. No shared guest constant is modified.
 #include "gta4_draw_distance_guest.inc"
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_821DFFE8(PPCContext& ctx, uint8_t* base) {
   const double configured_scale =
       REXCVAR_GET(gta4_draw_distance_scale) *
@@ -5013,7 +5070,9 @@ extern "C" void sub_821DFFE8(PPCContext& ctx, uint8_t* base) {
                 std::bit_cast<float>(LoadU32(base, kDistanceScaleOutputGlobal)));
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_821DFFE8
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_8247E4C0(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_8247E4C0(ctx, base);
@@ -5032,7 +5091,9 @@ extern "C" void sub_8247E4C0(PPCContext& ctx, uint8_t* base) {
 
   __imp__sub_8247E3B8(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_8247E4C0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_828C01E0(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_828C01E0(ctx, base);
@@ -5049,14 +5110,18 @@ extern "C" void sub_828C01E0(PPCContext& ctx, uint8_t* base) {
   g_active_native_capture.build_object = ctx.r3.u32;
   __imp__sub_828C01E0(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_828C01E0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_828BF880(PPCContext& ctx, uint8_t* base) {
   if (IsNativeMode() && g_active_native_capture.active) {
     g_active_native_capture.selector_mask = ctx.r4.u32;
   }
   __imp__sub_828BF880(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_828BF880
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_828C0338(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode() || !g_active_native_capture.active) {
     __imp__sub_828C0338(ctx, base);
@@ -5085,7 +5150,9 @@ extern "C" void sub_828C0338(PPCContext& ctx, uint8_t* base) {
                 build_object, commands.size());
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_828C0338
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A47E28(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A47E28(ctx, base);
@@ -5130,6 +5197,7 @@ extern "C" void sub_82A47E28(PPCContext& ctx, uint8_t* base) {
         g_active_native_capture.active);
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A47E28
 
 extern "C" void CCommandBuffer_Destroy(PPCContext& ctx, uint8_t* base) {
   if (IsNativeMode()) {
@@ -5138,6 +5206,7 @@ extern "C" void CCommandBuffer_Destroy(PPCContext& ctx, uint8_t* base) {
   __imp__CCommandBuffer_Destroy(ctx, base);
 }
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A41520(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A41520(ctx, base);
@@ -5147,7 +5216,9 @@ extern "C" void sub_82A41520(PPCContext& ctx, uint8_t* base) {
   const uint32_t device = ctx.r3.u32;
   StoreU8(base, device + 10941, LoadU8(base, device + 10941) & uint8_t(0xFB));
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A41520
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A416B8(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A416B8(ctx, base);
@@ -5199,7 +5270,9 @@ extern "C" void sub_82A416B8(PPCContext& ctx, uint8_t* base) {
   SubmitNativeCommand(command);
   ctx.r3.u32 = 0;
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A416B8
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A4F7E0(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A4F7E0(ctx, base);
@@ -5207,7 +5280,9 @@ extern "C" void sub_82A4F7E0(PPCContext& ctx, uint8_t* base) {
   }
   ApplyDeviceCpuPrefix(base, ctx.r3.u32);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A4F7E0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A3BAA8(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A3BAA8(ctx, base);
@@ -5215,7 +5290,9 @@ extern "C" void sub_82A3BAA8(PPCContext& ctx, uint8_t* base) {
   }
   StoreAllDirty(base, ctx.r3.u32);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A3BAA8
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A3F268(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A3F268(ctx, base);
@@ -5226,7 +5303,9 @@ extern "C" void sub_82A3F268(PPCContext& ctx, uint8_t* base) {
   value = (value & ~uint32_t(0x3000)) | (std::rotl(ctx.r4.u32, 12) & 0x3000);
   StoreU32(base, device + 10916, value);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A3F268
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A42AC0(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A42AC0(ctx, base);
@@ -5251,7 +5330,9 @@ extern "C" void sub_82A42AC0(PPCContext& ctx, uint8_t* base) {
   StoreU32(base, device + 10920, value);
   ApplyNativeDirtyDefaults(base, device);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A42AC0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A3B540(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A3B540(ctx, base);
@@ -5299,6 +5380,7 @@ extern "C" void sub_82A3B540(PPCContext& ctx, uint8_t* base) {
   StoreU32(base, device + 10436, packed_top_left);
   StoreU32(base, device + 10440, packed_bottom_right);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A3B540
 
 #if defined(__ANDROID__)
 #include <android/log.h>
@@ -5387,6 +5469,7 @@ int ShadowBoundTarget(uint8_t* base, uint32_t device, uint32_t* slot = nullptr) 
 }
 }  // namespace
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A3BF50(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A3BF50(ctx, base);
@@ -5412,7 +5495,9 @@ extern "C" void sub_82A3BF50(PPCContext& ctx, uint8_t* base) {
   }
   SubmitNativeCommand(command);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A3BF50
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_828DA250(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_828DA250(ctx, base);
@@ -5452,7 +5537,9 @@ extern "C" void sub_828DA250(PPCContext& ctx, uint8_t* base) {
     g_last_title_depth_surface = depth_surface;
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_828DA250
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A3C2B8(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A3C2B8(ctx, base);
@@ -5475,7 +5562,9 @@ extern "C" void sub_82A3C2B8(PPCContext& ctx, uint8_t* base) {
   }
   SubmitNativeCommand(command);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A3C2B8
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A3B690(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A3B690(ctx, base);
@@ -5522,7 +5611,9 @@ extern "C" void sub_82A3B690(PPCContext& ctx, uint8_t* base) {
   command.stride_words = stride_words;
   SubmitNativeCommand(command);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A3B690
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A3B7B0(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A3B7B0(ctx, base);
@@ -5542,7 +5633,9 @@ extern "C" void sub_82A3B7B0(PPCContext& ctx, uint8_t* base) {
   command.buffer = buffer;
   SubmitNativeCommand(command);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A3B7B0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A44168(PPCContext& ctx, uint8_t* base) {
   const uint32_t texture = ctx.r3.u32;
   if (IsNativeMode() && texture && ctx.r8.u32 == 0) {
@@ -5557,7 +5650,9 @@ extern "C" void sub_82A44168(PPCContext& ctx, uint8_t* base) {
   }
   __imp__sub_82A44168(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A44168
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A441F8(PPCContext& ctx, uint8_t* base) {
   const uint32_t texture = ctx.r3.u32;
   if (IsNativeMode() && texture && ctx.r7.u32 == 0) {
@@ -5572,6 +5667,7 @@ extern "C" void sub_82A441F8(PPCContext& ctx, uint8_t* base) {
   }
   __imp__sub_82A441F8(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A441F8
 
 extern "C" void D3DResource_Release(PPCContext& ctx, uint8_t* base) {
   const bool native_mode = IsNativeMode();
@@ -5594,6 +5690,7 @@ extern "C" void D3DResource_Release(PPCContext& ctx, uint8_t* base) {
   }
 }
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A4A3C8(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A4A3C8(ctx, base);
@@ -5626,7 +5723,9 @@ extern "C" void sub_82A4A3C8(PPCContext& ctx, uint8_t* base) {
     ctx.r3.u32 = pointer;
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A4A3C8
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A4A600(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A4A600(ctx, base);
@@ -5664,7 +5763,9 @@ extern "C" void sub_82A4A600(PPCContext& ctx, uint8_t* base) {
     SubmitNativeCommand(command);
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A4A600
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_828E0048(PPCContext& ctx, uint8_t* base) {
   const uint32_t resource_owner = ctx.r4.u32;
   const uint32_t logical_font_id =
@@ -5690,7 +5791,9 @@ extern "C" void sub_828E0048(PPCContext& ctx, uint8_t* base) {
   // accessor that converts the owner into the inner D3D texture handle.
   __imp__sub_828E0048(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_828E0048
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A44B78(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A44B78(ctx, base);
@@ -5780,7 +5883,9 @@ extern "C" void sub_82A44B78(PPCContext& ctx, uint8_t* base) {
   GTA4_FontSelectionTraceBinding(g_vector_font_id, g_vector_font_owner, texture, stage);
   SubmitNativeCommand(command);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A44B78
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A46FB0(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A46FB0(ctx, base);
@@ -5797,7 +5902,9 @@ extern "C" void sub_82A46FB0(PPCContext& ctx, uint8_t* base) {
   StoreU32(base, device + kCommandScratchEndOffset, scratch + kCommandScratchSize);
   ctx.r3.u32 = scratch;
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A46FB0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A424A8(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A424A8(ctx, base);
@@ -5812,15 +5919,21 @@ extern "C" void sub_82A424A8(PPCContext& ctx, uint8_t* base) {
       {sizeof(SetShaderCommand), CommandType::kSetPixelShader}, device, shader};
   SubmitNativeCommand(command);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A424A8
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A42BA8(PPCContext& ctx, uint8_t* base) {
   RegisterNativeShader(ctx, base, __imp__sub_82A42BA8, ShaderStage::kPixel);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A42BA8
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A42CB8(PPCContext& ctx, uint8_t* base) {
   RegisterNativeShader(ctx, base, __imp__sub_82A42CB8, ShaderStage::kVertex);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A42CB8
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A42760(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A42760(ctx, base);
@@ -5837,7 +5950,9 @@ extern "C" void sub_82A42760(PPCContext& ctx, uint8_t* base) {
       {sizeof(SetShaderCommand), CommandType::kSetVertexShader}, device, shader};
   SubmitNativeCommand(command);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A42760
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A42930(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A42930(ctx, base);
@@ -5858,7 +5973,9 @@ extern "C" void sub_82A42930(PPCContext& ctx, uint8_t* base) {
   command.declaration = declaration;
   SubmitNativeCommand(command);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A42930
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A3A890(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A3A890(ctx, base);
@@ -5876,7 +5993,9 @@ extern "C" void sub_82A3A890(PPCContext& ctx, uint8_t* base) {
   command.declaration = declaration;
   SubmitNativeCommand(command);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A3A890
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A3DAB0(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A3DAB0(ctx, base);
@@ -5926,7 +6045,9 @@ extern "C" void sub_82A3DAB0(PPCContext& ctx, uint8_t* base) {
   g_pending_draw_primitive_up.dirty_state = dirty_state;
   ctx.r3.u32 = vertex_data;
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A3DAB0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A3DF50(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A3DF50(ctx, base);
@@ -5967,7 +6088,9 @@ extern "C" void sub_82A3DF50(PPCContext& ctx, uint8_t* base) {
   FreeAlignedGuestAllocation(ctx, base, g_pending_draw_primitive_up.vertex_data);
   g_pending_draw_primitive_up = {};
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A3DF50
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A3DF60(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A3DF60(ctx, base);
@@ -5994,6 +6117,7 @@ extern "C" void sub_82A3DF60(PPCContext& ctx, uint8_t* base) {
   temporal_host::Draw(base,command.device);
   SubmitNativeCommand(command);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A3DF60
 
 void SubmitNativeResolve(uint8_t* base, uint32_t device, uint32_t flags,
                          const ResolveRectangle* source_rectangle, uint32_t destination_texture,
@@ -6145,6 +6269,7 @@ void FinalizeNativeResolveBatchState(uint8_t* base, uint32_t device) {
   StoreU32(base, device + 12700, UINT32_MAX);
 }
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A44850(PPCContext& ctx, uint8_t* base) {
   const uint32_t requested_width = ctx.r3.u32;
   const uint32_t requested_height = ctx.r4.u32;
@@ -6160,7 +6285,9 @@ extern "C" void sub_82A44850(PPCContext& ctx, uint8_t* base) {
   PatchNativeDisplayResourceDimensions(base, ctx.r3.u32, requested_width, requested_height,
                                        return_address, "texture", true);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A44850
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A44970(PPCContext& ctx, uint8_t* base) {
   const uint32_t requested_width = ctx.r3.u32;
   const uint32_t requested_height = ctx.r4.u32;
@@ -6176,7 +6303,9 @@ extern "C" void sub_82A44970(PPCContext& ctx, uint8_t* base) {
   PatchNativeDisplayResourceDimensions(base, ctx.r3.u32, requested_width, requested_height,
                                        return_address, "surface", false);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A44970
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_828C0160(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode() || ctx.lr != kVideoGlobalsReadyReturnAddress) {
     __imp__sub_828C0160(ctx, base);
@@ -6209,7 +6338,9 @@ extern "C" void sub_828C0160(PPCContext& ctx, uint8_t* base) {
 
   __imp__sub_828C0160(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_828C0160
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_824F4730(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode() || !ctx.r3.u32 || ctx.lr != kDeferredResolutionSetupReturnAddress) {
     __imp__sub_824F4730(ctx, base);
@@ -6299,7 +6430,9 @@ extern "C" void sub_824F4730(PPCContext& ctx, uint8_t* base) {
         patched_hiz);
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_824F4730
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_828DC7F0(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_828DC7F0(ctx, base);
@@ -6405,7 +6538,9 @@ extern "C" void sub_828DC7F0(PPCContext& ctx, uint8_t* base) {
         name, wrapper, target_width, target_height);
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_828DC7F0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_828BE580(PPCContext& ctx, uint8_t* base) {
   if (IsNativeMode() && ctx.lr == kExteriorReflectionProjectionReturnAddress) {
     const double distance = GetExteriorReflectionCaptureDistance();
@@ -6419,7 +6554,9 @@ extern "C" void sub_828BE580(PPCContext& ctx, uint8_t* base) {
   }
   __imp__sub_828BE580(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_828BE580
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_828C8A50(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode() || ctx.lr != kEaaParameterUploadReturnAddress || ctx.r7.u32 != 16 ||
       ctx.r8.u32 != 1 || !ctx.r6.u32) {
@@ -6449,7 +6586,9 @@ extern "C" void sub_828C8A50(PPCContext& ctx, uint8_t* base) {
                 ctx.r5.u32, parameter_data);
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_828C8A50
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_822D1710(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_822D1710(ctx, base);
@@ -6490,7 +6629,9 @@ extern "C" void sub_822D1710(PPCContext& ctx, uint8_t* base) {
   __imp__sub_822D1710(ctx, base);
   temporal_host::Event(TemporalEvent::kAfterPostFx);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_822D1710
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_821BD0A0(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_821BD0A0(ctx, base);
@@ -6505,7 +6646,9 @@ extern "C" void sub_821BD0A0(PPCContext& ctx, uint8_t* base) {
   ScopedRenderPhaseMarker phase_scope(device, RenderPhase::kRadarMap, radar_map_section, caller);
   gta4::aspect::DrawRadarSection(ctx, base, __imp__sub_821BD0A0);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_821BD0A0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_8267D528(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_8267D528(ctx, base);
@@ -6521,7 +6664,9 @@ extern "C" void sub_8267D528(PPCContext& ctx, uint8_t* base) {
   ScopedRenderPhaseMarker phase_scope(device, RenderPhase::kSceneToGBuffer, phase_object, caller);
   __imp__sub_8267D528(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_8267D528
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_8267D750(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_8267D750(ctx, base);
@@ -6536,6 +6681,7 @@ extern "C" void sub_8267D750(PPCContext& ctx, uint8_t* base) {
   ScopedRenderPhaseMarker phase_scope(device, RenderPhase::kLightsToScreen, phase_object, caller);
   __imp__sub_8267D750(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_8267D750
 
 // Shared original-call path: the bulb observer wraps this without duplicating
 // the existing world-light provenance scope or invoking the game twice.
@@ -6548,6 +6694,7 @@ void CallBulbSourceOriginalWithProvenance(PPCContext& ctx, uint8_t* base) {
   __imp__sub_822077D8(ctx, base);
 }
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_822AC8D0(PPCContext& ctx, uint8_t* base) {
   const bool trace = IsNativeLightProvenanceTraceEnabled();
   const uint32_t caller = uint32_t(ctx.lr);
@@ -6558,7 +6705,9 @@ extern "C" void sub_822AC8D0(PPCContext& ctx, uint8_t* base) {
     TraceNativePrimaryLightAdmission(base, caller, destination, candidate);
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_822AC8D0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_822B2B50(PPCContext& ctx, uint8_t* base) {
   ScopedNativeLightSubmissionTrace submission_scope(base, ctx);
   bool apartment_bulb_x890 = false;
@@ -6585,7 +6734,9 @@ extern "C" void sub_822B2B50(PPCContext& ctx, uint8_t* base) {
   __imp__sub_822B2B50(ctx, base);
   submission_scope.TraceNoPrimaryCopy(base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_822B2B50
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_821671F8(PPCContext& ctx, uint8_t* base) {
   const bool trace = IsNativeMode() && IsNativeLightTraceEnabled();
   const uint32_t caller = uint32_t(ctx.lr);
@@ -6610,9 +6761,11 @@ extern "C" void sub_821671F8(PPCContext& ctx, uint8_t* base) {
                                          color_pointer, preserved_registers);
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_821671F8
 
 #include "gta4_bulb_source_trace.inc"
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_822072D0(PPCContext& ctx, uint8_t* base) {
   ScopedNativeLightingExecution lighting_scope(
       base, 0x822072D0, RenderExecutionStage::kDeferredLighting, LightPassRole::kCorona,
@@ -6622,28 +6775,36 @@ extern "C" void sub_822072D0(PPCContext& ctx, uint8_t* base) {
   __imp__sub_822072D0(ctx, base);
   TraceBulbCoronaBatch(base, "after-original", bulb_corona_event);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_822072D0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_822B0B90(PPCContext& ctx, uint8_t* base) {
   ScopedNativeLightingExecution lighting_scope(
       base, 0x822B0B90, RenderExecutionStage::kDeferredLighting, LightPassRole::kNone);
   ScopedNativeLocalLightLoop trace(NativeLocalLightLoopKind::kTypeThree, ctx, base);
   __imp__sub_822B0B90(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_822B0B90
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_822B0F08(PPCContext& ctx, uint8_t* base) {
   ScopedNativeLightingExecution lighting_scope(
       base, 0x822B0F08, RenderExecutionStage::kDeferredLighting, LightPassRole::kNone);
   ScopedNativeLocalLightLoop trace(NativeLocalLightLoopKind::kPointSpot, ctx, base);
   __imp__sub_822B0F08(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_822B0F08
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_822B4640(PPCContext& ctx, uint8_t* base) {
   ScopedNativeLightingExecution lighting_scope(
       base, 0x822B4640, RenderExecutionStage::kDeferredLighting, LightPassRole::kNone);
   ScopedNativeLocalLightLoop trace(NativeLocalLightLoopKind::kShaft, ctx, base);
   __imp__sub_822B4640(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_822B4640
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_8234A600(PPCContext& ctx, uint8_t* base) {
   ScopedNativeLightingExecution lighting_scope(
       base, 0x8234A600, RenderExecutionStage::kDeferredLighting, LightPassRole::kWaterFx,
@@ -6651,14 +6812,18 @@ extern "C" void sub_8234A600(PPCContext& ctx, uint8_t* base) {
   ScopedNativeLocalLightLoop trace(NativeLocalLightLoopKind::kWaterFx, ctx, base);
   __imp__sub_8234A600(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_8234A600
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_824F7328(PPCContext& ctx, uint8_t* base) {
   ScopedNativeLightingExecution lighting_scope(
       base, 0x824F7328, RenderExecutionStage::kDeferredLighting, LightPassRole::kDepthCopy);
   ScopedNativeLocalLightLoop trace(NativeLocalLightLoopKind::kGlobalStencil, ctx, base);
   __imp__sub_824F7328(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_824F7328
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_827A9A20(PPCContext& ctx, uint8_t* base) {
   const bool trace = IsNativeMode() && IsNativeLightLoopTraceEnabled();
   const uint32_t caller = uint32_t(ctx.lr);
@@ -6679,7 +6844,9 @@ extern "C" void sub_827A9A20(PPCContext& ctx, uint8_t* base) {
     }
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_827A9A20
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_828BD310(PPCContext& ctx, uint8_t* base) {
   const bool trace = IsNativeMode() && IsNativeLightLoopTraceEnabled();
   const uint32_t caller = uint32_t(ctx.lr);
@@ -6689,7 +6856,9 @@ extern "C" void sub_828BD310(PPCContext& ctx, uint8_t* base) {
                                "visibility-rejected");
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_828BD310
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82271FF8(PPCContext& ctx, uint8_t* base) {
   const bool trace = IsNativeMode() && IsNativeLightLoopTraceEnabled();
   const uint32_t caller = uint32_t(ctx.lr);
@@ -6698,7 +6867,9 @@ extern "C" void sub_82271FF8(PPCContext& ctx, uint8_t* base) {
     TraceNativeLocalLightShadowUnavailable(base, ctx, caller);
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82271FF8
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_824F6208(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_824F6208(ctx, base);
@@ -6712,7 +6883,9 @@ extern "C" void sub_824F6208(PPCContext& ctx, uint8_t* base) {
   ScopedNativeDeferredSelectorTrace selector_trace;
   __imp__sub_824F6208(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_824F6208
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_824F6478(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_824F6478(ctx, base);
@@ -6726,7 +6899,9 @@ extern "C" void sub_824F6478(PPCContext& ctx, uint8_t* base) {
     TraceNativeLocalLightTechniqueEnd(base, caller);
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_824F6478
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_821BC690(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_821BC690(ctx, base);
@@ -6753,7 +6928,9 @@ extern "C" void sub_821BC690(PPCContext& ctx, uint8_t* base) {
   }
   __imp__sub_821BC690(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_821BC690
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_821BC5B0(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_821BC5B0(ctx, base);
@@ -6779,7 +6956,9 @@ extern "C" void sub_821BC5B0(PPCContext& ctx, uint8_t* base) {
   }
   __imp__sub_821BC5B0(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_821BC5B0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A3E910(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode() || ctx.lr != kDeferredPhaseBeginReturnAddress) {
     __imp__sub_82A3E910(ctx, base);
@@ -6828,7 +7007,9 @@ extern "C" void sub_82A3E910(PPCContext& ctx, uint8_t* base) {
   StoreU32(base, rectangles + 8, saved_rectangle[2]);
   StoreU32(base, rectangles + 12, saved_rectangle[3]);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A3E910
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_824F6AF0(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_824F6AF0(ctx, base);
@@ -6982,7 +7163,9 @@ extern "C" void sub_824F6AF0(PPCContext& ctx, uint8_t* base) {
                 phase, width, height);
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_824F6AF0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A3CC68(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A3CC68(ctx, base);
@@ -7059,7 +7242,9 @@ extern "C" void sub_82A3CC68(PPCContext& ctx, uint8_t* base) {
                       ctx.f1.f64, LoadU32(base, ctx.r1.u32 + 92), LoadU32(base, ctx.r1.u32 + 100),
                       1, uint32_t(ctx.lr), 0);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A3CC68
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A3EDA8(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A3EDA8(ctx, base);
@@ -7166,7 +7351,9 @@ extern "C" void sub_82A3EDA8(PPCContext& ctx, uint8_t* base) {
   InvokeGuest(ctx, base, sub_82A3BE18, device, 0x820B0314);
   ctx.r3.u32 = 0;
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A3EDA8
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A3E348(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A3E348(ctx, base);
@@ -7260,7 +7447,9 @@ extern "C" void sub_82A3E348(PPCContext& ctx, uint8_t* base) {
   temporal_host::Draw(base,command.device);
   SubmitNativeCommand(command);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A3E348
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A457B0(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A457B0(ctx, base);
@@ -7341,7 +7530,9 @@ extern "C" void sub_82A457B0(PPCContext& ctx, uint8_t* base) {
   StoreU8(base, device + 10941, LoadU8(base, device + 10941) | uint8_t(4));
   StoreU64(base, device + 16, LoadU64(base, device + 16) | uint64_t(0x00020000));
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A457B0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A46DA0(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A46DA0(ctx, base);
@@ -7357,7 +7548,9 @@ extern "C" void sub_82A46DA0(PPCContext& ctx, uint8_t* base) {
   }
   StoreU32(base, device + 22280, behavior);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A46DA0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_8247BD88(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_8247BD88(ctx, base);
@@ -7390,7 +7583,9 @@ extern "C" void sub_8247BD88(PPCContext& ctx, uint8_t* base) {
         arguments, raw[0], raw[1], raw[2], raw[3], raw[4], raw[5], raw[6], raw[7]);
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_8247BD88
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_8247BED8(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_8247BED8(ctx, base);
@@ -7423,7 +7618,9 @@ extern "C" void sub_8247BED8(PPCContext& ctx, uint8_t* base) {
         arguments, raw[0], raw[1], raw[2], raw[3], raw[4], raw[5], raw[6], raw[7], raw[8]);
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_8247BED8
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_827BB138(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_827BB138(ctx, base);
@@ -7474,7 +7671,9 @@ extern "C" void sub_827BB138(PPCContext& ctx, uint8_t* base) {
         plane_cr, plane_cb, plane_a, result, reason);
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_827BB138
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_828C15C8(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_828C15C8(ctx, base);
@@ -7518,7 +7717,9 @@ extern "C" void sub_828C15C8(PPCContext& ctx, uint8_t* base) {
   g_tv_final_resolve_count = previous_resolve_count;
   g_tv_final_sequence = previous_sequence;
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_828C15C8
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_826273A0(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_826273A0(ctx, base);
@@ -7554,7 +7755,9 @@ extern "C" void sub_826273A0(PPCContext& ctx, uint8_t* base) {
                 kTvMuteGlobal);
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_826273A0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82A467D8(PPCContext& ctx, uint8_t* base) {
   if (!IsNativeMode()) {
     __imp__sub_82A467D8(ctx, base);
@@ -7650,6 +7853,7 @@ extern "C" void sub_82A467D8(PPCContext& ctx, uint8_t* base) {
   SubmitNativeCommand(command);
   ctx.r3.u32 = device;
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A467D8
 
 #include "gta4_help_trace_hooks.inc"
 #include "gta4_fade_trace_hooks.inc"

@@ -1910,244 +1910,6 @@ loc_821B6A34:
 	return;
 }
 
-DEFINE_REX_FUNC(sub_821C62C0) {
-	REX_FUNC_PROLOGUE();
-	PPCXERRegister xer{};
-	PPCCRRegister cr6{};
-	PPCRegister r27{};
-	PPCRegister f31{};
-	// li r4,0
-	ctx.r4.s64 = 0;
-	// li r3,16
-	ctx.r3.s64 = 16;
-	// bl 0x8218cb30
-	ctx.lr = 0x821C62CC;
-	sub_8218CB30(ctx, base);
-	// cmplwi cr6,r3,0
-	cr6.compare<uint32_t>(ctx.r3.u32, 0, xer);
-	// beq cr6,0x821c62e4
-	if (cr6.eq) goto loc_821C62E4;
-	// li r5,1
-	ctx.r5.s64 = 1;
-	// li r4,6
-	ctx.r4.s64 = 6;
-	// bl 0x8218e348
-	ctx.lr = 0x821C62E0;
-	sub_8218E348(ctx, base);
-	// b 0x821c62e8
-	goto loc_821C62E8;
-loc_821C62E4:
-	// mr r3,r27
-	ctx.r3.u64 = r27.u64;
-loc_821C62E8:
-	// bl 0x821251a0
-	ctx.lr = 0x821C62EC;
-	sub_821251A0(ctx, base);
-	// li r4,0
-	ctx.r4.s64 = 0;
-	// li r3,16
-	ctx.r3.s64 = 16;
-	// bl 0x8218cb30
-	ctx.lr = 0x821C62F8;
-	sub_8218CB30(ctx, base);
-	// cmplwi cr6,r3,0
-	cr6.compare<uint32_t>(ctx.r3.u32, 0, xer);
-	// beq cr6,0x821c6310
-	if (cr6.eq) goto loc_821C6310;
-	// li r5,0
-	ctx.r5.s64 = 0;
-	// li r4,19
-	ctx.r4.s64 = 19;
-	// bl 0x8218e348
-	ctx.lr = 0x821C630C;
-	sub_8218E348(ctx, base);
-	// b 0x821c6314
-	goto loc_821C6314;
-loc_821C6310:
-	// mr r3,r27
-	ctx.r3.u64 = r27.u64;
-loc_821C6314:
-	// bl 0x821251a0
-	ctx.lr = 0x821C6318;
-	sub_821251A0(ctx, base);
-	// li r4,0
-	ctx.r4.s64 = 0;
-	// li r3,16
-	ctx.r3.s64 = 16;
-	// bl 0x8218cb30
-	ctx.lr = 0x821C6324;
-	sub_8218CB30(ctx, base);
-	// cmplwi cr6,r3,0
-	cr6.compare<uint32_t>(ctx.r3.u32, 0, xer);
-	// beq cr6,0x821c633c
-	if (cr6.eq) goto loc_821C633C;
-	// li r5,0
-	ctx.r5.s64 = 0;
-	// li r4,23
-	ctx.r4.s64 = 23;
-	// bl 0x8218e348
-	ctx.lr = 0x821C6338;
-	sub_8218E348(ctx, base);
-	// b 0x821c6340
-	goto loc_821C6340;
-loc_821C633C:
-	// mr r3,r27
-	ctx.r3.u64 = r27.u64;
-loc_821C6340:
-	// bl 0x821251a0
-	ctx.lr = 0x821C6344;
-	sub_821251A0(ctx, base);
-	// li r4,0
-	ctx.r4.s64 = 0;
-	// li r3,16
-	ctx.r3.s64 = 16;
-	// bl 0x8218cb30
-	ctx.lr = 0x821C6350;
-	sub_8218CB30(ctx, base);
-	// cmplwi cr6,r3,0
-	cr6.compare<uint32_t>(ctx.r3.u32, 0, xer);
-	// beq cr6,0x821c6368
-	if (cr6.eq) goto loc_821C6368;
-	// li r5,0
-	ctx.r5.s64 = 0;
-	// li r4,24
-	ctx.r4.s64 = 24;
-	// bl 0x8218e348
-	ctx.lr = 0x821C6364;
-	sub_8218E348(ctx, base);
-	// b 0x821c636c
-	goto loc_821C636C;
-loc_821C6368:
-	// mr r3,r27
-	ctx.r3.u64 = r27.u64;
-loc_821C636C:
-	// bl 0x821251a0
-	ctx.lr = 0x821C6370;
-	sub_821251A0(ctx, base);
-	// li r4,0
-	ctx.r4.s64 = 0;
-	// li r3,16
-	ctx.r3.s64 = 16;
-	// bl 0x8218cb30
-	ctx.lr = 0x821C637C;
-	sub_8218CB30(ctx, base);
-	// cmplwi cr6,r3,0
-	cr6.compare<uint32_t>(ctx.r3.u32, 0, xer);
-	// beq cr6,0x821c6394
-	if (cr6.eq) goto loc_821C6394;
-	// li r5,255
-	ctx.r5.s64 = 255;
-	// li r4,26
-	ctx.r4.s64 = 26;
-	// bl 0x8218e348
-	ctx.lr = 0x821C6390;
-	sub_8218E348(ctx, base);
-	// b 0x821c6398
-	goto loc_821C6398;
-loc_821C6394:
-	// mr r3,r27
-	ctx.r3.u64 = r27.u64;
-loc_821C6398:
-	// bl 0x821251a0
-	ctx.lr = 0x821C639C;
-	sub_821251A0(ctx, base);
-	// li r4,0
-	ctx.r4.s64 = 0;
-	// li r3,16
-	ctx.r3.s64 = 16;
-	// bl 0x8218cb30
-	ctx.lr = 0x821C63A8;
-	sub_8218CB30(ctx, base);
-	// cmplwi cr6,r3,0
-	cr6.compare<uint32_t>(ctx.r3.u32, 0, xer);
-	// beq cr6,0x821c63c0
-	if (cr6.eq) goto loc_821C63C0;
-	// li r5,-1
-	ctx.r5.s64 = -1;
-	// li r4,25
-	ctx.r4.s64 = 25;
-	// bl 0x8218e348
-	ctx.lr = 0x821C63BC;
-	sub_8218E348(ctx, base);
-	// b 0x821c63c4
-	goto loc_821C63C4;
-loc_821C63C0:
-	// mr r3,r27
-	ctx.r3.u64 = r27.u64;
-loc_821C63C4:
-	// bl 0x821251a0
-	ctx.lr = 0x821C63C8;
-	sub_821251A0(ctx, base);
-	// li r4,0
-	ctx.r4.s64 = 0;
-	// li r3,16
-	ctx.r3.s64 = 16;
-	// bl 0x8218cb30
-	ctx.lr = 0x821C63D4;
-	sub_8218CB30(ctx, base);
-	// cmplwi cr6,r3,0
-	cr6.compare<uint32_t>(ctx.r3.u32, 0, xer);
-	// beq cr6,0x821c63ec
-	if (cr6.eq) goto loc_821C63EC;
-	// li r5,0
-	ctx.r5.s64 = 0;
-	// li r4,22
-	ctx.r4.s64 = 22;
-	// bl 0x8218e348
-	ctx.lr = 0x821C63E8;
-	sub_8218E348(ctx, base);
-	// b 0x821c63f0
-	goto loc_821C63F0;
-loc_821C63EC:
-	// mr r3,r27
-	ctx.r3.u64 = r27.u64;
-loc_821C63F0:
-	// bl 0x821251a0
-	ctx.lr = 0x821C63F4;
-	sub_821251A0(ctx, base);
-	// li r4,0
-	ctx.r4.s64 = 0;
-	// li r3,16
-	ctx.r3.s64 = 16;
-	// bl 0x8218cb30
-	ctx.lr = 0x821C6400;
-	sub_8218CB30(ctx, base);
-	// cmplwi cr6,r3,0
-	cr6.compare<uint32_t>(ctx.r3.u32, 0, xer);
-	// beq cr6,0x821c6424
-	if (cr6.eq) goto loc_821C6424;
-	// li r5,15
-	ctx.r5.s64 = 15;
-	// li r4,15
-	ctx.r4.s64 = 15;
-	// bl 0x8218e348
-	ctx.lr = 0x821C6414;
-	sub_8218E348(ctx, base);
-	// bl 0x821251a0
-	ctx.lr = 0x821C6418;
-	sub_821251A0(ctx, base);
-	// addi r1,r1,144
-	ctx.r1.s64 = ctx.r1.s64 + 144;
-	// lfd f31,-56(r1)
-	ctx.fpscr.disableFlushMode();
-	f31.u64 = REX_LOAD_U64(ctx.r1.u32 + -56);
-	// b 0x8298eb14
-	return;
-loc_821C6424:
-	// mr r3,r27
-	ctx.r3.u64 = r27.u64;
-	// bl 0x821251a0
-	ctx.lr = 0x821C642C;
-	sub_821251A0(ctx, base);
-	// addi r1,r1,144
-	ctx.r1.s64 = ctx.r1.s64 + 144;
-	// lfd f31,-56(r1)
-	ctx.fpscr.disableFlushMode();
-	f31.u64 = REX_LOAD_U64(ctx.r1.u32 + -56);
-	// b 0x8298eb14
-	return;
-}
-
 DEFINE_REX_FUNC(sub_821CEAE0) {
 	REX_FUNC_PROLOGUE();
 	PPCRegister ctr{};
@@ -2813,527 +2575,6 @@ loc_821EFF00:
 	return;
 }
 
-DEFINE_REX_FUNC(sub_821F7208) {
-	REX_FUNC_PROLOGUE();
-	PPCXERRegister xer{};
-	PPCCRRegister cr6{};
-	PPCRegister r25{};
-	PPCRegister r27{};
-	PPCRegister r29{};
-	PPCRegister r30{};
-	PPCRegister r31{};
-	PPCRegister f29{};
-	PPCRegister f30{};
-	PPCRegister f31{};
-	PPCRegister temp{};
-	// rlwinm r11,r11,0,2,2
-	ctx.r11.u64 = __builtin_rotateleft64(ctx.r11.u32 | (ctx.r11.u64 << 32), 0) & 0x20000000;
-	// cmplwi cr6,r11,0
-	cr6.compare<uint32_t>(ctx.r11.u32, 0, xer);
-	// beq cr6,0x821f7cf4
-	if (cr6.eq) goto loc_821F7CF4;
-	// lis r30,-32017
-	r30.s64 = -2098266112;
-	// lwz r3,-21944(r30)
-	ctx.r3.u64 = REX_LOAD_U32(r30.u32 + -21944);
-	// bl 0x821250b0
-	ctx.lr = 0x821F7220;
-	sub_821250B0(ctx, base);
-	// cmplwi cr6,r3,0
-	cr6.compare<uint32_t>(ctx.r3.u32, 0, xer);
-	// beq cr6,0x821f7234
-	if (cr6.eq) goto loc_821F7234;
-	// bl 0x8235cb20
-	ctx.lr = 0x821F722C;
-	sub_8235CB20(ctx, base);
-	// mr r29,r3
-	r29.u64 = ctx.r3.u64;
-	// b 0x821f7238
-	goto loc_821F7238;
-loc_821F7234:
-	// li r29,0
-	r29.s64 = 0;
-loc_821F7238:
-	// lwz r3,-21944(r30)
-	ctx.r3.u64 = REX_LOAD_U32(r30.u32 + -21944);
-	// bl 0x821250b0
-	ctx.lr = 0x821F7240;
-	sub_821250B0(ctx, base);
-	// lis r11,-32252
-	ctx.r11.s64 = -2113667072;
-	// mr r31,r3
-	r31.u64 = ctx.r3.u64;
-	// cmplwi cr6,r31,0
-	cr6.compare<uint32_t>(r31.u32, 0, xer);
-	// lfs f29,2232(r11)
-	ctx.fpscr.disableFlushMode();
-	temp.u32 = REX_LOAD_U32(ctx.r11.u32 + 2232);
-	f29.f64 = double(temp.f32);
-	// beq cr6,0x821f7274
-	if (cr6.eq) goto loc_821F7274;
-	// lis r11,-32256
-	ctx.r11.s64 = -2113929216;
-	// fmr f1,f29
-	ctx.f1.f64 = f29.f64;
-	// lfs f2,7908(r11)
-	temp.u32 = REX_LOAD_U32(ctx.r11.u32 + 7908);
-	ctx.f2.f64 = double(temp.f32);
-	// bl 0x82126d10
-	ctx.lr = 0x821F7264;
-	sub_82126D10(ctx, base);
-	// mr r3,r31
-	ctx.r3.u64 = r31.u64;
-	// bl 0x821ef9b8
-	ctx.lr = 0x821F726C;
-	sub_821EF9B8(ctx, base);
-	// mr r4,r3
-	ctx.r4.u64 = ctx.r3.u64;
-	// b 0x821f7278
-	goto loc_821F7278;
-loc_821F7274:
-	// li r4,0
-	ctx.r4.s64 = 0;
-loc_821F7278:
-	// mr r3,r29
-	ctx.r3.u64 = r29.u64;
-	// bl 0x8235a188
-	ctx.lr = 0x821F7280;
-	sub_8235A188(ctx, base);
-	// lwz r3,-21944(r30)
-	ctx.r3.u64 = REX_LOAD_U32(r30.u32 + -21944);
-	// bl 0x821250b0
-	ctx.lr = 0x821F7288;
-	sub_821250B0(ctx, base);
-	// mr r31,r3
-	r31.u64 = ctx.r3.u64;
-	// cmplwi cr6,r31,0
-	cr6.compare<uint32_t>(r31.u32, 0, xer);
-	// beq cr6,0x821f72ac
-	if (cr6.eq) goto loc_821F72AC;
-	// bl 0x823313f8
-	ctx.lr = 0x821F7298;
-	sub_823313F8(ctx, base);
-	// lis r11,-32256
-	ctx.r11.s64 = -2113929216;
-	// mr r4,r31
-	ctx.r4.u64 = r31.u64;
-	// addi r11,r11,22340
-	ctx.r11.s64 = ctx.r11.s64 + 22340;
-	// stw r11,0(r31)
-	REX_STORE_U32(r31.u32 + 0, ctx.r11.u32);
-	// b 0x821f72b0
-	goto loc_821F72B0;
-loc_821F72AC:
-	// li r4,0
-	ctx.r4.s64 = 0;
-loc_821F72B0:
-	// mr r3,r29
-	ctx.r3.u64 = r29.u64;
-	// bl 0x8235a188
-	ctx.lr = 0x821F72B8;
-	sub_8235A188(ctx, base);
-	// lwz r3,-21944(r30)
-	ctx.r3.u64 = REX_LOAD_U32(r30.u32 + -21944);
-	// bl 0x821250b0
-	ctx.lr = 0x821F72C0;
-	sub_821250B0(ctx, base);
-	// lis r11,-32256
-	ctx.r11.s64 = -2113929216;
-	// cmplwi cr6,r3,0
-	cr6.compare<uint32_t>(ctx.r3.u32, 0, xer);
-	// lfs f31,3068(r11)
-	ctx.fpscr.disableFlushMode();
-	temp.u32 = REX_LOAD_U32(ctx.r11.u32 + 3068);
-	f31.f64 = double(temp.f32);
-	// beq cr6,0x821f7334
-	if (cr6.eq) goto loc_821F7334;
-	// li r11,20
-	ctx.r11.s64 = 20;
-	// lwz r4,36(r25)
-	ctx.r4.u64 = REX_LOAD_U32(r25.u32 + 36);
-	// lis r10,-32245
-	ctx.r10.s64 = -2113208320;
-	// fmr f3,f31
-	ctx.f3.f64 = f31.f64;
-	// li r6,30
-	ctx.r6.s64 = 30;
-	// fmr f2,f31
-	ctx.f2.f64 = f31.f64;
-	// li r9,1
-	ctx.r9.s64 = 1;
-	// fmr f1,f31
-	ctx.f1.f64 = f31.f64;
-	// li r31,4
-	r31.s64 = 4;
-	// stw r11,132(r1)
-	REX_STORE_U32(ctx.r1.u32 + 132, ctx.r11.u32);
-	// li r7,0
-	ctx.r7.s64 = 0;
-	// lfs f4,-6944(r10)
-	temp.u32 = REX_LOAD_U32(ctx.r10.u32 + -6944);
-	ctx.f4.f64 = double(temp.f32);
-	// stw r11,108(r1)
-	REX_STORE_U32(ctx.r1.u32 + 108, ctx.r11.u32);
-	// lis r10,-32094
-	ctx.r10.s64 = -2103312384;
-	// stw r6,124(r1)
-	REX_STORE_U32(ctx.r1.u32 + 124, ctx.r6.u32);
-	// li r11,0
-	ctx.r11.s64 = 0;
-	// stb r9,143(r1)
-	REX_STORE_U8(ctx.r1.u32 + 143, ctx.r9.u8);
-	// li r6,21
-	ctx.r6.s64 = 21;
-	// stw r31,100(r1)
-	REX_STORE_U32(ctx.r1.u32 + 100, r31.u32);
-	// li r5,0
-	ctx.r5.s64 = 0;
-	// lwz r8,20000(r10)
-	ctx.r8.u64 = REX_LOAD_U32(ctx.r10.u32 + 20000);
-	// stb r11,95(r1)
-	REX_STORE_U8(ctx.r1.u32 + 95, ctx.r11.u8);
-	// bl 0x82346e50
-	ctx.lr = 0x821F732C;
-	sub_82346E50(ctx, base);
-	// mr r4,r3
-	ctx.r4.u64 = ctx.r3.u64;
-	// b 0x821f7338
-	goto loc_821F7338;
-loc_821F7334:
-	// li r4,0
-	ctx.r4.s64 = 0;
-loc_821F7338:
-	// mr r3,r29
-	ctx.r3.u64 = r29.u64;
-	// bl 0x8235a188
-	ctx.lr = 0x821F7340;
-	sub_8235A188(ctx, base);
-	// lwz r3,-21944(r30)
-	ctx.r3.u64 = REX_LOAD_U32(r30.u32 + -21944);
-	// bl 0x821250b0
-	ctx.lr = 0x821F7348;
-	sub_821250B0(ctx, base);
-	// lis r11,-32256
-	ctx.r11.s64 = -2113929216;
-	// mr r31,r3
-	r31.u64 = ctx.r3.u64;
-	// cmplwi cr6,r31,0
-	cr6.compare<uint32_t>(r31.u32, 0, xer);
-	// lfs f30,5180(r11)
-	ctx.fpscr.disableFlushMode();
-	temp.u32 = REX_LOAD_U32(ctx.r11.u32 + 5180);
-	f30.f64 = double(temp.f32);
-	// beq cr6,0x821f7384
-	if (cr6.eq) goto loc_821F7384;
-	// fmr f2,f29
-	ctx.f2.f64 = f29.f64;
-	// fmr f1,f30
-	ctx.f1.f64 = f30.f64;
-	// bl 0x82126d10
-	ctx.lr = 0x821F7368;
-	sub_82126D10(ctx, base);
-	// li r5,384
-	ctx.r5.s64 = 384;
-	// lwz r4,36(r25)
-	ctx.r4.u64 = REX_LOAD_U32(r25.u32 + 36);
-	// mr r3,r31
-	ctx.r3.u64 = r31.u64;
-	// li r7,0
-	ctx.r7.s64 = 0;
-	// bl 0x8236fbd8
-	ctx.lr = 0x821F737C;
-	sub_8236FBD8(ctx, base);
-	// mr r4,r3
-	ctx.r4.u64 = ctx.r3.u64;
-	// b 0x821f7388
-	goto loc_821F7388;
-loc_821F7384:
-	// li r4,0
-	ctx.r4.s64 = 0;
-loc_821F7388:
-	// mr r3,r29
-	ctx.r3.u64 = r29.u64;
-	// bl 0x8235a188
-	ctx.lr = 0x821F7390;
-	sub_8235A188(ctx, base);
-	// lwz r3,-21944(r30)
-	ctx.r3.u64 = REX_LOAD_U32(r30.u32 + -21944);
-	// bl 0x821250b0
-	ctx.lr = 0x821F7398;
-	sub_821250B0(ctx, base);
-	// cmplwi cr6,r3,0
-	cr6.compare<uint32_t>(ctx.r3.u32, 0, xer);
-	// beq cr6,0x821f73c0
-	if (cr6.eq) goto loc_821F73C0;
-	// li r7,0
-	ctx.r7.s64 = 0;
-	// lwz r4,36(r25)
-	ctx.r4.u64 = REX_LOAD_U32(r25.u32 + 36);
-	// li r6,16
-	ctx.r6.s64 = 16;
-	// fmr f1,f31
-	ctx.fpscr.disableFlushMode();
-	ctx.f1.f64 = f31.f64;
-	// li r5,3
-	ctx.r5.s64 = 3;
-	// bl 0x8236ea10
-	ctx.lr = 0x821F73B8;
-	sub_8236EA10(ctx, base);
-	// mr r4,r3
-	ctx.r4.u64 = ctx.r3.u64;
-	// b 0x821f73c4
-	goto loc_821F73C4;
-loc_821F73C0:
-	// li r4,0
-	ctx.r4.s64 = 0;
-loc_821F73C4:
-	// li r27,2
-	r27.s64 = 2;
-	// mr r3,r29
-	ctx.r3.u64 = r29.u64;
-	// stw r27,44(r4)
-	REX_STORE_U32(ctx.r4.u32 + 44, r27.u32);
-	// bl 0x8235a188
-	ctx.lr = 0x821F73D4;
-	sub_8235A188(ctx, base);
-	// lwz r3,-21944(r30)
-	ctx.r3.u64 = REX_LOAD_U32(r30.u32 + -21944);
-	// bl 0x821250b0
-	ctx.lr = 0x821F73DC;
-	sub_821250B0(ctx, base);
-	// cmplwi cr6,r3,0
-	cr6.compare<uint32_t>(ctx.r3.u32, 0, xer);
-	// beq cr6,0x821f7404
-	if (cr6.eq) goto loc_821F7404;
-	// li r7,0
-	ctx.r7.s64 = 0;
-	// lwz r4,36(r25)
-	ctx.r4.u64 = REX_LOAD_U32(r25.u32 + 36);
-	// li r6,16
-	ctx.r6.s64 = 16;
-	// fmr f1,f31
-	ctx.fpscr.disableFlushMode();
-	ctx.f1.f64 = f31.f64;
-	// li r5,1
-	ctx.r5.s64 = 1;
-	// bl 0x8236ea10
-	ctx.lr = 0x821F73FC;
-	sub_8236EA10(ctx, base);
-	// mr r4,r3
-	ctx.r4.u64 = ctx.r3.u64;
-	// b 0x821f7408
-	goto loc_821F7408;
-loc_821F7404:
-	// li r4,0
-	ctx.r4.s64 = 0;
-loc_821F7408:
-	// mr r3,r29
-	ctx.r3.u64 = r29.u64;
-	// stw r27,44(r4)
-	REX_STORE_U32(ctx.r4.u32 + 44, r27.u32);
-	// bl 0x8235a188
-	ctx.lr = 0x821F7414;
-	sub_8235A188(ctx, base);
-	// lwz r3,-21944(r30)
-	ctx.r3.u64 = REX_LOAD_U32(r30.u32 + -21944);
-	// bl 0x821250b0
-	ctx.lr = 0x821F741C;
-	sub_821250B0(ctx, base);
-	// mr r31,r3
-	r31.u64 = ctx.r3.u64;
-	// cmplwi cr6,r31,0
-	cr6.compare<uint32_t>(r31.u32, 0, xer);
-	// beq cr6,0x821f7448
-	if (cr6.eq) goto loc_821F7448;
-	// lis r11,-32256
-	ctx.r11.s64 = -2113929216;
-	// fmr f2,f30
-	ctx.fpscr.disableFlushMode();
-	ctx.f2.f64 = f30.f64;
-	// lfs f1,2592(r11)
-	temp.u32 = REX_LOAD_U32(ctx.r11.u32 + 2592);
-	ctx.f1.f64 = double(temp.f32);
-	// bl 0x82126d10
-	ctx.lr = 0x821F7438;
-	sub_82126D10(ctx, base);
-	// mr r3,r31
-	ctx.r3.u64 = r31.u64;
-	// bl 0x821efa10
-	ctx.lr = 0x821F7440;
-	sub_821EFA10(ctx, base);
-	// mr r4,r3
-	ctx.r4.u64 = ctx.r3.u64;
-	// b 0x821f744c
-	goto loc_821F744C;
-loc_821F7448:
-	// li r4,0
-	ctx.r4.s64 = 0;
-loc_821F744C:
-	// mr r3,r29
-	ctx.r3.u64 = r29.u64;
-	// bl 0x8235a188
-	ctx.lr = 0x821F7454;
-	sub_8235A188(ctx, base);
-	// lwz r3,-21944(r30)
-	ctx.r3.u64 = REX_LOAD_U32(r30.u32 + -21944);
-	// bl 0x821250b0
-	ctx.lr = 0x821F745C;
-	sub_821250B0(ctx, base);
-	// cmplwi cr6,r3,0
-	cr6.compare<uint32_t>(ctx.r3.u32, 0, xer);
-	// beq cr6,0x821f7484
-	if (cr6.eq) goto loc_821F7484;
-	// li r7,16384
-	ctx.r7.s64 = 16384;
-	// lwz r4,36(r25)
-	ctx.r4.u64 = REX_LOAD_U32(r25.u32 + 36);
-	// li r6,29
-	ctx.r6.s64 = 29;
-	// fmr f1,f31
-	ctx.fpscr.disableFlushMode();
-	ctx.f1.f64 = f31.f64;
-	// li r5,1
-	ctx.r5.s64 = 1;
-	// bl 0x8236ea10
-	ctx.lr = 0x821F747C;
-	sub_8236EA10(ctx, base);
-	// mr r4,r3
-	ctx.r4.u64 = ctx.r3.u64;
-	// b 0x821f7488
-	goto loc_821F7488;
-loc_821F7484:
-	// li r4,0
-	ctx.r4.s64 = 0;
-loc_821F7488:
-	// mr r3,r29
-	ctx.r3.u64 = r29.u64;
-	// stw r27,44(r4)
-	REX_STORE_U32(ctx.r4.u32 + 44, r27.u32);
-	// bl 0x8235a188
-	ctx.lr = 0x821F7494;
-	sub_8235A188(ctx, base);
-	// lwz r3,-21944(r30)
-	ctx.r3.u64 = REX_LOAD_U32(r30.u32 + -21944);
-	// bl 0x821250b0
-	ctx.lr = 0x821F749C;
-	sub_821250B0(ctx, base);
-	// cmplwi cr6,r3,0
-	cr6.compare<uint32_t>(ctx.r3.u32, 0, xer);
-	// beq cr6,0x821f74c4
-	if (cr6.eq) goto loc_821F74C4;
-	// li r7,16384
-	ctx.r7.s64 = 16384;
-	// lwz r4,36(r25)
-	ctx.r4.u64 = REX_LOAD_U32(r25.u32 + 36);
-	// li r6,29
-	ctx.r6.s64 = 29;
-	// fmr f1,f31
-	ctx.fpscr.disableFlushMode();
-	ctx.f1.f64 = f31.f64;
-	// li r5,3
-	ctx.r5.s64 = 3;
-	// bl 0x8236ea10
-	ctx.lr = 0x821F74BC;
-	sub_8236EA10(ctx, base);
-	// mr r4,r3
-	ctx.r4.u64 = ctx.r3.u64;
-	// b 0x821f74c8
-	goto loc_821F74C8;
-loc_821F74C4:
-	// li r4,0
-	ctx.r4.s64 = 0;
-loc_821F74C8:
-	// mr r3,r29
-	ctx.r3.u64 = r29.u64;
-	// stw r27,44(r4)
-	REX_STORE_U32(ctx.r4.u32 + 44, r27.u32);
-	// bl 0x8235a188
-	ctx.lr = 0x821F74D4;
-	sub_8235A188(ctx, base);
-	// lwz r3,-21944(r30)
-	ctx.r3.u64 = REX_LOAD_U32(r30.u32 + -21944);
-	// bl 0x821250b0
-	ctx.lr = 0x821F74DC;
-	sub_821250B0(ctx, base);
-	// cmplwi cr6,r3,0
-	cr6.compare<uint32_t>(ctx.r3.u32, 0, xer);
-	// beq cr6,0x821f7524
-	if (cr6.eq) goto loc_821F7524;
-	// li r7,0
-	ctx.r7.s64 = 0;
-	// lwz r4,36(r25)
-	ctx.r4.u64 = REX_LOAD_U32(r25.u32 + 36);
-	// li r6,27
-	ctx.r6.s64 = 27;
-	// fmr f1,f31
-	ctx.fpscr.disableFlushMode();
-	ctx.f1.f64 = f31.f64;
-	// li r5,0
-	ctx.r5.s64 = 0;
-	// bl 0x8236ea10
-	ctx.lr = 0x821F74FC;
-	sub_8236EA10(ctx, base);
-	// mr r4,r3
-	ctx.r4.u64 = ctx.r3.u64;
-	// mr r3,r29
-	ctx.r3.u64 = r29.u64;
-	// stw r27,44(r4)
-	REX_STORE_U32(ctx.r4.u32 + 44, r27.u32);
-	// bl 0x8235a188
-	ctx.lr = 0x821F750C;
-	sub_8235A188(ctx, base);
-	// mr r3,r29
-	ctx.r3.u64 = r29.u64;
-	// addi r1,r1,240
-	ctx.r1.s64 = ctx.r1.s64 + 240;
-	// lfd f29,-88(r1)
-	ctx.fpscr.disableFlushMode();
-	f29.u64 = REX_LOAD_U64(ctx.r1.u32 + -88);
-	// lfd f30,-80(r1)
-	f30.u64 = REX_LOAD_U64(ctx.r1.u32 + -80);
-	// lfd f31,-72(r1)
-	f31.u64 = REX_LOAD_U64(ctx.r1.u32 + -72);
-	// b 0x8298eb0c
-	return;
-loc_821F7524:
-	// li r4,0
-	ctx.r4.s64 = 0;
-	// mr r3,r29
-	ctx.r3.u64 = r29.u64;
-	// stw r27,44(r4)
-	REX_STORE_U32(ctx.r4.u32 + 44, r27.u32);
-	// bl 0x8235a188
-	ctx.lr = 0x821F7534;
-	sub_8235A188(ctx, base);
-	// mr r3,r29
-	ctx.r3.u64 = r29.u64;
-	// addi r1,r1,240
-	ctx.r1.s64 = ctx.r1.s64 + 240;
-	// lfd f29,-88(r1)
-	ctx.fpscr.disableFlushMode();
-	f29.u64 = REX_LOAD_U64(ctx.r1.u32 + -88);
-	// lfd f30,-80(r1)
-	f30.u64 = REX_LOAD_U64(ctx.r1.u32 + -80);
-	// lfd f31,-72(r1)
-	f31.u64 = REX_LOAD_U64(ctx.r1.u32 + -72);
-	// b 0x8298eb0c
-	return;
-loc_821F7CF4:
-	// li r3,0
-	ctx.r3.s64 = 0;
-	// addi r1,r1,240
-	ctx.r1.s64 = ctx.r1.s64 + 240;
-	// lfd f29,-88(r1)
-	ctx.fpscr.disableFlushMode();
-	f29.u64 = REX_LOAD_U64(ctx.r1.u32 + -88);
-	// lfd f30,-80(r1)
-	f30.u64 = REX_LOAD_U64(ctx.r1.u32 + -80);
-	// lfd f31,-72(r1)
-	f31.u64 = REX_LOAD_U64(ctx.r1.u32 + -72);
-	// b 0x8298eb0c
-	return;
-}
-
 DEFINE_REX_FUNC(sub_82212450) {
 	REX_FUNC_PROLOGUE();
 	PPCXERRegister xer{};
@@ -3670,92 +2911,6 @@ loc_8221263C:
 	// addi r1,r1,160
 	ctx.r1.s64 = ctx.r1.s64 + 160;
 	// b 0x8298eb08
-	return;
-}
-
-DEFINE_REX_FUNC(sub_8222B7D8) {
-	REX_FUNC_PROLOGUE();
-	PPCXERRegister xer{};
-	PPCCRRegister cr6{};
-	PPCRegister r15{};
-	PPCRegister r31{};
-	PPCRegister f31{};
-	// lis r10,-32066
-	ctx.r10.s64 = -2101477376;
-	// bne cr6,0x8222b7ec
-	if (!cr6.eq) goto loc_8222B7EC;
-	// li r11,0
-	ctx.r11.s64 = 0;
-	// stb r11,22258(r10)
-	REX_STORE_U8(ctx.r10.u32 + 22258, ctx.r11.u8);
-	// b 0x8222b7f4
-	goto loc_8222B7F4;
-loc_8222B7EC:
-	// mr r11,r15
-	ctx.r11.u64 = r15.u64;
-	// stb r11,22258(r10)
-	REX_STORE_U8(ctx.r10.u32 + 22258, ctx.r11.u8);
-loc_8222B7F4:
-	// lis r10,-32068
-	ctx.r10.s64 = -2101608448;
-	// stb r11,2608(r10)
-	REX_STORE_U8(ctx.r10.u32 + 2608, ctx.r11.u8);
-	// bl 0x8218c388
-	ctx.lr = 0x8222B800;
-	sub_8218C388(ctx, base);
-	// lbz r11,22257(r31)
-	ctx.r11.u64 = REX_LOAD_U8(r31.u32 + 22257);
-	// cmplwi cr6,r11,0
-	cr6.compare<uint32_t>(ctx.r11.u32, 0, xer);
-	// beq cr6,0x8222b850
-	if (cr6.eq) goto loc_8222B850;
-	// lis r11,-32093
-	ctx.r11.s64 = -2103246848;
-	// lbz r11,-17061(r11)
-	ctx.r11.u64 = REX_LOAD_U8(ctx.r11.u32 + -17061);
-	// cmplwi cr6,r11,0
-	cr6.compare<uint32_t>(ctx.r11.u32, 0, xer);
-	// beq cr6,0x8222b840
-	if (cr6.eq) goto loc_8222B840;
-	// lis r11,-32068
-	ctx.r11.s64 = -2101608448;
-	// addi r5,r11,2500
-	ctx.r5.s64 = ctx.r11.s64 + 2500;
-	// lis r11,-32070
-	ctx.r11.s64 = -2101739520;
-	// addi r4,r11,28240
-	ctx.r4.s64 = ctx.r11.s64 + 28240;
-	// lis r11,-32066
-	ctx.r11.s64 = -2101477376;
-	// addi r3,r11,22264
-	ctx.r3.s64 = ctx.r11.s64 + 22264;
-	// lis r11,-32093
-	ctx.r11.s64 = -2103246848;
-	// lwz r6,-17004(r11)
-	ctx.r6.u64 = REX_LOAD_U32(ctx.r11.u32 + -17004);
-	// bl 0x8222f868
-	ctx.lr = 0x8222B840;
-	sub_8222F868(ctx, base);
-loc_8222B840:
-	// lis r11,-32093
-	ctx.r11.s64 = -2103246848;
-	// lbz r11,-17059(r11)
-	ctx.r11.u64 = REX_LOAD_U8(ctx.r11.u32 + -17059);
-	// cmplwi cr6,r11,0
-	cr6.compare<uint32_t>(ctx.r11.u32, 0, xer);
-	// bne cr6,0x8222b854
-	if (!cr6.eq) goto loc_8222B854;
-loc_8222B850:
-	// bl 0x8222ade0
-	ctx.lr = 0x8222B854;
-	sub_8222ADE0(ctx, base);
-loc_8222B854:
-	// addi r1,r1,240
-	ctx.r1.s64 = ctx.r1.s64 + 240;
-	// lfd f31,-152(r1)
-	ctx.fpscr.disableFlushMode();
-	f31.u64 = REX_LOAD_U64(ctx.r1.u32 + -152);
-	// b 0x8298eae4
 	return;
 }
 
@@ -8075,71 +7230,6 @@ loc_8233FF8C:
 	// ld r31,-16(r1)
 	r31.u64 = REX_LOAD_U64(ctx.r1.u32 + -16);
 	// blr 
-	return;
-}
-
-DEFINE_REX_FUNC(sub_823435C8) {
-	REX_FUNC_PROLOGUE();
-	PPCRegister r30{};
-	// stw r11,0(r30)
-	REX_STORE_U32(r30.u32 + 0, ctx.r11.u32);
-	// addi r1,r1,160
-	ctx.r1.s64 = ctx.r1.s64 + 160;
-	// b 0x8298eb0c
-	return;
-}
-
-DEFINE_REX_FUNC(sub_82343A00) {
-	REX_FUNC_PROLOGUE();
-	PPCXERRegister xer{};
-	PPCCRRegister cr6{};
-	PPCRegister r31{};
-	PPCRegister temp{};
-	// li r6,0
-	ctx.r6.s64 = 0;
-	// li r5,5
-	ctx.r5.s64 = 5;
-	// bl 0x8229fd98
-	ctx.lr = 0x82343A0C;
-	sub_8229FD98(ctx, base);
-	// lis r11,-32017
-	ctx.r11.s64 = -2098266112;
-	// stw r3,48(r31)
-	REX_STORE_U32(r31.u32 + 48, ctx.r3.u32);
-	// lwz r3,-21944(r11)
-	ctx.r3.u64 = REX_LOAD_U32(ctx.r11.u32 + -21944);
-	// bl 0x821250b0
-	ctx.lr = 0x82343A1C;
-	sub_821250B0(ctx, base);
-	// cmplwi cr6,r3,0
-	cr6.compare<uint32_t>(ctx.r3.u32, 0, xer);
-	// beq cr6,0x82343a44
-	if (cr6.eq) goto loc_82343A44;
-	// lis r11,-32256
-	ctx.r11.s64 = -2113929216;
-	// li r6,0
-	ctx.r6.s64 = 0;
-	// li r5,0
-	ctx.r5.s64 = 0;
-	// li r4,10000
-	ctx.r4.s64 = 10000;
-	// lfs f1,10176(r11)
-	ctx.fpscr.disableFlushMode();
-	temp.u32 = REX_LOAD_U32(ctx.r11.u32 + 10176);
-	ctx.f1.f64 = double(temp.f32);
-	// bl 0x823588b0
-	ctx.lr = 0x82343A3C;
-	sub_823588B0(ctx, base);
-	// addi r1,r1,112
-	ctx.r1.s64 = ctx.r1.s64 + 112;
-	// b 0x8298eb1c
-	return;
-loc_82343A44:
-	// li r3,0
-	ctx.r3.s64 = 0;
-	// addi r1,r1,112
-	ctx.r1.s64 = ctx.r1.s64 + 112;
-	// b 0x8298eb1c
 	return;
 }
 
@@ -17523,7 +16613,7 @@ loc_82598794:
 	ctx.r3.u64 = r31.u64;
 	// bl 0x8298fea0
 	ctx.lr = 0x825987CC;
-	sub_8298FEA0(ctx, base);
+	rexcrt_strncpy(ctx, base);
 	// li r11,0
 	ctx.r11.s64 = 0;
 	// mr r3,r31
@@ -26398,7 +25488,7 @@ DEFINE_REX_FUNC(sub_827D72C8) {
 	REX_STORE_U32(r31.u32 + 84, r30.u32);
 	// bl 0x8298eb40
 	ctx.lr = 0x827D7314;
-	sub_8298EB40(ctx, base);
+	rexcrt_memset(ctx, base);
 	// li r11,-1
 	ctx.r11.s64 = -1;
 	// stw r30,12(r31)
@@ -32813,7 +31903,7 @@ DEFINE_REX_FUNC(sub_829A04E8) {
 	REX_STORE_U32(ctx.r1.u32 + 112, r31.u32);
 	// bl 0x8298eb40
 	ctx.lr = 0x829A0518;
-	sub_8298EB40(ctx, base);
+	rexcrt_memset(ctx, base);
 	// addi r11,r1,108
 	ctx.r11.s64 = ctx.r1.s64 + 108;
 	// stw r31,104(r1)
@@ -33419,7 +32509,7 @@ loc_829B9680:
 	ctx.r3.u64 = ctx.r11.u64 + ctx.r10.u64;
 	// bl 0x829907e0
 	ctx.lr = 0x829B96B4;
-	sub_829907E0(ctx, base);
+	rexcrt_memcpy(ctx, base);
 	// lwz r11,0(r31)
 	ctx.r11.u64 = REX_LOAD_U32(r31.u32 + 0);
 	// lwz r9,4(r11)
@@ -33555,7 +32645,7 @@ DEFINE_REX_FUNC(sub_829C7700) {
 	ctx.r5.u64 = REX_LOAD_U32(ctx.r5.u32 + 0);
 	// bl 0x829907e0
 	ctx.lr = 0x829C7734;
-	sub_829907E0(ctx, base);
+	rexcrt_memcpy(ctx, base);
 loc_829C7734:
 	// mr r3,r31
 	ctx.r3.u64 = r31.u64;
@@ -34716,7 +33806,7 @@ loc_82A03DA0:
 	ctx.r3.s64 = ctx.r1.s64 + 320;
 	// bl 0x8298eb40
 	ctx.lr = 0x82A03DB0;
-	sub_8298EB40(ctx, base);
+	rexcrt_memset(ctx, base);
 	// bl 0x82a07d18
 	ctx.lr = 0x82A03DB4;
 	sub_82A07D18(ctx, base);
@@ -34744,7 +33834,7 @@ loc_82A03DA0:
 	ctx.r4.u64 = r22.u64;
 	// bl 0x829907e0
 	ctx.lr = 0x82A03DE4;
-	sub_829907E0(ctx, base);
+	rexcrt_memcpy(ctx, base);
 	// b 0x82a03e68
 	goto loc_82A03E68;
 loc_82A03DE8:
@@ -34851,10 +33941,7 @@ loc_82A03E68:
 	// cmplw cr6,r3,r11
 	cr6.compare<uint32_t>(ctx.r3.u32, ctx.r11.u32, xer);
 	// bne cr6,0x82a03eb8
-	if (!cr6.eq) {
-		ppc_free(ctx, base);
-		return;
-	}
+	if (!cr6.eq) goto loc_82A03EB8;
 loc_82A03EAC:
 	// lwz r11,592(r1)
 	ctx.r11.u64 = REX_LOAD_U32(ctx.r1.u32 + 592);
@@ -35388,7 +34475,7 @@ loc_82A04258:
 	ctx.r5.s64 = 904;
 	// bl 0x829907e0
 	ctx.lr = 0x82A0427C;
-	sub_829907E0(ctx, base);
+	rexcrt_memcpy(ctx, base);
 	// lwz r11,696(r31)
 	ctx.r11.u64 = REX_LOAD_U32(r31.u32 + 696);
 	// stw r31,268(r31)
@@ -35567,8 +34654,7 @@ loc_82A04340:
 	// cmplwi cr6,r11,0
 	cr6.compare<uint32_t>(ctx.r11.u32, 0, xer);
 	// beq cr6,0x82a042fc
-	// ERROR: conditional branch to unknown address 0x82A042FC
-	if (cr6.eq) REX_FATAL("Unresolved branch from 0x82A043CC to 0x82A042FC");
+	if (cr6.eq) goto loc_82A042FC;
 	// lis r11,-32249
 	ctx.r11.s64 = -2113470464;
 	// addi r3,r11,-1880
@@ -35777,7 +34863,7 @@ loc_82A0451C:
 	ctx.r5.s64 = 120;
 	// bl 0x829907e0
 	ctx.lr = 0x82A0454C;
-	sub_829907E0(ctx, base);
+	rexcrt_memcpy(ctx, base);
 loc_82A0454C:
 	// rlwinm r11,r17,0,7,7
 	ctx.r11.u64 = __builtin_rotateleft64(r17.u32 | (r17.u64 << 32), 0) & 0x1000000;
@@ -36673,7 +35759,7 @@ loc_82A04BAC:
 	REX_STORE_U32(r31.u32 + 744, ctx.r11.u32);
 	// bl 0x829907e0
 	ctx.lr = 0x82A04BE4;
-	sub_829907E0(ctx, base);
+	rexcrt_memcpy(ctx, base);
 	// b 0x82a04bf4
 	goto loc_82A04BF4;
 loc_82A04BE8:

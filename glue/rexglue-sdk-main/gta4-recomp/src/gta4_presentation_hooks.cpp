@@ -124,6 +124,7 @@ Decision DeclaredBoundary(uint8_t* base,uint32_t device,uint64_t sequence,uint32
 // Vtable slot 4 of the exact retail DrawScene and GBuffer phases receives the
 // shared render context in r4. Observe AFTER the original camera/context update;
 // retain no guest object beyond the matching device/submitted-frame sequence.
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_8235DF98(PPCContext& ctx,uint8_t* base) {
   const uint32_t phase=ctx.r3.u32,context=ctx.r4.u32;
   const auto frame=BoundaryFrame(base);
@@ -136,6 +137,8 @@ extern "C" void sub_8235DF98(PPCContext& ctx,uint8_t* base) {
   temporal_boundaries.Composite(frame.first,frame.second,context,phase,
       gta4::temporal_boundary::DeclaresComposite(*flags,*list));
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_8235DF98
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_8267CFF8(PPCContext& ctx,uint8_t* base) {
   const uint32_t phase=ctx.r3.u32,context=ctx.r4.u32;
   const auto frame=BoundaryFrame(base);
@@ -145,7 +148,9 @@ extern "C" void sub_8267CFF8(PPCContext& ctx,uint8_t* base) {
   std::lock_guard lock(temporal_boundary_mutex);
   temporal_boundaries.GBuffer(frame.first,frame.second,phase,context);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_8267CFF8
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82145420(PPCContext& ctx, uint8_t* base) {
   const gta4::input::ContextTouchGameplayTransition touch_transition;
   const uint32_t caller = ctx.lr;
@@ -162,7 +167,9 @@ extern "C" void sub_82145420(PPCContext& ctx, uint8_t* base) {
   if (eligible)
     TraceStartup(base, "cold-start-ready", caller);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82145420
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82145968(PPCContext& ctx, uint8_t* base) {
   const bool apply = cold_parser_scope && ctx.lr == policy::kParserCaller;
   __imp__sub_82145968(ctx, base);
@@ -199,21 +206,27 @@ extern "C" void sub_82145968(PPCContext& ctx, uint8_t* base) {
     }
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82145968
 
 // Observation only: the original routine owns screen advancement and clocks.
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82144708(PPCContext& ctx, uint8_t* base) {
   const uint32_t caller = ctx.lr;
   __imp__sub_82144708(ctx, base);
   TraceStartup(base, "screen-advanced", caller);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82144708
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82142230(PPCContext& ctx, uint8_t* base) {
   // This is the stock frontend/profile/DLC workflow, not proof of rendered UI.
   TraceStartup(base, "frontend-workflow-enter", ctx.lr);
   observe_startup.store(false, std::memory_order_relaxed);
   __imp__sub_82142230(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82142230
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_822CF300(PPCContext& ctx, uint8_t* base) {
   const uint32_t requested = ctx.r6.u32;
   const uint32_t caller = ctx.lr;
@@ -262,3 +275,4 @@ extern "C" void sub_822CF300(PPCContext& ctx, uint8_t* base) {
     ctx.r6.u64 = selected;
   __imp__sub_822CF300(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_822CF300

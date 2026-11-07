@@ -677,6 +677,7 @@ loc_821D8CC4:
 	return;
 }
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_821D8848(PPCContext& ctx, uint8_t* base) {
   const uint32_t entity = ctx.r3.u32;
   const uint32_t view = ctx.r8.u32;
@@ -688,7 +689,9 @@ extern "C" void sub_821D8848(PPCContext& ctx, uint8_t* base) {
   }
   ObserveClassification(base, entity, view, distance, ctx.r3.u32);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_821D8848
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_825132D0(PPCContext& ctx, uint8_t* base) {
   if (!DeadlineOrderEnabled(base, ctx.r3.u32)) {
     __imp__sub_825132D0(ctx, base);
@@ -1244,3 +1247,4 @@ loc_825136B0:
 	__restgprlr_14(ctx, base);
 	return;
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_825132D0

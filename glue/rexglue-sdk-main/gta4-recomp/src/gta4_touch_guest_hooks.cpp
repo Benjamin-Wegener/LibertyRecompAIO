@@ -405,6 +405,7 @@ bool TouchRadarLocalViewport(uint8_t* base) noexcept {
 }
 }  // namespace gta4::input
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_821C31A8(PPCContext& context, uint8_t* base) {
   const uint32_t caller = uint32_t(context.lr);
   const uint32_t position = context.r4.u32, wrap = context.r6.u32;
@@ -428,12 +429,16 @@ extern "C" void sub_821C31A8(PPCContext& context, uint8_t* base) {
       RadarFloat(base, help_wrap.wrap + 4, right);
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_821C31A8
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_821C62C0(PPCContext& context, uint8_t* base) {
   const gta4::input::WeaponHudPassScope pass(context, base);
   __imp__sub_821C62C0(context, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_821C62C0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_821BEF30(PPCContext& context, uint8_t* base) {
   const uint32_t position = context.r4.u32, size = context.r5.u32;
   const uint32_t texture = context.r6.u32, color = context.r7.u32;
@@ -444,90 +449,117 @@ extern "C" void sub_821BEF30(PPCContext& context, uint8_t* base) {
   if (weapon_sprite)
     gta4::input::ObserveWeaponHudRectangle(base, position, size, texture, color);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_821BEF30
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_821C3930(PPCContext& context, uint8_t* base) {
   const uint32_t position = context.r3.u32, size = context.r4.u32;
   const uint32_t texture = context.r5.u32, color = context.r6.u32;
   __imp__sub_821C3930(context, base);
   gta4::input::ObserveWeaponHudRectangle(base, position, size, texture, color);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_821C3930
 
 #if defined(GTA4_TOUCH_LEGACY_HOST)
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_821C5148(PPCContext& context, uint8_t* base) {
   gta4::input::DrawTouchWeaponHudSprite(context, base, __imp__sub_821C5148);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_821C5148
 #endif
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_821F4150(PPCContext& context, uint8_t* base) {
   gta4::input::ObserveTouchPresentationBlock(base);
   __imp__sub_821F4150(context, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_821F4150
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_821EC3F0(PPCContext& context, uint8_t* base) {
   // START_CUTSCENE_NOW / INIT_CUTSCENE enter here before either native
   // cutscene state word becomes nonzero. Keep reentrant polls suppressed.
   const gta4::input::ContextTouchGameplayTransition transition;
   __imp__sub_821EC3F0(context, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_821EC3F0
 
 #if defined(GTA4_TOUCH_LEGACY_HOST)
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82145420(PPCContext& context, uint8_t* base) {
   // The modern host composes this guard with its existing intro hook.
   const gta4::input::ContextTouchGameplayTransition transition;
   __imp__sub_82145420(context, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82145420
 #endif
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_821BC948(PPCContext& context, uint8_t* base) {
   gta4::input::CopyTouchRadarViewport(context, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_821BC948
 
 // These parser boundaries are shared by both applications. Only tokens
 // resolved inside a submitted help draw are retained by the observer.
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_821F2360(PPCContext& context, uint8_t* base) {
   gta4::input::ResolveTouchHelpToken(context, base, __imp__sub_821F2360);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_821F2360
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_822B7C00(PPCContext& context, uint8_t* base) {
   gta4::input::ResolveTouchHelpBinding(context, base, __imp__sub_822B7C00);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_822B7C00
 
 // The desktop legacy app has a single Sony poll/replay owner. Embedded
 // legacy apps use the identical touch boundaries without that owner.
 #if defined(GTA4_TOUCH_STANDALONE_POLL_OWNER)
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_828CCD60(PPCContext& context, uint8_t* base) {
   const uint64_t epoch = GTA4_TouchCurrentEpoch() + 1;
   GTA4_TouchConsumePoll(context, base, epoch);
   __imp__sub_828CCD60(context, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_828CCD60
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_822B7DD0(PPCContext& context, uint8_t* base) {
   const uint32_t control = context.r3.u32;
   const uint32_t caller = static_cast<uint32_t>(context.lr);
   __imp__sub_822B7DD0(context, base);
   GTA4_TouchObserveControlReplay(context, base, control, caller, GTA4_TouchCurrentEpoch());
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_822B7DD0
 #endif
 
 // Modern wrappers compose with their existing keyboard, Sony and diagnostic
 // hooks. Legacy has no such translation units and owns these wrappers here.
 #if defined(GTA4_TOUCH_LEGACY_HOST)
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_8229D8A8(PPCContext& context, uint8_t* base) {
   GTA4_TouchCaptureFrontendDraw(context, base, __imp__sub_8229D8A8);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_8229D8A8
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82223CF8(PPCContext& context, uint8_t* base) {
   gta4::input::BeginTouchHelpDraw(base, context.r3.u32);
   struct Scope { ~Scope() { gta4::input::EndTouchHelpDraw(); } } scope;
   __imp__sub_82223CF8(context, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82223CF8
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_821F6E38(PPCContext& context, uint8_t* base) {
   GTA4_TouchObserveHudSubmit(context, base);
   gta4::input::ObserveTouchHelpText(base, context.r5.u32);
   struct Scope { ~Scope() { gta4::input::EndTouchHelpText(); } } scope;
   __imp__sub_821F6E38(context, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_821F6E38
 
 namespace {
 void ScriptQuery(PPCContext& context, uint8_t* base,
@@ -544,26 +576,37 @@ void ScriptQuery(PPCContext& context, uint8_t* base,
 }
 }
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_825D1AF8(PPCContext& context, uint8_t* base) {
   ScriptQuery(context, base, gta4::input::TouchScriptQueryKind::kRawButton,
                __imp__sub_825D1AF8);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_825D1AF8
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_825D1B40(PPCContext& context, uint8_t* base) {
   ScriptQuery(context, base, gta4::input::TouchScriptQueryKind::kRawButtonPressed,
                __imp__sub_825D1B40);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_825D1B40
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_825D1B88(PPCContext& context, uint8_t* base) {
   ScriptQuery(context, base, gta4::input::TouchScriptQueryKind::kControlHeld,
                __imp__sub_825D1B88);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_825D1B88
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_825D1BD0(PPCContext& context, uint8_t* base) {
   ScriptQuery(context, base, gta4::input::TouchScriptQueryKind::kControlPressed,
                __imp__sub_825D1BD0);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_825D1BD0
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_825D1C18(PPCContext& context, uint8_t* base) {
   ScriptQuery(context, base, gta4::input::TouchScriptQueryKind::kControlAnalog,
                __imp__sub_825D1C18);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_825D1C18
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_825D20A0(PPCContext& context, uint8_t* base) {
   const uint32_t call_context = context.r3.u32;
   const uint32_t thread = gta4::input::ReadTouchScriptThread(base);
@@ -574,4 +617,5 @@ extern "C" void sub_825D20A0(PPCContext& context, uint8_t* base) {
   gta4::input::MergeTouchScriptAnalogueStickResults(base, call_context, facts.epoch,
                                                     thread, facts.generation);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_825D20A0
 #endif

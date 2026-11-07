@@ -145,6 +145,7 @@ void InvokeVehicleControl(PPCContext& ctx, uint8_t* base, PPCFunc* original,
 }  // namespace
 }  // namespace gta4
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82163CE0(PPCContext& ctx, uint8_t* base) {
   const uint32_t action_record = ctx.r3.u32;
   const uint32_t caller = ctx.lr;
@@ -162,19 +163,28 @@ extern "C" void sub_82163CE0(PPCContext& ctx, uint8_t* base) {
     ctx.r3.u64 = 1;
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82163CE0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_822ABEE0(PPCContext& ctx, uint8_t* base) {
   gta4::InvokeVehicleControl(ctx, base, __imp__sub_822ABEE0, gta4::VehicleMotionKind::kHelicopter);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_822ABEE0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82643870(PPCContext& ctx, uint8_t* base) {
   gta4::InvokeVehicleControl(ctx, base, __imp__sub_82643870, gta4::VehicleMotionKind::kAutomobile);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82643870
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82647DD0(PPCContext& ctx, uint8_t* base) {
   gta4::InvokeVehicleControl(ctx, base, __imp__sub_82647DD0, gta4::VehicleMotionKind::kBike);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82647DD0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82664450(PPCContext& ctx, uint8_t* base) {
   gta4::InvokeVehicleControl(ctx, base, __imp__sub_82664450, gta4::VehicleMotionKind::kBoat);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82664450

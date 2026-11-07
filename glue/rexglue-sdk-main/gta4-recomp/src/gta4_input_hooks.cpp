@@ -2094,6 +2094,7 @@ void MaybeForceDirectWeaponAction(PPCContext& ctx, uint8_t* base,
 
 }  // namespace gta4::input
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_828CCD60(PPCContext& ctx, uint8_t* base) {
   const uint32_t caller = ctx.lr;
   // Select bindings before retail polls XInput, and use that same selection
@@ -2213,7 +2214,9 @@ extern "C" void sub_828CCD60(PPCContext& ctx, uint8_t* base) {
         epoch.state.mouse_reset_generation, static_cast<uint32_t>(epoch.state.mouse_source));
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_828CCD60
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_822B7DD0(PPCContext& ctx, uint8_t* base) {
   const uint32_t control = ctx.r3.u32;
   const uint32_t caller = ctx.lr;
@@ -2275,7 +2278,9 @@ extern "C" void sub_822B7DD0(PPCContext& ctx, uint8_t* base) {
       base, epoch, control, active_gameplay_control,
       native_user_control ? "gta-route-final" : "gta-route-non-owner");
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_822B7DD0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_8224FFC8(PPCContext& ctx, uint8_t* base) {
   // Shared native frontend event query (including callers outside the list
   // poll). Keep keyboard/controller navigation behind the explicit editor's
@@ -2388,7 +2393,9 @@ extern "C" void sub_8224FFC8(PPCContext& ctx, uint8_t* base) {
         gta4::input::IsDown(epoch.state, rex::ui::VirtualKey::kF));
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_8224FFC8
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_823CF9C0(PPCContext& ctx, uint8_t* base) {
   const uint32_t phone_object = ctx.r3.u32;
   const uint32_t caller = ctx.lr;
@@ -2480,7 +2487,9 @@ extern "C" void sub_823CF9C0(PPCContext& ctx, uint8_t* base) {
         before.phone_put_away, after.phone_put_away);
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_823CF9C0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82252488(PPCContext& ctx, uint8_t* base) {
   const PPCContext entry_context = ctx;
   if (ctx.r3.u32) {
@@ -2488,7 +2497,9 @@ extern "C" void sub_82252488(PPCContext& ctx, uint8_t* base) {
   }
   __imp__sub_82252488(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82252488
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_823D5800(PPCContext& ctx, uint8_t* base) {
   const uint32_t ped_weapon_manager = ctx.r3.u32;
   gta4::input::DirectWeaponRequest request;
@@ -2521,7 +2532,9 @@ extern "C" void sub_823D5800(PPCContext& ctx, uint8_t* base) {
         ped_weapon_manager, operation, slot, ctx.r3.u32);
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_823D5800
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_823D5358(PPCContext& ctx, uint8_t* base) {
   auto& policy = gta4::input::g_vehicle_weapon_candidates;
   switch (policy.Route(ctx.r3.u32, ctx.lr)) {
@@ -2543,14 +2556,18 @@ extern "C" void sub_823D5358(PPCContext& ctx, uint8_t* base) {
       return;
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_823D5358
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_822D3230(PPCContext& ctx, uint8_t* base) {
   const uint32_t action_record = ctx.r3.u32;
   const uint32_t caller = ctx.lr;
   __imp__sub_822D3230(ctx, base);
   gta4::input::MaybeForceDirectWeaponAction(ctx, base, action_record, caller);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_822D3230
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_822D4158(PPCContext& ctx, uint8_t* base) {
   const uint32_t action_record = ctx.r3.u32;
   const uint32_t caller = ctx.lr;
@@ -2559,7 +2576,9 @@ extern "C" void sub_822D4158(PPCContext& ctx, uint8_t* base) {
   gta4::input::MaybeForceRadioOffPredicate(ctx, base, action_record, caller,
                                            radio_entity);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_822D4158
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_825D1AF8(PPCContext& ctx, uint8_t* base) {
   const uint32_t call_context = ctx.r3.u32;
   const uint32_t touch_thread = gta4::input::ReadTouchScriptThread(base);
@@ -2580,7 +2599,9 @@ extern "C" void sub_825D1AF8(PPCContext& ctx, uint8_t* base) {
     REXLOG_INFO("gta4-input: parachute smoke button forced");
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_825D1AF8
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_825D1B40(PPCContext& ctx, uint8_t* base) {
   const uint32_t call_context = ctx.r3.u32;
   const uint32_t touch_thread = gta4::input::ReadTouchScriptThread(base);
@@ -2593,7 +2614,9 @@ extern "C" void sub_825D1B40(PPCContext& ctx, uint8_t* base) {
       base, call_context, gta4::input::TouchScriptQueryKind::kRawButtonPressed,
       touch_context.epoch, touch_thread, touch_context.generation);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_825D1B40
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_825D1B88(PPCContext& ctx, uint8_t* base) {
   const uint32_t call_context = ctx.r3.u32;
   const uint32_t touch_thread = gta4::input::ReadTouchScriptThread(base);
@@ -2614,7 +2637,9 @@ extern "C" void sub_825D1B88(PPCContext& ctx, uint8_t* base) {
     REXLOG_INFO("gta4-input: parachute held control forced");
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_825D1B88
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_825D1BD0(PPCContext& ctx, uint8_t* base) {
   const uint32_t call_context = ctx.r3.u32;
   const uint32_t touch_thread = gta4::input::ReadTouchScriptThread(base);
@@ -2636,7 +2661,9 @@ extern "C" void sub_825D1BD0(PPCContext& ctx, uint8_t* base) {
     REXLOG_INFO("gta4-input: parachute edge control forced");
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_825D1BD0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_825D1C18(PPCContext& ctx, uint8_t* base) {
   const uint32_t call_context = ctx.r3.u32;
   const uint32_t touch_thread = gta4::input::ReadTouchScriptThread(base);
@@ -2658,7 +2685,9 @@ extern "C" void sub_825D1C18(PPCContext& ctx, uint8_t* base) {
     REXLOG_INFO("gta4-input: parachute analogue brake forced");
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_825D1C18
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_825D20A0(PPCContext& ctx, uint8_t* base) {
   const uint32_t call_context = ctx.r3.u32;
   const uint32_t touch_thread = gta4::input::ReadTouchScriptThread(base);
@@ -2678,6 +2707,7 @@ extern "C" void sub_825D20A0(PPCContext& ctx, uint8_t* base) {
     REXLOG_INFO("gta4-input: parachute keyboard stick forced");
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_825D20A0
 
 namespace gta4::input {
 namespace {
@@ -2793,6 +2823,7 @@ void MergeKeyboardScriptContextButton(PPCContext& ctx, uint8_t* base,
 }
 }  // namespace gta4::input
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_825D1308(PPCContext& ctx, uint8_t* base) {
   const uint32_t group = ctx.r3.u32;
   const uint32_t button = ctx.r4.u32;
@@ -2803,7 +2834,9 @@ extern "C" void sub_825D1308(PPCContext& ctx, uint8_t* base) {
       base, gta4::input::ScriptInputQueryTraceKind::kRawHeld, group, button,
       caller, ctx.r3.u32);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_825D1308
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_825D1468(PPCContext& ctx, uint8_t* base) {
   const uint32_t group = ctx.r3.u32;
   const uint32_t button = ctx.r4.u32;
@@ -2814,7 +2847,9 @@ extern "C" void sub_825D1468(PPCContext& ctx, uint8_t* base) {
       base, gta4::input::ScriptInputQueryTraceKind::kRawPressed, group, button,
       caller, ctx.r3.u32);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_825D1468
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_825D1908(PPCContext& ctx, uint8_t* base) {
   const uint32_t group = ctx.r3.u32;
   const uint32_t action = ctx.r4.u32;
@@ -2824,7 +2859,9 @@ extern "C" void sub_825D1908(PPCContext& ctx, uint8_t* base) {
       base, gta4::input::ScriptInputQueryTraceKind::kControlHeld, group, action,
       caller, ctx.r3.u32);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_825D1908
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_825D1980(PPCContext& ctx, uint8_t* base) {
   const uint32_t group = ctx.r3.u32;
   const uint32_t action = ctx.r4.u32;
@@ -2834,5 +2871,6 @@ extern "C" void sub_825D1980(PPCContext& ctx, uint8_t* base) {
       base, gta4::input::ScriptInputQueryTraceKind::kControlPressed, group, action,
       caller, ctx.r3.u32);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_825D1980
 
 #include "gta4_mouse_camera_hooks.inc"

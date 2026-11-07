@@ -147,6 +147,7 @@ MotionNativeRegistration* FindRegistration(uint32_t return_address) {
 }  // namespace
 }  // namespace gta4
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82845600(PPCContext& ctx, uint8_t* base) {
   gta4::quicksave::ObserveNativeRegistration(ctx, base);
   const uint32_t return_address = static_cast<uint32_t>(ctx.lr);
@@ -190,3 +191,4 @@ extern "C" void sub_82845600(PPCContext& ctx, uint8_t* base) {
 
   __imp__sub_82845600(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82845600

@@ -239,14 +239,19 @@ void DecodeFrame(PPCContext& ctx, uint8_t* base, const DecodeArguments& args) {
 }  // namespace
 }  // namespace gta4::lzx
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 REX_HOOK_RAW(sub_82A21BF0) {
   gta4::lzx::DecodeFrame(ctx, base, gta4::lzx::ReadArguments(ctx));
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A21BF0
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 REX_HOOK_RAW(sub_82A21BA8) {
   gta4::lzx::ResetDecoder(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A21BA8
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 REX_HOOK_RAW(sub_82A21F70) {
   gta4::lzx::LogBackendOnce();
   const uint32_t outer = ctx.r3.u32;
@@ -259,7 +264,9 @@ REX_HOOK_RAW(sub_82A21F70) {
   }
   __imp__sub_82A21F70(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A21F70
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 REX_HOOK_RAW(sub_82A15060) {
   const uint32_t outer_object = ctx.r3.u32;
   if (gta4::lzx::IsGuestRange(outer_object, gta4::lzx::kEmbeddedDecoderOffset + sizeof(uint32_t))) {
@@ -267,3 +274,4 @@ REX_HOOK_RAW(sub_82A15060) {
   }
   __imp__sub_82A15060(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82A15060

@@ -79,6 +79,7 @@ uint64_t BeginBulbCoronaBatch(uint8_t* base) {
 }
 } // namespace
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_822077D8(PPCContext& ctx, uint8_t* base) {
   if (!BulbSourceObservationActive(base)) { CallBulbSourceOriginalWithProvenance(ctx,base); return; }
   const auto event=g_bulb_source_event.fetch_add(1,std::memory_order_relaxed)+1;
@@ -94,6 +95,8 @@ extern "C" void sub_822077D8(PPCContext& ctx, uint8_t* base) {
               "no-corona-is-not-no-room-light=true",event,source.frame,source.object,source.queued);
   g_bulb_source_observer=previous;
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_822077D8
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82207118(PPCContext& ctx,uint8_t* base) {
   auto* source=g_bulb_source_observer;
   if(!source){__imp__sub_82207118(ctx,base);return;}
@@ -104,6 +107,8 @@ extern "C" void sub_82207118(PPCContext& ctx,uint8_t* base) {
               "boolean-meaning=raw-original-result",
               source->event,source->frame,caller,ctx.r3.u32,BulbSourceFloats(base,scale_output,1));
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82207118
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82207008(PPCContext& ctx,uint8_t* base) {
   if (!BulbSourceObservationActive(base)) { __imp__sub_82207008(ctx,base); return; }
   const auto event=g_bulb_queue_event.fetch_add(1,std::memory_order_relaxed)+1;
@@ -130,3 +135,4 @@ extern "C" void sub_82207008(PPCContext& ctx,uint8_t* base) {
               "position={} rgb={},{},{} size={:.8g} attribute={:08X} details={} gpu-drawn=unknown",
               event,source?source->event:0,frame,caller,before,after,advanced,position,rgb[0],rgb[1],rgb[2],size,attribute,attributes);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82207008

@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.25)
 project(gta4_recomp LANGUAGES CXX)
+# PAL build: disable all USA-address hook overrides (tools/pal_guard_hooks.py)
+add_compile_definitions(GTA4_PAL_SAFE_MODE=1)
+
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

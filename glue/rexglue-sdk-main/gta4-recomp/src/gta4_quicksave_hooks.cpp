@@ -524,6 +524,7 @@ bool ResolveText(PPCContext& context, uint8_t* base) {
 }
 }  // namespace gta4::quicksave
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82846AE8(PPCContext& ctx, uint8_t* base) {
   using namespace gta4::quicksave;
   const auto name = ProgramName(base, ctx.r4.u32);
@@ -537,6 +538,8 @@ extern "C" void sub_82846AE8(PPCContext& ctx, uint8_t* base) {
   loading = &frame;
   __imp__sub_82846AE8(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82846AE8
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_828453F8(PPCContext& ctx, uint8_t* base) {
   using namespace gta4::quicksave;
   if (loading && !loading->activity_name.empty() && ctx.r4.u32 <= kMaxSCO &&
@@ -568,6 +571,8 @@ extern "C" void sub_828453F8(PPCContext& ctx, uint8_t* base) {
     loading->activity_profile.reset();
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_828453F8
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82846780(PPCContext& ctx, uint8_t* base) {
   using namespace gta4::quicksave;
   const auto name = ProgramName(base, ctx.r4.u32);
@@ -635,11 +640,16 @@ extern "C" void sub_82846780(PPCContext& ctx, uint8_t* base) {
   } else
     REXLOG_ERROR("gta4-quicksave: program publication validation failed");
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82846780
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_825E87C8(PPCContext& ctx, uint8_t* base) {
   __imp__sub_825E87C8(ctx, base);
   gta4::quicksave::Poll(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_825E87C8
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82243260(PPCContext& ctx, uint8_t* base) {
   __imp__sub_82243260(ctx, base);
   gta4::quicksave::Poll(ctx, base);
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82243260

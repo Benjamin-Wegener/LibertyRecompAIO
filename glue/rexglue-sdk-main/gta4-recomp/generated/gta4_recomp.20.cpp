@@ -4447,95 +4447,6 @@ loc_822376DC:
 	return;
 }
 
-DEFINE_REX_FUNC(sub_822447B8) {
-	REX_FUNC_PROLOGUE();
-	PPCXERRegister xer{};
-	PPCCRRegister cr6{};
-	PPCRegister r25{};
-	PPCRegister r26{};
-	PPCRegister r27{};
-	PPCRegister r28{};
-	PPCRegister r29{};
-	PPCRegister r30{};
-	PPCRegister r31{};
-	// cmplwi cr6,r9,0
-	cr6.compare<uint32_t>(ctx.r9.u32, 0, xer);
-	// beq cr6,0x82244804
-	if (cr6.eq) goto loc_82244804;
-	// lbz r9,8(r9)
-	ctx.r9.u64 = REX_LOAD_U8(ctx.r9.u32 + 8);
-	// cmplwi cr6,r9,0
-	cr6.compare<uint32_t>(ctx.r9.u32, 0, xer);
-	// beq cr6,0x82244804
-	if (cr6.eq) goto loc_82244804;
-	// li r4,16
-	ctx.r4.s64 = 16;
-	// lwzx r30,r10,r31
-	r30.u64 = REX_LOAD_U32(ctx.r10.u32 + r31.u32);
-	// mr r3,r28
-	ctx.r3.u64 = r28.u64;
-	// bl 0x823e8e70
-	ctx.lr = 0x822447DC;
-	sub_823E8E70(ctx, base);
-	// lwz r11,31128(r26)
-	ctx.r11.u64 = REX_LOAD_U32(r26.u32 + 31128);
-	// stw r30,0(r3)
-	REX_STORE_U32(ctx.r3.u32 + 0, r30.u32);
-	// rlwinm r10,r11,2,0,29
-	ctx.r10.u64 = __builtin_rotateleft64(ctx.r11.u32 | (ctx.r11.u64 << 32), 2) & 0xFFFFFFFC;
-	// mulli r11,r11,90
-	ctx.r11.s64 = static_cast<int64_t>(ctx.r11.u64 * static_cast<uint64_t>(90));
-	// lwzx r9,r10,r27
-	ctx.r9.u64 = REX_LOAD_U32(ctx.r10.u32 + r27.u32);
-	// add r8,r11,r29
-	ctx.r8.u64 = ctx.r11.u64 + r29.u64;
-	// addi r9,r9,-1
-	ctx.r9.s64 = ctx.r9.s64 + -1;
-	// rlwinm r8,r8,2,0,29
-	ctx.r8.u64 = __builtin_rotateleft64(ctx.r8.u32 | (ctx.r8.u64 << 32), 2) & 0xFFFFFFFC;
-	// stwx r9,r10,r27
-	REX_STORE_U32(ctx.r10.u32 + r27.u32, ctx.r9.u32);
-	// stwx r25,r8,r31
-	REX_STORE_U32(ctx.r8.u32 + r31.u32, r25.u32);
-loc_82244804:
-	// addi r29,r29,1
-	r29.s64 = r29.s64 + 1;
-	// cmpwi cr6,r29,90
-	cr6.compare<int32_t>(r29.s32, 90, xer);
-	// blt cr6,0x822447ac
-	// ERROR: conditional branch to unknown address 0x822447AC
-	if (cr6.lt) REX_FATAL("Unresolved branch from 0x8224480C to 0x822447AC");
-	// lhz r5,4(r28)
-	ctx.r5.u64 = REX_LOAD_U16(r28.u32 + 4);
-	// cmpwi cr6,r5,0
-	cr6.compare<int32_t>(ctx.r5.s32, 0, xer);
-	// ble cr6,0x8224483c
-	if (!cr6.gt) goto loc_8224483C;
-	// mr r4,r25
-	ctx.r4.u64 = r25.u64;
-loc_82244820:
-	// lwz r11,0(r28)
-	ctx.r11.u64 = REX_LOAD_U32(r28.u32 + 0);
-	// lwzx r3,r4,r11
-	ctx.r3.u64 = REX_LOAD_U32(ctx.r4.u32 + ctx.r11.u32);
-	// bl 0x82236468
-	ctx.lr = 0x8224482C;
-	sub_82236468(ctx, base);
-	// addi r5,r5,-1
-	ctx.r5.s64 = ctx.r5.s64 + -1;
-	// addi r4,r4,4
-	ctx.r4.s64 = ctx.r4.s64 + 4;
-	// cmplwi cr6,r5,0
-	cr6.compare<uint32_t>(ctx.r5.u32, 0, xer);
-	// bne cr6,0x82244820
-	if (!cr6.eq) goto loc_82244820;
-loc_8224483C:
-	// addi r1,r1,144
-	ctx.r1.s64 = ctx.r1.s64 + 144;
-	// b 0x8298eb0c
-	return;
-}
-
 DEFINE_REX_FUNC(sub_82247210) {
 	REX_FUNC_PROLOGUE();
 	PPCXERRegister xer{};
@@ -7215,7 +7126,7 @@ loc_822DFB5C:
 	ctx.r4.u64 = r26.u64;
 	// bl 0x829907e0
 	ctx.lr = 0x822DFBA8;
-	sub_829907E0(ctx, base);
+	rexcrt_memcpy(ctx, base);
 	// mr r11,r30
 	ctx.r11.u64 = r30.u64;
 	// stw r27,140(r30)
@@ -23937,119 +23848,6 @@ loc_826FECCC:
 	return;
 }
 
-DEFINE_REX_FUNC(sub_82702F48) {
-	REX_FUNC_PROLOGUE();
-	PPCXERRegister xer{};
-	PPCCRRegister cr6{};
-	PPCRegister r20{};
-	PPCRegister r21{};
-	PPCRegister r22{};
-	PPCRegister r26{};
-	PPCRegister r30{};
-	PPCRegister r31{};
-	// stw r26,4(r3)
-	REX_STORE_U32(ctx.r3.u32 + 4, r26.u32);
-	// lis r10,-32250
-	ctx.r10.s64 = -2113536000;
-	// stw r26,8(r3)
-	REX_STORE_U32(ctx.r3.u32 + 8, r26.u32);
-	// addi r11,r11,2304
-	ctx.r11.s64 = ctx.r11.s64 + 2304;
-	// stw r26,12(r3)
-	REX_STORE_U32(ctx.r3.u32 + 12, r26.u32);
-	// addi r10,r10,-19092
-	ctx.r10.s64 = ctx.r10.s64 + -19092;
-	// mr r9,r3
-	ctx.r9.u64 = ctx.r3.u64;
-	// stw r11,0(r3)
-	REX_STORE_U32(ctx.r3.u32 + 0, ctx.r11.u32);
-	// stw r10,16(r3)
-	REX_STORE_U32(ctx.r3.u32 + 16, ctx.r10.u32);
-	// b 0x82702f74
-	goto loc_82702F74;
-loc_82702F74:
-	// lis r11,210
-	ctx.r11.s64 = 13762560;
-	// stw r9,0(r22)
-	REX_STORE_U32(r22.u32 + 0, ctx.r9.u32);
-	// lwz r30,12(r21)
-	r30.u64 = REX_LOAD_U32(r21.u32 + 12);
-	// ori r11,r11,3360
-	ctx.r11.u64 = ctx.r11.u64 | 3360;
-	// mulli r3,r30,312
-	ctx.r3.s64 = static_cast<int64_t>(r30.u64 * static_cast<uint64_t>(312));
-	// cmplw cr6,r30,r11
-	cr6.compare<uint32_t>(r30.u32, ctx.r11.u32, xer);
-	// ble cr6,0x82702f94
-	if (!cr6.gt) goto loc_82702F94;
-	// li r3,-1
-	ctx.r3.s64 = -1;
-loc_82702F94:
-	// bl 0x8218be28
-	ctx.lr = 0x82702F98;
-	sub_8218BE28(ctx, base);
-	// mr r31,r3
-	r31.u64 = ctx.r3.u64;
-	// cmplwi cr6,r31,0
-	cr6.compare<uint32_t>(r31.u32, 0, xer);
-	// beq cr6,0x82704188
-	if (cr6.eq) goto loc_82704188;
-	// lis r11,-32145
-	ctx.r11.s64 = -2106654720;
-	// mr r5,r30
-	ctx.r5.u64 = r30.u64;
-	// addi r6,r11,-5176
-	ctx.r6.s64 = ctx.r11.s64 + -5176;
-	// li r4,312
-	ctx.r4.s64 = 312;
-	// bl 0x82120220
-	ctx.lr = 0x82702FB8;
-	sub_82120220(ctx, base);
-	// mr r11,r31
-	ctx.r11.u64 = r31.u64;
-	// b 0x8270418c
-	goto loc_8270418C;
-loc_82704188:
-	// mr r11,r26
-	ctx.r11.u64 = r26.u64;
-loc_8270418C:
-	// lwz r10,0(r22)
-	ctx.r10.u64 = REX_LOAD_U32(r22.u32 + 0);
-	// stw r11,8(r22)
-	REX_STORE_U32(r22.u32 + 8, ctx.r11.u32);
-	// lwz r9,12(r21)
-	ctx.r9.u64 = REX_LOAD_U32(r21.u32 + 12);
-	// stw r11,12(r10)
-	REX_STORE_U32(ctx.r10.u32 + 12, ctx.r11.u32);
-	// stw r9,8(r10)
-	REX_STORE_U32(ctx.r10.u32 + 8, ctx.r9.u32);
-	// b 0x827048d8
-	goto loc_827048D8;
-loc_827048D8:
-	// clrlwi r11,r20,24
-	ctx.r11.u64 = r20.u32 & 0xFF;
-	// mr r3,r20
-	ctx.r3.u64 = r20.u64;
-	// cmplwi cr6,r11,0
-	cr6.compare<uint32_t>(ctx.r11.u32, 0, xer);
-	// beq cr6,0x827048f8
-	// ERROR: conditional branch to unknown address 0x827048F8
-	if (cr6.eq) REX_FATAL("Unresolved branch from 0x827048E4 to 0x827048F8");
-	// lwz r11,0(r21)
-	ctx.r11.u64 = REX_LOAD_U32(r21.u32 + 0);
-	// stw r11,16(r22)
-	REX_STORE_U32(r22.u32 + 16, ctx.r11.u32);
-	// stw r22,0(r21)
-	REX_STORE_U32(r21.u32 + 0, r22.u32);
-	// stw r26,20(r21)
-	REX_STORE_U32(r21.u32 + 20, r26.u32);
-loc_827048F8:
-	// addi r1,r1,192
-	ctx.r1.s64 = ctx.r1.s64 + 192;
-	// b 0x8298eaf8
-	return;
-}
-
 DEFINE_REX_FUNC(sub_82712370) {
 	REX_FUNC_PROLOGUE();
 	PPCRegister r31{};
@@ -26327,45 +26125,6 @@ DEFINE_REX_FUNC(sub_827CBFD0) {
 	return;
 }
 
-DEFINE_REX_FUNC(sub_827CD7B0) {
-	REX_FUNC_PROLOGUE();
-	PPCXERRegister xer{};
-	PPCCRRegister cr6{};
-	PPCRegister r27{};
-	PPCRegister r28{};
-	PPCRegister r29{};
-	PPCRegister r30{};
-	PPCRegister r31{};
-	PPCRegister f31{};
-	// mr r3,r27
-	ctx.r3.u64 = r27.u64;
-	// rlwinm r28,r11,2,0,29
-	r28.u64 = __builtin_rotateleft64(ctx.r11.u32 | (ctx.r11.u64 << 32), 2) & 0xFFFFFFFC;
-	// stw r10,16(r29)
-	REX_STORE_U32(r29.u32 + 16, ctx.r10.u32);
-	// bl 0x827cc710
-	ctx.lr = 0x827CD7C0;
-	sub_827CC710(ctx, base);
-	// addi r31,r31,-1
-	r31.s64 = r31.s64 + -1;
-	// addi r30,r30,4
-	r30.s64 = r30.s64 + 4;
-	// stwx r3,r28,r29
-	REX_STORE_U32(r28.u32 + r29.u32, ctx.r3.u32);
-	// cmplwi cr6,r31,0
-	cr6.compare<uint32_t>(r31.u32, 0, xer);
-	// bne cr6,0x827cd790
-	// ERROR: conditional branch to unknown address 0x827CD790
-	if (!cr6.eq) REX_FATAL("Unresolved branch from 0x827CD7D0 to 0x827CD790");
-	// addi r1,r1,176
-	ctx.r1.s64 = ctx.r1.s64 + 176;
-	// lfd f31,-88(r1)
-	ctx.fpscr.disableFlushMode();
-	f31.u64 = REX_LOAD_U64(ctx.r1.u32 + -88);
-	// b 0x8298eb04
-	return;
-}
-
 DEFINE_REX_FUNC(sub_827CE760) {
 	REX_FUNC_PROLOGUE();
 	PPCRegister temp{};
@@ -27062,7 +26821,7 @@ DEFINE_REX_FUNC(sub_827F0B70) {
 	REX_STORE_U32(ctx.r1.u32 + 112, ctx.r11.u32);
 	// bl 0x829a1eb0
 	ctx.lr = 0x827F0BDC;
-	sub_829A1EB0(ctx, base);
+	ReadFile(ctx, base);
 	// cmpwi cr6,r3,0
 	cr6.compare<int32_t>(ctx.r3.s32, 0, xer);
 	// bne cr6,0x827f0c38
@@ -27110,7 +26869,7 @@ loc_827F0C18:
 	ctx.r3.u64 = r31.u64;
 	// bl 0x829a1eb0
 	ctx.lr = 0x827F0C30;
-	sub_829A1EB0(ctx, base);
+	ReadFile(ctx, base);
 	// cmpwi cr6,r3,0
 	cr6.compare<int32_t>(ctx.r3.s32, 0, xer);
 	// beq cr6,0x827f0be8
@@ -33947,7 +33706,7 @@ DEFINE_REX_FUNC(sub_82991EE0) {
 	// bge+ 0x82991ef0
 	if (!cr0.lt) goto loc_82991EF0;
 	// b 0x829907e0
-	sub_829907E0(ctx, base);
+	rexcrt_memcpy(ctx, base);
 	return;
 loc_82991EF0:
 	// addi r0,r5,1
@@ -34688,7 +34447,7 @@ loc_829A60C8:
 	REX_STORE_U32(r31.u32 + 308, ctx.r11.u32);
 	// bl 0x8298eb40
 	ctx.lr = 0x829A6120;
-	sub_8298EB40(ctx, base);
+	rexcrt_memset(ctx, base);
 	// b 0x829a61c0
 	goto loc_829A61C0;
 loc_829A6124:
@@ -34729,7 +34488,7 @@ loc_829A6124:
 	ctx.r4.s64 = 0;
 	// bl 0x8298eb40
 	ctx.lr = 0x829A616C;
-	sub_8298EB40(ctx, base);
+	rexcrt_memset(ctx, base);
 	// lwz r11,108(r31)
 	ctx.r11.u64 = REX_LOAD_U32(r31.u32 + 108);
 	// lwz r10,84(r31)
@@ -37162,7 +36921,7 @@ loc_829E2B2C:
 	r28.u64 = __builtin_rotateleft64(ctx.r10.u32 | (ctx.r10.u64 << 32), 9) & 0xFFFFFE00;
 	// bl 0x8298fea0
 	ctx.lr = 0x829E2B70;
-	sub_8298FEA0(ctx, base);
+	rexcrt_strncpy(ctx, base);
 	// li r27,0
 	r27.s64 = 0;
 	// addi r11,r1,112

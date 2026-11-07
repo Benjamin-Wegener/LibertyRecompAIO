@@ -43,6 +43,7 @@ void StoreGuestFloat(uint8_t* base, uint32_t address, float value) {
 
 }  // namespace
 
+#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
 extern "C" void sub_82143DC8(PPCContext& ctx, uint8_t* base) {
   const uint32_t screen = REX_LOAD_U32(kCurrentScreenGlobal);
   if (screen >= kScreenCount) {
@@ -111,3 +112,4 @@ extern "C" void sub_82143DC8(PPCContext& ctx, uint8_t* base) {
     }
   }
 }
+#endif  // GTA4_PAL_SAFE_MODE sub_82143DC8
