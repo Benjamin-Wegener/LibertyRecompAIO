@@ -76,3 +76,16 @@ foreach(_kind IN ITEMS SHARED MODULE EXE)
   string(APPEND CMAKE_${_kind}_LINKER_FLAGS_INIT " -Wl,-z,max-page-size=16384")
   string(APPEND CMAKE_${_kind}_LINKER_FLAGS " -Wl,-z,max-page-size=16384")
 endforeach()
+
+# ccache: content-addressed compiler cache. Ninja compares timestamps, and the
+# CI checks the submodules out fresh on every run, so without this every run
+# recompiles all ~570 translation units even though only a couple of files
+# changed. ccache hashes the preprocessed source instead, so a rebuild after a
+# one-file edit only compiles that file. Optional: without ccache installed
+# (local builds) the launcher is simply unset.
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+  set(CMAKE_C_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
+  set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
+  message(STATUS "ccache launcher: ${CCACHE_PROGRAM}")
+endif()
