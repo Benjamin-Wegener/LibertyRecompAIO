@@ -34994,8 +34994,3 @@ loc_82A04D64:
 	return;
 }
 
-// STUB: Function at 0x82A47248 has no discovered code blocks
-DEFINE_REX_FUNC(CCommandBuffer_Destroy) {
-	REX_FUNC_PROLOGUE();
-}
-

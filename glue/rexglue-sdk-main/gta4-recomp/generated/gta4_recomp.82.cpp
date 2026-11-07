@@ -35388,23 +35388,3 @@ loc_82A06644:
 	return;
 }
 
-// STUB: Function at 0x82A19910 has no discovered code blocks
-DEFINE_REX_FUNC(XMemCpyStreaming_Unaligned_Cached_Helper) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A3C598 has no discovered code blocks
-DEFINE_REX_FUNC(D3D_IsFloatGpuFormat) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A42760 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A42760) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A49AB8 has no discovered code blocks
-DEFINE_REX_FUNC(D3DDevice_InsertFence) {
-	REX_FUNC_PROLOGUE();
-}
-

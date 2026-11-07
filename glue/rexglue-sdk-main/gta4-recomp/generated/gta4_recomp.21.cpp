@@ -34908,38 +34908,3 @@ loc_82A03B3C:
 	return;
 }
 
-// STUB: Function at 0x82A14988 has no discovered code blocks
-DEFINE_REX_FUNC(FindFirstFileA) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A14D10 has no discovered code blocks
-DEFINE_REX_FUNC(DeleteFileA) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A1858C has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A1858C) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A1BB68 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A1BB68) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A3C690 has no discovered code blocks
-DEFINE_REX_FUNC(D3D_ConvertD32FS8ToD24FS8) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A42AC0 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A42AC0) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A4A3C8 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A4A3C8) {
-	REX_FUNC_PROLOGUE();
-}
-

@@ -35490,33 +35490,3 @@ DEFINE_REX_FUNC(CloseHandle) {
 	return;
 }
 
-// STUB: Function at 0x82A17180 has no discovered code blocks
-DEFINE_REX_FUNC(RtlAllocateHeap) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A19E30 has no discovered code blocks
-DEFINE_REX_FUNC(RtlSetLastError) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A3B7B0 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A3B7B0) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A416B8 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A416B8) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A46D70 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A46D70) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A69C68 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A69C68) {
-	REX_FUNC_PROLOGUE();
-}
-

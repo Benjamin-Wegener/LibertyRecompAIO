@@ -33877,33 +33877,3 @@ loc_829D6F5C:
 	return;
 }
 
-// STUB: Function at 0x82A14DC8 has no discovered code blocks
-DEFINE_REX_FUNC(MoveFileA) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A188E0 has no discovered code blocks
-DEFINE_REX_FUNC(FlushFileBuffers) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A1C3C0 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A1C3C0) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A3DAB0 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A3DAB0) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A42BA8 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A42BA8) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A4A600 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A4A600) {
-	REX_FUNC_PROLOGUE();
-}
-

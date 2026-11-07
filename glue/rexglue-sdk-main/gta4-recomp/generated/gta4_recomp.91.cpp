@@ -34095,13 +34095,3 @@ loc_82A069E8:
 	return;
 }
 
-// STUB: Function at 0x82A44808 has no discovered code blocks
-DEFINE_REX_FUNC(D3DBaseTexture_GetLevelCount) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A692E8 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A692E8) {
-	REX_FUNC_PROLOGUE();
-}
-

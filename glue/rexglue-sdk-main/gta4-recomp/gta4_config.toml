@@ -44,6 +44,13 @@ memmove = 0x82A02230              # 40 xrefs — native rexcrt_memmove in memory
 # timestamp, or attribute behavior.
 
 [functions]
+# PAL retail base executable (0.0.0.6): branch targets that the automatic
+# discovery did not turn into function entries. Declared so the call graph
+# validates; they are real code targets, not data.
+"0x82518A40" = {}   # branch target from 0x82234E08
+"0x82A05828" = {}   # branch target from 0x8274D070
+"0x826EA240" = {}   # self-branch from 0x826EA2F4
+"0x82154100" = {}   # branch target from 0x821545A0
 # sync_registers / share_registers: see tools/mark_share_registers.py.
 "0x82140660" = { sync_registers = true }
 "0x82140698" = { sync_registers = true }
@@ -735,56 +742,10 @@ memmove = 0x82A02230              # 40 xrefs — native rexcrt_memmove in memory
 "0x82A0F398" = { share_registers = true }
 "0x82A0F54C" = { share_registers = true }
 "0x82A10CA8" = { share_registers = true }
-"0x82A15060" = { sync_registers = true }
-"0x82A1BB68" = { share_registers = true }
-"0x82A1C3C0" = { share_registers = true }
-"0x82A21BA8" = { sync_registers = true }
-"0x82A21BF0" = { sync_registers = true }
-"0x82A21F70" = { sync_registers = true }
-"0x82A355E0" = { sync_registers = true }
-"0x82A3A890" = { sync_registers = true }
-"0x82A3B540" = { sync_registers = true }
-"0x82A3B690" = { sync_registers = true }
-"0x82A3B7B0" = { sync_registers = true }
-"0x82A3BAA8" = { sync_registers = true }
-"0x82A3BF50" = { sync_registers = true }
-"0x82A3C2B8" = { sync_registers = true }
-"0x82A3CC68" = { sync_registers = true }
-"0x82A3DAB0" = { sync_registers = true }
-"0x82A3DF50" = { sync_registers = true }
-"0x82A3DF60" = { sync_registers = true }
-"0x82A3E348" = { sync_registers = true }
-"0x82A3E910" = { sync_registers = true }
-"0x82A3EDA8" = { sync_registers = true }
-"0x82A3F268" = { sync_registers = true }
-"0x82A41520" = { sync_registers = true }
-"0x82A416B8" = { sync_registers = true }
-"0x82A42168" = { sync_registers = true }
-"0x82A424A8" = { sync_registers = true }
-"0x82A42760" = { sync_registers = true }
-"0x82A42930" = { sync_registers = true }
-"0x82A42AC0" = { sync_registers = true }
-"0x82A42BA8" = { sync_registers = true }
-"0x82A42CB8" = { sync_registers = true }
-"0x82A44168" = { sync_registers = true }
-"0x82A441F8" = { sync_registers = true }
-"0x82A44850" = { sync_registers = true }
-"0x82A44970" = { sync_registers = true }
-"0x82A44B78" = { sync_registers = true }
-"0x82A457B0" = { sync_registers = true }
-"0x82A467D8" = { sync_registers = true }
-"0x82A46D70" = { sync_registers = true }
-"0x82A46DA0" = { sync_registers = true }
-"0x82A46FB0" = { sync_registers = true }
-"0x82A47E28" = { sync_registers = true }
-"0x82A4A3C8" = { sync_registers = true }
-"0x82A4A600" = { sync_registers = true }
-"0x82A4F7E0" = { sync_registers = true }
 
 # Cross-function branch targets: other functions branch directly to these
 # mid-function addresses. Required by codegen to resolve the call graph.
 "0x8217C108" = {}   # branch target from sub_8217C5A8
-"0x82A77E28" = {}   # tail-call thunk: b sub_82812248
 "0x8219E410" = {}   # branch target from sub_821A2EDC
 "0x8219ACA0" = {}   # vtable slot +0x20 target in the original GTA IV .rdata tables
 "0x82194840" = {}   # address-taken vtable thunk: addi r3,r3,-4; b sub_82194590
@@ -854,15 +815,6 @@ memmove = 0x82A02230              # 40 xrefs — native rexcrt_memmove in memory
 # Correct formula is flat-image offset (VA - 0x82000000). With correct offset every
 # All are independently terminated routines referenced by the CRT constructor
 # table; they do not all share the same tail-branch destination.
-"0x82A692C8" = {}   # CRT constructor-table target, table[0x82A90F58]
-"0x82A692E8" = {}   # CRT constructor-table target, table[0x82A90F5C]
-"0x82A69308" = {}   # CRT constructor-table target, table[0x82A90F60]
-"0x82A69328" = {}   # CRT constructor-table target, table[0x82A90F64]
-"0x82A69428" = {}   # CRT constructor-table target, table[0x82A90F84]
-"0x82A69C68" = {}   # CRT constructor-table target, table[0x82A90FE4]
-"0x82A69CA8" = {}   # CRT constructor-table target, table[0x82A90FEC]
-"0x82A69CC8" = {}   # CRT constructor-table target, table[0x82A90FF0]
-"0x82A6C218" = {}   # CRT constructor-table target, table[0x82A912D8]
 "0x828764B8" = {}   # tail-call thunk: mr r3,r4 + b 0x82847338 (after b-boundary)
 
 # CRT function boundaries: force codegen to split these out as separate functions
@@ -875,19 +827,11 @@ memmove = 0x82A02230              # 40 xrefs — native rexcrt_memmove in memory
 "0x82A00C40" = { name = "strncmp" }
 "0x82A00BA0" = { name = "strncpy" }
 "0x82A00B60" = { name = "strchr" }
-"0x82A18CD0" = {}
 "0x82A01DE8" = {}
 "0x82A02100" = { name = "strrchr" }
 "0x829FFAD0" = { name = "strstr" }
 
 # Heap CRT function boundaries
-"0x82A17180" = { name = "RtlAllocateHeap" }
-"0x82A17A14" = { share_registers = true }
-"0x82A17A68" = { name = "RtlFreeHeap" }
-"0x82A17CFC" = { share_registers = true }
-"0x82A16418" = { name = "RtlSizeHeap" }
-"0x82A17D50" = { name = "RtlReAllocateHeap" }
-"0x82A1858C" = { share_registers = true }
 
 # File CRT function boundaries
 "0x82A131B0" = { name = "CreateFileA" }
@@ -895,22 +839,8 @@ memmove = 0x82A02230              # 40 xrefs — native rexcrt_memmove in memory
 "0x82A13618" = { name = "WriteFile" }
 "0x82A11F68" = { name = "CloseHandle" }
 "0x82A127E0" = { name = "SetFilePointer" }
-"0x82A14918" = { name = "GetFileSizeEx" }
 "0x82A125D0" = {}   # XFileSectorInformation helper; not GetFileSize
 "0x82A135B0" = { name = "GetFileSize" }
-"0x82A14C68" = { name = "SetEndOfFile" }
-"0x82A14D10" = { name = "DeleteFileA" }
-"0x82A14DC8" = { name = "MoveFileA" }
-"0x82A14B30" = { name = "SetFileAttributesA" }
-"0x82A14AC8" = { name = "GetFileAttributesA" }
-"0x82A14A18" = { name = "SetFileTime" }
-"0x82A14988" = { name = "FindFirstFileA" }  # was 0x82A19F88 (NT-level, wrong)
-"0x82A14C10" = {}
-"0x82A1A100" = {}
-"0x82A188E0" = { name = "FlushFileBuffers" }
-"0x82A14E98" = { name = "CreateDirectoryA" }
-"0x82A14F28" = {}
-"0x82A1A160" = {}
 
 # =============================================================================
 # FLIRT-verified additions (2026-04-18)
@@ -938,40 +868,12 @@ memmove = 0x82A02230              # 40 xrefs — native rexcrt_memmove in memory
 "0x82A10F48" = { name = "XMemFree" }           #   1 xref
 
 # --- XMemCpyStreaming helpers (VMX streaming copy internals) -------------------
-"0x82A18D90" = { name = "XMemCpyStreaming128_Writecombined_Helper" }
-"0x82A190B4" = { name = "XMemCpyStreaming_Unaligned_Writecombined_Helper" }
-"0x82A19580" = { name = "XMemCpyStreaming128_Cached_Helper" }
-"0x82A19910" = { name = "XMemCpyStreaming_Unaligned_Cached_Helper" }
 
 # --- NT Rtl error API ---------------------------------------------------------
-"0x82A19E30" = { name = "RtlSetLastError" }    #   9 xrefs
-"0x82A19E48" = { name = "RtlSetLastNTError" }  #  36 xrefs
-"0x82A19E80" = { name = "RtlGetLastError" }    #  24 xrefs
-"0x82A1A420" = { name = "RtlOutputDebugString" }
 
 # --- D3DDevice HIGH priority (actual D3D9-shape APIs, not dispatcher innards) --
 # NOTE: 150+ SetRenderState_*/SamplerState_* labels from FLIRT are INSIDE three
 # dispatcher functions (sub_82A38F28, sub_82A39928, sub_82A3AB50) — adding them
 # as [[functions]] entries would split mid-function. Skipped intentionally.
-"0x82A413F8" = { name = "D3DDevice_Release" }
-"0x82A423F8" = { name = "D3DDevice_SetVertexShaderConstantI" }
-"0x82A42450" = { name = "D3DDevice_SetPixelShaderConstantI" }
-"0x82A3BE98" = { name = "D3DDevice_SetViewportF" }
-"0x82A44808" = { name = "D3DBaseTexture_GetLevelCount" }           # 7 xrefs
-"0x82A49AB8" = { name = "D3DDevice_InsertFence" }
-"0x82A4A150" = { name = "D3DResource_GetType" }                    # 13 xrefs
-"0x82A4A710" = { name = "D3DResource_AddRef" }                     # 9 xrefs
-"0x82A4A788" = { name = "D3DResource_Release" }                    # 20 xrefs
-"0x82A4A920" = { name = "D3DVertexBuffer_Unlock" }
-"0x82A4BD20" = { name = "D3D_PatchVertexShaderToMatchPixelShader" }
-"0x82A50700" = { name = "D3D_VideoModeInitialize" }
-"0x82A4CE38" = { name = "D3D_SetRawGammaRamp" }
-"0x82A47248" = { name = "CCommandBuffer_Destroy" }
 
 # --- D3D MED priority (helpers / query funcs) ---------------------------------
-"0x82A412D0" = { name = "D3D_MemAllocAligned" }
-"0x82A42F10" = { name = "D3D_BlockSizeOfGpuFormat" }               # 9 xrefs
-"0x82A43030" = { name = "D3D_AlignTextureDimensions" }             # 10 xrefs
-"0x82A3C598" = { name = "D3D_IsFloatGpuFormat" }
-"0x82A3C690" = { name = "D3D_ConvertD32FS8ToD24FS8" }
-"0x82A53340" = { name = "D3D_XBMAllocateFrameMemory" }

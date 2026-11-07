@@ -33918,33 +33918,3 @@ DEFINE_REX_FUNC(sub_82A12638) {
 	return;
 }
 
-// STUB: Function at 0x82A14C10 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A14C10) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A17A68 has no discovered code blocks
-DEFINE_REX_FUNC(RtlFreeHeap) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A19E48 has no discovered code blocks
-DEFINE_REX_FUNC(RtlSetLastNTError) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A3BF50 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A3BF50) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A423F8 has no discovered code blocks
-DEFINE_REX_FUNC(D3DDevice_SetVertexShaderConstantI) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A4A710 has no discovered code blocks
-DEFINE_REX_FUNC(D3DResource_AddRef) {
-	REX_FUNC_PROLOGUE();
-}
-

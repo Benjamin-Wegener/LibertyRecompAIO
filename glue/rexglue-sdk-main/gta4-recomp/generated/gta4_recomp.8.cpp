@@ -32706,13 +32706,3 @@ loc_82A077B4:
 	return;
 }
 
-// STUB: Function at 0x82A44168 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A44168) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A4CE38 has no discovered code blocks
-DEFINE_REX_FUNC(D3D_SetRawGammaRamp) {
-	REX_FUNC_PROLOGUE();
-}
-

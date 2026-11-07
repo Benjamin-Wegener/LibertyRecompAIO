@@ -35524,8 +35524,3 @@ loc_82A05634:
 	return;
 }
 
-// STUB: Function at 0x82A77E28 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A77E28) {
-	REX_FUNC_PROLOGUE();
-}
-

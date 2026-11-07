@@ -35552,38 +35552,3 @@ loc_82A05098:
 	return;
 }
 
-// STUB: Function at 0x82A14AC8 has no discovered code blocks
-DEFINE_REX_FUNC(GetFileAttributesA) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A17A14 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A17A14) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A19E80 has no discovered code blocks
-DEFINE_REX_FUNC(RtlGetLastError) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A3BAA8 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A3BAA8) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A42168 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A42168) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A46DA0 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A46DA0) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A69CA8 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A69CA8) {
-	REX_FUNC_PROLOGUE();
-}
-

@@ -35875,38 +35875,3 @@ DEFINE_REX_FUNC(sub_82A12650) {
 	return;
 }
 
-// STUB: Function at 0x82A14C68 has no discovered code blocks
-DEFINE_REX_FUNC(SetEndOfFile) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A17CFC has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A17CFC) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A1A100 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A1A100) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A3BE98 has no discovered code blocks
-DEFINE_REX_FUNC(D3DDevice_SetViewportF) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A424A8 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A424A8) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A47E28 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A47E28) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A6C218 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A6C218) {
-	REX_FUNC_PROLOGUE();
-}
-

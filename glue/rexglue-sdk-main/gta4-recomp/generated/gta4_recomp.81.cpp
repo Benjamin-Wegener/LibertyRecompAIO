@@ -35757,18 +35757,3 @@ DEFINE_REX_FUNC(sub_82A11940) {
 	return;
 }
 
-// STUB: Function at 0x82A3E348 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A3E348) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A43030 has no discovered code blocks
-DEFINE_REX_FUNC(D3D_AlignTextureDimensions) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A4F7E0 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A4F7E0) {
-	REX_FUNC_PROLOGUE();
-}
-

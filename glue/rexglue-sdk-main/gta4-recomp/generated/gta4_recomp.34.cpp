@@ -34914,33 +34914,3 @@ DEFINE_REX_FUNC(sub_82A0D100) {
 	return;
 }
 
-// STUB: Function at 0x82A14F28 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A14F28) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A18D90 has no discovered code blocks
-DEFINE_REX_FUNC(XMemCpyStreaming128_Writecombined_Helper) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A21F70 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A21F70) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A3E910 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A3E910) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A441F8 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A441F8) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A50700 has no discovered code blocks
-DEFINE_REX_FUNC(D3D_VideoModeInitialize) {
-	REX_FUNC_PROLOGUE();
-}
-

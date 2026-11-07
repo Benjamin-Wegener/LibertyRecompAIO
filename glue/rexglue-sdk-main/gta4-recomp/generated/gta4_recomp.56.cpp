@@ -34531,23 +34531,3 @@ DEFINE_REX_FUNC(sub_82A076E8) {
 	return;
 }
 
-// STUB: Function at 0x82A21BA8 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A21BA8) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A3DF50 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A3DF50) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A42CB8 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A42CB8) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A4A788 has no discovered code blocks
-DEFINE_REX_FUNC(D3DResource_Release) {
-	REX_FUNC_PROLOGUE();
-}
-

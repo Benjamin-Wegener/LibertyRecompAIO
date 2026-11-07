@@ -35075,33 +35075,3 @@ loc_82A04EF8:
 	return;
 }
 
-// STUB: Function at 0x82A14B30 has no discovered code blocks
-DEFINE_REX_FUNC(SetFileAttributesA) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A17D50 has no discovered code blocks
-DEFINE_REX_FUNC(RtlReAllocateHeap) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A1A160 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A1A160) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A3C2B8 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A3C2B8) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A42450 has no discovered code blocks
-DEFINE_REX_FUNC(D3DDevice_SetPixelShaderConstantI) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A4A920 has no discovered code blocks
-DEFINE_REX_FUNC(D3DVertexBuffer_Unlock) {
-	REX_FUNC_PROLOGUE();
-}
-

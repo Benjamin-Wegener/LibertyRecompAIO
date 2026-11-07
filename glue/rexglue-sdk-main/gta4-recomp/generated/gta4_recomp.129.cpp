@@ -34225,33 +34225,3 @@ loc_82A07960:
 	return;
 }
 
-// STUB: Function at 0x82A14E98 has no discovered code blocks
-DEFINE_REX_FUNC(CreateDirectoryA) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A18CD0 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A18CD0) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A21BF0 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A21BF0) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A3DF60 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A3DF60) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A42F10 has no discovered code blocks
-DEFINE_REX_FUNC(D3D_BlockSizeOfGpuFormat) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A4BD20 has no discovered code blocks
-DEFINE_REX_FUNC(D3D_PatchVertexShaderToMatchPixelShader) {
-	REX_FUNC_PROLOGUE();
-}
-

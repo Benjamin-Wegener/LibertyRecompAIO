@@ -35014,33 +35014,3 @@ loc_82A06A54:
 	return;
 }
 
-// STUB: Function at 0x82A15060 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A15060) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A190B4 has no discovered code blocks
-DEFINE_REX_FUNC(XMemCpyStreaming_Unaligned_Writecombined_Helper) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A3A890 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A3A890) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A412D0 has no discovered code blocks
-DEFINE_REX_FUNC(D3D_MemAllocAligned) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A44B78 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A44B78) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A69308 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A69308) {
-	REX_FUNC_PROLOGUE();
-}
-

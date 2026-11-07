@@ -34482,23 +34482,3 @@ loc_82A07D64:
 	return;
 }
 
-// STUB: Function at 0x82A355E0 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A355E0) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A3EDA8 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A3EDA8) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A44850 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A44850) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A53340 has no discovered code blocks
-DEFINE_REX_FUNC(D3D_XBMAllocateFrameMemory) {
-	REX_FUNC_PROLOGUE();
-}
-

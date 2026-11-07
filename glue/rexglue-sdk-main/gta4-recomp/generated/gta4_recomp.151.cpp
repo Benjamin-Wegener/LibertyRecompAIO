@@ -35131,18 +35131,3 @@ loc_82A06DE4:
 	return;
 }
 
-// STUB: Function at 0x82A3F268 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A3F268) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A44970 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A44970) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A692C8 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A692C8) {
-	REX_FUNC_PROLOGUE();
-}
-

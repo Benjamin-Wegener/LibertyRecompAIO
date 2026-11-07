@@ -34769,23 +34769,3 @@ loc_82A072B8:
 	return;
 }
 
-// STUB: Function at 0x82A1A420 has no discovered code blocks
-DEFINE_REX_FUNC(RtlOutputDebugString) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A3CC68 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A3CC68) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A42930 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A42930) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A4A150 has no discovered code blocks
-DEFINE_REX_FUNC(D3DResource_GetType) {
-	REX_FUNC_PROLOGUE();
-}
-

@@ -35968,23 +35968,3 @@ loc_82A11D28:
 	return;
 }
 
-// STUB: Function at 0x82A3B540 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A3B540) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A413F8 has no discovered code blocks
-DEFINE_REX_FUNC(D3DDevice_Release) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A457B0 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A457B0) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A69328 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A69328) {
-	REX_FUNC_PROLOGUE();
-}
-

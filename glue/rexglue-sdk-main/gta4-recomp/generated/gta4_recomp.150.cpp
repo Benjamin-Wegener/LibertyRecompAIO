@@ -37074,13 +37074,3 @@ DEFINE_REX_FUNC(sub_829FABB0) {
 	return;
 }
 
-// STUB: Function at 0x82A46FB0 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A46FB0) {
-	REX_FUNC_PROLOGUE();
-}
-
-// STUB: Function at 0x82A69CC8 has no discovered code blocks
-DEFINE_REX_FUNC(sub_82A69CC8) {
-	REX_FUNC_PROLOGUE();
-}
-

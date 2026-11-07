@@ -6,6 +6,12 @@
 #include <cstdlib>
 #include <rex/logging.h>
 
+DEFINE_REX_FUNC(D3D_MemAllocAligned) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function D3D_MemAllocAligned called");
+	std::abort();
+}
+
 DEFINE_REX_FUNC(sub_82146BE8) {
 	REX_FUNC_PROLOGUE();
 	REXLOG_ERROR("PAL compat: missing function sub_82146BE8 called");
@@ -1890,6 +1896,12 @@ DEFINE_REX_FUNC(sub_82A02648) {
 	std::abort();
 }
 
+DEFINE_REX_FUNC(sub_82A15060) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A15060 called");
+	std::abort();
+}
+
 DEFINE_REX_FUNC(sub_82A153C0) {
 	REX_FUNC_PROLOGUE();
 	REXLOG_ERROR("PAL compat: missing function sub_82A153C0 called");
@@ -1905,6 +1917,24 @@ DEFINE_REX_FUNC(sub_82A21680) {
 DEFINE_REX_FUNC(sub_82A21700) {
 	REX_FUNC_PROLOGUE();
 	REXLOG_ERROR("PAL compat: missing function sub_82A21700 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A21BA8) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A21BA8 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A21BF0) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A21BF0 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_82A21F70) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_82A21F70 called");
 	std::abort();
 }
 
