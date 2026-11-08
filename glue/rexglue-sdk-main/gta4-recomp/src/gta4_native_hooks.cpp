@@ -6794,6 +6794,12 @@ extern "C" void sub_822E9FA8(PPCContext& ctx, uint8_t* base) {
 
 #ifndef GTA4_PAL_SAFE_MODE_RETARGETED  // PAL-retargeted, see tools/pal_retarget_hooks.py
 extern "C" void sub_822EA320(PPCContext& ctx, uint8_t* base) {
+  static uint32_t trace_count = 0;
+  if (trace_count++ < 10) {
+    REXLOG_WARN("sub_822EA320 [point-spot]: 0x82A35150={:02X} 5151={:02X} 5152={:02X} 5153={:02X}",
+                LoadU8(base, 0x82A35150), LoadU8(base, 0x82A35151),
+                LoadU8(base, 0x82A35152), LoadU8(base, 0x82A35153));
+  }
   ScopedNativeLightingExecution lighting_scope(
       base, 0x822EA320, RenderExecutionStage::kDeferredLighting, LightPassRole::kNone);
   ScopedNativeLocalLightLoop trace(NativeLocalLightLoopKind::kPointSpot, ctx, base);
@@ -6803,6 +6809,12 @@ extern "C" void sub_822EA320(PPCContext& ctx, uint8_t* base) {
 
 #ifndef GTA4_PAL_SAFE_MODE_RETARGETED  // PAL-retargeted, see tools/pal_retarget_hooks.py
 extern "C" void sub_822EDA58(PPCContext& ctx, uint8_t* base) {
+  static uint32_t trace_count = 0;
+  if (trace_count++ < 10) {
+    REXLOG_WARN("sub_822EDA58 [shaft]: 0x82A35150={:02X} 5151={:02X} 5152={:02X} 5153={:02X}",
+                LoadU8(base, 0x82A35150), LoadU8(base, 0x82A35151),
+                LoadU8(base, 0x82A35152), LoadU8(base, 0x82A35153));
+  }
   ScopedNativeLightingExecution lighting_scope(
       base, 0x822EDA58, RenderExecutionStage::kDeferredLighting, LightPassRole::kNone);
   ScopedNativeLocalLightLoop trace(NativeLocalLightLoopKind::kShaft, ctx, base);
@@ -6829,13 +6841,13 @@ extern "C" void sub_824A0298(PPCContext& ctx, uint8_t* base) {
 }
 #endif  // GTA4_PAL_SAFE_MODE sub_824F7328
 
-#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
-extern "C" void sub_827A9A20(PPCContext& ctx, uint8_t* base) {
+#ifndef GTA4_PAL_SAFE_MODE_RETARGETED  // PAL-retargeted, see tools/pal_retarget_hooks.py
+extern "C" void sub_82747950(PPCContext& ctx, uint8_t* base) {
   const bool trace = IsNativeMode() && IsNativeLightLoopTraceEnabled();
   const uint32_t caller = uint32_t(ctx.lr);
-  __imp__sub_827A9A20(ctx, base);
+  __imp__sub_82747950(ctx, base);
   if (trace && !ctx.r3.u32) {
-    // 0x822B104C stores the optional cookie in r18 and continues at 0x822B1058.
+    // 0x822EA464 stores the optional cookie in r18 and continues at 0x822EA470.
     // This result does not reject the local-light record.
     const NativeLocalLightTechniqueSite site = ResolveNativeLocalLightBranchSite(base, ctx, caller);
     if (site.kind != NativeLocalLightLoopKind::kNone && site.instance) {
