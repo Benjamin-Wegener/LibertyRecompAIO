@@ -150,7 +150,12 @@ class Gta4NativeGraphicsSystem final : public system::IGraphicsSystem {
   };
 
   struct NativeVertexInput {
+    // The Xenos semantic id (usage/usage index): matches a vertex declaration element.
     uint32_t location = 0;
+    // The Vulkan input location the shader module declares. Equal to `location` unless the
+    // device's maxVertexInputAttributes is below the highest semantic id (16 on many Adreno
+    // and other drivers); then the module's inputs are renumbered densely.
+    uint32_t slot = 0;
     NativeVertexNumericType numeric_type = NativeVertexNumericType::kFloat;
     uint32_t component_count = 0;
 
