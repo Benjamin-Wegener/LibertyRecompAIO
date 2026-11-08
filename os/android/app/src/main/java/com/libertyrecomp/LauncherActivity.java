@@ -660,13 +660,13 @@ public class LauncherActivity extends Activity {
     }
 
     // Graphics settings: one dropdown per setting, saved to graphics.txt, which
-    // LibertyActivity appends after args.txt. "Default" writes nothing, so the
-    // value from args.txt applies.
+    // LibertyActivity appends after args.txt. The default choice writes nothing,
+    // so the value from args.txt applies.
     private static final class GraphicsSetting {
         final String label;
         final String note;
         final String[] cvars;    // every cvar this setting writes (density writes four)
-        final String[] choices;  // shown in the dropdown; index 0 is "Default"
+        final String[] choices;  // shown in the dropdown; index 0 is the default
         final String[] values;   // values for choices 1..n
         GraphicsSetting(String label, String note, String[] cvars, String[] choices, String[] values) {
             this.label = label;
@@ -678,99 +678,93 @@ public class LauncherActivity extends Activity {
     }
 
     private static final GraphicsSetting[] GRAPHICS_SETTINGS = {
-            new GraphicsSetting("Intro logos", "Skip the Rockstar and partner logo videos at start",
+            new GraphicsSetting("Intro logos", "Rockstar and partner logo videos at start",
                     new String[] {"gta4_skip_intro"},
-                    new String[] {"Default", "Show", "Skip"},
-                    new String[] {"false", "true"}),
+                    new String[] {"Show (Default)", "Skip"},
+                    new String[] {"true"}),
             new GraphicsSetting("Resolution", "Lower is faster",
                     new String[] {"gta4_output_height_cap"},
-                    new String[] {"Default", "540p", "720p", "900p", "1080p", "Screen resolution"},
-                    new String[] {"540", "720", "900", "1080", "0"}),
+                    new String[] {"Screen resolution (Default)", "480p", "540p", "720p", "900p", "1080p"},
+                    new String[] {"480", "540", "720", "900", "1080"}),
             new GraphicsSetting("Upscaler", "FSR 1 renders below the resolution and sharpens",
                     new String[] {"gta4_native_upscaler"},
-                    new String[] {"Default", "Off", "FSR 1"},
-                    new String[] {"native", "fsr1"}),
+                    new String[] {"Off (Default)", "FSR 1"},
+                    new String[] {"fsr1"}),
             new GraphicsSetting("FSR 1 quality", "Only used with the FSR 1 upscaler",
                     new String[] {"gta4_fsr1_quality"},
-                    new String[] {"Default", "Ultra quality", "Quality", "Balanced", "Performance"},
-                    new String[] {"ultra_quality", "quality", "balanced", "performance"}),
+                    new String[] {"Quality (Default)", "Ultra quality", "Balanced", "Performance"},
+                    new String[] {"ultra_quality", "balanced", "performance"}),
             new GraphicsSetting("Anti-aliasing", "Smooths jagged edges",
                     new String[] {"gta4_native_anti_aliasing"},
-                    new String[] {"Default", "Off", "FXAA", "SMAA"},
-                    new String[] {"off", "fxaa", "smaa"}),
+                    new String[] {"FXAA (Default)", "Off", "SMAA"},
+                    new String[] {"off", "smaa"}),
             new GraphicsSetting("Frame limit", "30 is the steadiest on most phones",
                     new String[] {"gta4_frame_limit"},
-                    new String[] {"Default", "30 FPS", "40 FPS", "60 FPS", "Unlocked"},
-                    new String[] {"30", "40", "60", "0"}),
+                    new String[] {"30 FPS (Default)", "40 FPS", "60 FPS", "Unlocked"},
+                    new String[] {"40", "60", "0"}),
             new GraphicsSetting("Draw distance", "Mostly costs CPU time",
                     new String[] {"gta4_draw_distance_scale"},
-                    new String[] {"Default", "60%", "80%", "100% (console)", "120%"},
-                    new String[] {"0.6", "0.8", "1.0", "1.2"}),
+                    new String[] {"100% / Console (Default)", "60%", "80%", "120%"},
+                    new String[] {"0.6", "0.8", "1.2"}),
             new GraphicsSetting("Population density", "Cars and pedestrians; mostly costs CPU time",
                     new String[] {"gta4_traffic_density_scale", "gta4_parked_car_density_scale",
                             "gta4_ped_density_scale", "gta4_scenario_ped_density_scale"},
-                    new String[] {"Default", "Very low (20%)", "Low (30%)", "Medium (40%)",
+                    new String[] {"Medium / 40% (Default)", "Very low (20%)", "Low (30%)",
                             "High (70%)", "Console (100%)"},
-                    new String[] {"0.2", "0.3", "0.4", "0.7", "1.0"}),
+                    new String[] {"0.2", "0.3", "0.7", "1.0"}),
             new GraphicsSetting("Shadow quality", "High is sharper and costs some GPU time",
                     new String[] {"gta4_shadow_map_base_size"},
-                    new String[] {"Default", "Console", "High"},
-                    new String[] {"256", "512"}),
+                    new String[] {"Console (Default)", "High"},
+                    new String[] {"512"}),
             new GraphicsSetting("Motion blur", "Makes 30 FPS look smoother",
                     new String[] {"gta4_motion_blur"},
-                    new String[] {"Default", "On", "Off"},
-                    new String[] {"true", "false"}),
+                    new String[] {"Off (Default)", "On"},
+                    new String[] {"true"}),
             new GraphicsSetting("Reflection anti-aliasing", "Off saves GPU time",
                     new String[] {"gta4_reflection_aa"},
-                    new String[] {"Default", "Off", "Original"},
-                    new String[] {"off", "original"}),
+                    new String[] {"Original (Default)", "Off"},
+                    new String[] {"off"}),
             new GraphicsSetting("Run-ahead frames", "More can raise FPS but adds input delay",
                     new String[] {"gta4_extra_frames_in_flight"},
-                    new String[] {"Default", "0", "1", "2"},
-                    new String[] {"0", "1", "2"}),
+                    new String[] {"0 (Default)", "1", "2"},
+                    new String[] {"1", "2"}),
             new GraphicsSetting("CPU boost",
-                    "How hard the game asks Android for CPU speed. Steady keeps the clocks up "
-                            + "(fewer drops, a little warmer); Battery saves power",
+                    "How hard the game asks Android for CPU speed. Steady keeps the clocks up; Battery saves power",
                     new String[] {"android_performance_hint_target_ms"},
-                    new String[] {"Default", "Maximum", "Steady", "Balanced", "Battery"},
-                    new String[] {"20", "25", "30", "33"}),
+                    new String[] {"Steady (Default)", "Maximum", "Balanced", "Battery"},
+                    new String[] {"20", "30", "33"}),
             new GraphicsSetting("64-bit shader fallback",
-                    "Used automatically on GPUs without shaderInt64. Force it on to test it on "
-                            + "a GPU that has it: the game should look and run the same",
+                    "Used automatically on GPUs without shaderInt64",
                     new String[] {"vulkan_force_int64_lowering"},
-                    new String[] {"Default", "Force on (test)", "Off"},
-                    new String[] {"true", "false"}),
+                    new String[] {"Off (Default)", "Force on (test)"},
+                    new String[] {"true"}),
             new GraphicsSetting("Thread waiting",
-                    "How long busy game threads wait on each other before giving up the CPU. "
-                            + "Shorter can mean less heat, longer can mean smoother handoffs",
+                    "How long busy game threads wait on each other before giving up the CPU",
                     new String[] {"kernel_spinlock_spins"},
-                    new String[] {"Default", "Minimal", "Short", "Normal", "Long"},
-                    new String[] {"4", "16", "64", "256"}),
+                    new String[] {"Minimal (Default)", "Short", "Normal", "Long"},
+                    new String[] {"16", "64", "256"}),
             new GraphicsSetting("Heat guard",
-                    "Lowers the draw distance a little before the phone overheats and restores "
-                            + "it once it cools, for steadier clocks instead of throttling",
+                    "Lowers draw distance slightly before overheating to prevent severe thermal throttling",
                     new String[] {"android_thermal_guard"},
-                    new String[] {"Default", "On", "Off"},
-                    new String[] {"true", "false"}),
+                    new String[] {"On (Default)", "Off"},
+                    new String[] {"false"}),
             new GraphicsSetting("Touch controls",
-                    "Liberty: icon buttons that change on foot, driving, on the phone and in "
-                            + "menus; hold PAUSE in game for 1.5 s to move them. Xbox controller: "
-                            + "a classic gamepad. Switch any time with the button at the top",
+                    "Liberty: adaptive touch buttons. Xbox controller: classic gamepad",
                     new String[] {"gta4_touch_layout"},
-                    new String[] {"Default", "Liberty", "Xbox controller"},
-                    new String[] {"liberty", "gamepad"}),
-            new GraphicsSetting("Button labels", "Text under the Liberty buttons (off by default)",
+                    new String[] {"Liberty (Default)", "Xbox controller"},
+                    new String[] {"gamepad"}),
+            new GraphicsSetting("Button labels", "Text under the Liberty buttons",
                     new String[] {"gta4_touch_labels"},
-                    new String[] {"Default", "On", "Off"},
-                    new String[] {"true", "false"}),
+                    new String[] {"Off (Default)", "On"},
+                    new String[] {"true"}),
             new GraphicsSetting("Button size", "Liberty and Xbox controller",
                     new String[] {"gta4_touch_gamepad_scale"},
-                    new String[] {"Default", "Small", "Normal", "Large", "Extra large"},
-                    new String[] {"0.85", "1.0", "1.15", "1.3"}),
+                    new String[] {"Normal (Default)", "Small", "Large", "Extra large"},
+                    new String[] {"0.85", "1.15", "1.3"}),
             new GraphicsSetting("Button opacity", "Liberty and Xbox controller",
                     new String[] {"gta4_touch_gamepad_opacity"},
-                    new String[] {"Default", "Faint", "Light", "Normal", "Strong"},
-                    new String[] {"0.4", "0.7", "1.0", "1.5"}),
+                    new String[] {"Normal (Default)", "Faint", "Light", "Strong"},
+                    new String[] {"0.4", "0.7", "1.5"}),
     };
     private final Selector[] mGraphicsSpinners = new Selector[GRAPHICS_SETTINGS.length];
     // Last known selection per dropdown, so only real changes mark the
@@ -783,8 +777,7 @@ public class LauncherActivity extends Activity {
         card.setOrientation(LinearLayout.VERTICAL);
         card.setPadding(dp(22), dp(18), dp(22), dp(18));
         card.addView(heading("GRAPHICS & CONTROLS", 22));
-        card.addView(text("\"Default\" keeps the value from args.txt. Press Save changes, then "
-                + "Play.", 12, R.color.picker_muted), matchWrap(dp(2)));
+        card.addView(text("Press Save changes, then Play.", 12, R.color.picker_muted), matchWrap(dp(2)));
 
         // Tabs like GTA IV's pause menu: Display, Performance, Touch.
         String[] tabNames = {"Display", "Performance", "Touch"};
@@ -862,7 +855,7 @@ public class LauncherActivity extends Activity {
                 mGraphicsPositions[i] = 0;
             }
             markSettingsChanged();
-            toast("Graphics settings set to Default - press Save changes");
+            toast("Graphics settings reset to default – press Save changes");
         });
         LinearLayout.LayoutParams resetParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, dp(48));
