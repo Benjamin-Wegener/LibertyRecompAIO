@@ -51,6 +51,27 @@ import java.util.Locale;
  */
 public class LibertyActivity extends SDLActivity {
 
+    /**
+     * Liberty Recomp AIO ships two recompiled executables: libmain.so (European
+     * disc) and libmain_usa.so (USA disc + Title Update 8). The installer writes
+     * which one belongs to the installed game into LibertyRecomp/region.
+     */
+    @Override
+    protected String[] getLibraries() {
+        String region = null;
+        try {
+            File external = getExternalFilesDir(null);
+            File base = external != null ? external : getFilesDir();
+            region = readFirstLine(new File(base, "LibertyRecomp/region"));
+        } catch (RuntimeException e) {
+            Log.w(TAG, "region file unreadable", e);
+        }
+        boolean usa = region != null && region.trim().equalsIgnoreCase("usa");
+        Log.i(TAG, "game region " + (usa ? "usa -> libmain_usa.so" : "pal -> libmain.so"));
+        return new String[] {"SDL3", usa ? "main_usa" : "main"};
+    }
+
+
     private static final String TAG = "LibertyRecomp";
     private static final String RESOURCES = "Resources";
     private static final String RESOURCES_STAMP = ".stamp";

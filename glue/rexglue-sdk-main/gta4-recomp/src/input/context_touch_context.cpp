@@ -220,7 +220,7 @@ void ReadVehicleEntry(const Reader& read, uint32_t ped, TouchContextQueries quer
                       TouchContextSnapshot& out) noexcept {
   if (!queries.vehicle_player_would_enter || !out.gameplay_allowed ||
       out.base_mode != ContextTouchMode::kOnFoot) return;
-  // sub_8223ADB8 uses CPed +544 for the native preferred vehicle and rejects
+  // sub_822FFE68 uses CPed +544 for the native preferred vehicle and rejects
   // flag 0x40000 at +568. Its script caller sub_8257AAD8 passes the ped's
   // transform +16, matching the normal forward vector in sub_823CCBC8.
   const auto flags = read.U32(ped, 568), info = read.U32(ped, 544);
@@ -324,7 +324,7 @@ uint32_t QueryVehicleEntry(void* opaque, uint32_t ped, uint32_t forward) {
   nested.r3.u64 = ped;
   nested.r4.u64 = forward;
   nested.r5.u64 = 0;
-  __imp__sub_8223ADB8(nested, query.base);
+  __imp__sub_822FFE68(nested, query.base);
   return nested.r3.u32;
 }
 void CaptureAliased(PPCContext& context, uint8_t* base) {

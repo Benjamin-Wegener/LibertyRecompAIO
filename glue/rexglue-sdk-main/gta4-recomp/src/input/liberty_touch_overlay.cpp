@@ -2,6 +2,7 @@
 // player is doing (on foot, driving, phone, menus), drawn in a GTA-style HUD
 // look, sent to the title as an Xbox 360 pad. Every control can be moved:
 // hold Pause for 1.5 s to edit, drag, tap Pause to save.
+#include "../gta4_presentation_options.h"
 #include "input/liberty_touch_overlay.h"
 
 #include <algorithm>
@@ -251,6 +252,8 @@ Screen CurrentScreen(bool forced_menu, bool pause_flag_verified, uint32_t* logge
   // Menus first: while a menu is open the player facts are often not
   // readable, so "not valid" must not hide (or replace) the menu controls.
   if (context.frontend || context.map) return Screen::kMenu;
+  // Intro logo screens: show the cutscene layout so they can be skipped by touch.
+  if (gta4::presentation::IntroScreensActive()) return Screen::kCutscene;
   // Boot, legal and loading screens: no controls until the game is running.
   if (!context.valid || context.loading) return Screen::kHidden;
   if (context.cutscene) return Screen::kCutscene;

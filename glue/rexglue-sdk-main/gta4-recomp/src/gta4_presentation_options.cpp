@@ -22,6 +22,7 @@ REXCVAR_DEFINE_BOOL(gta4_trace_presentation_options, false, "GTA IV/Diagnostics"
 namespace gta4::presentation {
 namespace {
 std::atomic<bool> skip_intro{false};
+std::atomic<bool> intro_screens{false};
 std::atomic<bool> disable_grain{false};
 std::atomic<bool> motion_blur{true};
 std::atomic<bool> trace{false};
@@ -58,6 +59,12 @@ void InitializeOptions() {
               std::memory_order_relaxed);
 }
 
+void PublishIntroScreens(bool active) noexcept {
+  intro_screens.store(active, std::memory_order_relaxed);
+}
+bool IntroScreensActive() noexcept {
+  return intro_screens.load(std::memory_order_relaxed);
+}
 bool SkipIntroAtLaunch() noexcept {
   return skip_intro.load(std::memory_order_relaxed);
 }

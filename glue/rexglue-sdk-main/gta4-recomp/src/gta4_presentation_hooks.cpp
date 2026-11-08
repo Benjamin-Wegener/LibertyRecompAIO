@@ -169,10 +169,37 @@ extern "C" void sub_82124080(PPCContext& ctx, uint8_t* base) {
 }
 #endif  // GTA4_PAL_SAFE_MODE sub_82145420
 
+// Intro logo screens (touch overlay skip button): the cold-start parse gives
+// the index where the intro ends; each screen advance publishes whether one of
+// the intro screens is showing.
+std::atomic<uint32_t> g_intro_end{0};
+
+void PublishIntroScreenState(uint8_t* base) {
+  const uint32_t end = g_intro_end.load(std::memory_order_relaxed);
+  bool active = false;
+  if (end && GuestSpan(base, kActive, 1) && GuestSpan(base, kCurrentScreen, sizeof(uint32_t)))
+    active = REX_LOAD_U8(kActive) != 0 && REX_LOAD_U32(kCurrentScreen) < end;
+  gta4::presentation::PublishIntroScreens(active);
+}
+
+void RememberIntroScreens(uint8_t* base) {
+  if (!GuestSpan(base, kScreenCount, sizeof(uint32_t))) return;
+  const uint32_t count = REX_LOAD_U32(kScreenCount);
+  if (!count || count > policy::kMaxScreens ||
+      !GuestSpan(base, kDefinitions, std::size_t{count} * policy::kScreenStride)) return;
+  std::span<const uint8_t> table(base + kDefinitions, std::size_t{count} * policy::kScreenStride);
+  const auto plan = policy::PlanIntro(table, count, true);
+  g_intro_end.store(plan.status == policy::IntroStatus::kReady ? plan.end_intro_index : 0,
+                    std::memory_order_relaxed);
+  PublishIntroScreenState(base);
+}
+
 #ifndef GTA4_PAL_SAFE_MODE_RETARGETED  // PAL-retargeted, see tools/pal_retarget_hooks.py
 extern "C" void sub_82124540(PPCContext& ctx, uint8_t* base) {
-  const bool apply = cold_parser_scope && ctx.lr == policy::kParserCaller;
+  const bool cold_parse = ctx.lr == policy::kParserCaller;
+  const bool apply = cold_parser_scope && cold_parse;
   __imp__sub_82124540(ctx, base);
+  if (cold_parse) RememberIntroScreens(base);
   if (!apply)
     return;
   if (!GuestSpan(base, kScreenCount, sizeof(uint32_t)))
@@ -213,6 +240,7 @@ extern "C" void sub_82124540(PPCContext& ctx, uint8_t* base) {
 extern "C" void sub_82123E20(PPCContext& ctx, uint8_t* base) {
   const uint32_t caller = ctx.lr;
   __imp__sub_82123E20(ctx, base);
+  PublishIntroScreenState(base);
   TraceStartup(base, "screen-advanced", caller);
 }
 #endif  // GTA4_PAL_SAFE_MODE sub_82144708

@@ -85,7 +85,8 @@ public class LauncherActivity extends Activity {
     private static final int SOURCE_TLAD = 2;
     private static final int SOURCE_TBOGT = 3;
     private static final String[] SOURCE_LABELS = {
-            "Base game (disc image .iso)", "Title Update 8", "The Lost and Damned (optional)",
+            "Base game (disc image .iso, USA or Europe)", "Title Update 8 (USA disc only)",
+            "The Lost and Damned (optional)",
             "The Ballad of Gay Tony (optional)"};
 
     private File mDataRoot;
@@ -454,7 +455,7 @@ public class LauncherActivity extends Activity {
         panel.addView(text("Liberty Recomp AIO: GTA IV (Xbox 360) running natively through "
                 + "static recompilation, one APK for every GPU (Adreno with the bundled Turnip, "
                 + "Mali/Immortalis, Xclipse, PowerVR and others with the system Vulkan driver), "
-                + "European (PAL) disc. Based on Liberty Recompiled and the ReXGlue SDK, "
+                + "USA (with Title Update 8) and European (PAL) discs. Based on Liberty Recompiled and the ReXGlue SDK, "
                 + "the Android port by vaduur and the Mali Edition by prollynotzjay.",
                 13, R.color.picker_muted), matchWrap(dp(8)));
         panel.addView(text("The debug log is saved to Android/data/" + getPackageName()
@@ -581,8 +582,8 @@ public class LauncherActivity extends Activity {
             if (disc) {
                 mStatus.setText("Game files found in install/. Press Install on the right.");
             } else {
-                mStatus.setText("Game not installed. Choose the disc image on the right and "
-                        + "press Install.");
+                mStatus.setText("Game not installed. Choose the disc image (and Title Update 8 "
+                        + "for a USA disc) on the right and press Install.");
             }
         }
         String result = null;
@@ -1265,11 +1266,6 @@ public class LauncherActivity extends Activity {
         mInstallBody.addView(mSourceRows, matchWrap(0));
         for (int i = 0; i < SOURCE_LABELS.length; ++i) {
             final int index = i;
-            if (i == SOURCE_UPDATE) {
-                // PAL: the European disc has no Title Update 8; the row is not shown.
-                mSourceValues[i] = text("Not selected", 12, R.color.picker_muted);
-                continue;
-            }
             TextView label = text(SOURCE_LABELS[i], 14, R.color.picker_text);
             mSourceRows.addView(label, matchWrap(dp(12)));
             mSourceValues[i] = text("Not selected", 12, R.color.picker_muted);
@@ -1351,7 +1347,8 @@ public class LauncherActivity extends Activity {
         mInstallTitle.setText(mInstalled ? "Game installed" : "Install the game");
         mInstallNote.setText(mInstalled
                 ? "GTA IV is installed and ready."
-                : "You need your own European (PAL) disc image of GTA IV."
+                : "You need your own GTA IV disc image: Europe (PAL), or USA with Title Update 8 "
+                        + "(0.0.8.5)."
                         + (reason != null && !reason.equals("not installed")
                         && new File(Installer.installRoot(mDataRoot), "game").exists()
                         ? "\nCurrent installation: " + reason : ""));
