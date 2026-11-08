@@ -17,21 +17,31 @@ be changed under **Driver** on the launcher.
 
 ## Game version
 
-This build runs the **European (PAL) disc** (`default.xex` 0.0.0.6, no title update needed).
-USA disc support (1.00 + Title Update 8) side by side with PAL is planned.
+Both discs are supported; the installer detects the region:
 
-You need your own copy of the game as a disc image (`.iso`). Copy it to the phone, open the app,
-choose it under **Game Files** and press **Install**.
+| Disc | Needs | Executable |
+|---|---|---|
+| USA | Title Update 8 (0.0.8.5) | `libmain_usa.so` - the unmodified upstream recompilation |
+| Europe (PAL) | nothing else | `libmain.so` - PAL recompilation ([docs/PAL.md](docs/PAL.md)) |
 
-## Status (PAL)
+You need your own copy of the game as a disc image (`.iso`), plus Title Update 8 for the USA disc.
+Copy them to the phone, open the app, choose them under **Game Files** and press **Install**. The
+installer writes the region to `LibertyRecomp/region`, and the launcher loads the matching
+executable.
+
+Building: the normal build produces the PAL `libmain.so`; `tools/aio/build_usa_lib.sh` builds
+`libmain_usa.so` from the first commit of this repository (the upstream state) and puts it next to
+it in `jniLibs`.
+
+## Status
 
 | Area | State |
 |---|---|
-| Install, boot, menus, settings | works |
+| Install, boot, menus, settings | works (PAL tested; USA uses the upstream code, untested here) |
 | 3D, cutscenes, driving | works |
 | Gamepad (USB) and touch controls | work |
-| Vehicle headlights on walls/ground | missing (under investigation) |
-| Skip intro logos | in progress |
+| Skip button on the intro logos (touch) | works |
+| Vehicle headlights on walls/ground | missing (PAL, under investigation) |
 | Savegame export/import | planned |
 
 ## How PAL support works
