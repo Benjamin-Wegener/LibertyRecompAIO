@@ -182,6 +182,17 @@ void PublishIntroScreenState(uint8_t* base) {
   gta4::presentation::PublishIntroScreens(active);
 }
 
+void SkipIntroScreensNow(uint8_t* base) {
+  if (!GuestSpan(base, kScreenCount, sizeof(uint32_t))) return;
+  const uint32_t count = REX_LOAD_U32(kScreenCount);
+  if (!count || count > policy::kMaxScreens ||
+      !GuestSpan(base, kDefinitions, std::size_t{count} * policy::kScreenStride, true)) return;
+  std::span<uint8_t> table(base + kDefinitions, std::size_t{count} * policy::kScreenStride);
+  const auto plan = policy::CollapseIntro(table, count, true);
+  REXLOG_INFO("gta4-presentation: point=touch-skip status={} prefix={} end-intro={}",
+              int(plan.status), plan.prefix_count, plan.end_intro_index);
+}
+
 void RememberIntroScreens(uint8_t* base) {
   if (!GuestSpan(base, kScreenCount, sizeof(uint32_t))) return;
   const uint32_t count = REX_LOAD_U32(kScreenCount);
@@ -304,3 +315,7 @@ extern "C" void sub_822E26C0(PPCContext& ctx, uint8_t* base) {
   __imp__sub_822E26C0(ctx, base);
 }
 #endif  // GTA4_PAL_SAFE_MODE sub_822CF300
+
+void gta4::presentation::SkipIntroNow(unsigned char* base) noexcept {
+  if (IntroScreensActive()) SkipIntroScreensNow(base);
+}

@@ -23,6 +23,7 @@ namespace gta4::presentation {
 namespace {
 std::atomic<bool> skip_intro{false};
 std::atomic<bool> intro_screens{false};
+std::atomic<bool> intro_skip_request{false};
 std::atomic<bool> disable_grain{false};
 std::atomic<bool> motion_blur{true};
 std::atomic<bool> trace{false};
@@ -61,6 +62,12 @@ void InitializeOptions() {
 
 void PublishIntroScreens(bool active) noexcept {
   intro_screens.store(active, std::memory_order_relaxed);
+}
+void RequestIntroSkip() noexcept {
+  intro_skip_request.store(true, std::memory_order_relaxed);
+}
+bool ConsumeIntroSkipRequest() noexcept {
+  return intro_skip_request.exchange(false, std::memory_order_relaxed);
 }
 bool IntroScreensActive() noexcept {
   return intro_screens.load(std::memory_order_relaxed);

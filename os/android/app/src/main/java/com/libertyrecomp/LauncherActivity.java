@@ -74,6 +74,8 @@ public class LauncherActivity extends Activity {
 
     private static final String TAG = "LibertyLauncher";
     private static final int REQUEST_DRIVER_ZIP = 1;
+    private static final int REQUEST_SAVES_EXPORT = 20;
+    private static final int REQUEST_SAVES_IMPORT = 21;
     private static final String GAME_PROCESS_SUFFIX = ":game";
     /** Largest driver package accepted, unpacked. */
     private static final long MAX_DRIVER_BYTES = 256L * 1024 * 1024;
@@ -1313,7 +1315,129 @@ public class LauncherActivity extends Activity {
                 + "Android/data/" + getPackageName() + "/files/install/ - they are picked up "
                 + "automatically.", 12, R.color.picker_muted), matchWrap(dp(10)));
         card.addView(mInstallBody, matchWrap(0));
+
+        // Savegames: export/import as a zip, outside the app folder (Android deletes
+        // Android/data/<package> on uninstall).
+        TextView savesTitle = text("Savegames", 16, R.color.picker_text);
+        savesTitle.setTypeface(mFontBlack != null ? mFontBlack : Typeface.DEFAULT_BOLD);
+        card.addView(savesTitle, matchWrap(dp(16)));
+        card.addView(text("Back up your savegames as a zip (e.g. to Downloads or Google Drive), "
+                + "move them to another device or restore them. Importing keeps a backup of the "
+                + "current savegames.", 12, R.color.picker_muted), matchWrap(dp(2)));
+        LinearLayout savesRow = new LinearLayout(this);
+        savesRow.setOrientation(LinearLayout.HORIZONTAL);
+        Button exportSaves = button("Export savegames...", false);
+        exportSaves.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("application/zip");
+            intent.putExtra(Intent.EXTRA_TITLE, "LibertyRecompAIO-saves-"
+                    + new java.text.SimpleDateFormat("yyyyMMdd-HHmm", Locale.ROOT)
+                            .format(new java.util.Date()) + ".zip");
+            startActivityForResult(intent, REQUEST_SAVES_EXPORT);
+        });
+        savesRow.addView(exportSaves, new LinearLayout.LayoutParams(0, dp(44), 1f));
+        Button importSaves = button("Import savegames...", false);
+        importSaves.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("*/*");
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[] {"application/zip",
+                    "application/x-zip-compressed", "application/octet-stream"});
+            startActivityForResult(intent, REQUEST_SAVES_IMPORT);
+        });
+        LinearLayout.LayoutParams importParams = new LinearLayout.LayoutParams(0, dp(44), 1f);
+        importParams.leftMargin = dp(10);
+        savesRow.addView(importSaves, importParams);
+        card.addView(savesRow, matchWrap(dp(8)));
         return card;
+    }
+
+    private File savesRoot() {
+        return new File(new File(mDataRoot, "LibertyRecomp"), "saves");
+    }
+
+    /** Writes every file under the savegame folder into a zip (paths relative to saves/). */
+    private int exportSaves(Uri uri) throws IOException {
+        File root = savesRoot();
+        List<File> files = new ArrayList<>();
+        collectFiles(root, files);
+        if (files.isEmpty()) throw new IOException("there are no savegames yet");
+        int count = 0;
+        try (OutputStream raw = getContentResolver().openOutputStream(uri, "w")) {
+            if (raw == null) throw new IOException("the file could not be created");
+            try (java.util.zip.ZipOutputStream zip = new java.util.zip.ZipOutputStream(raw)) {
+                byte[] buffer = new byte[1 << 16];
+                String base = root.getCanonicalPath() + File.separator;
+                for (File file : files) {
+                    String name = file.getCanonicalPath().substring(base.length())
+                            .replace(File.separatorChar, '/');
+                    zip.putNextEntry(new ZipEntry("saves/" + name));
+                    try (InputStream in = new java.io.FileInputStream(file)) {
+                        int n;
+                        while ((n = in.read(buffer)) > 0) zip.write(buffer, 0, n);
+                    }
+                    zip.closeEntry();
+                    ++count;
+                }
+            }
+        }
+        return count;
+    }
+
+    /** Restores a zip written by exportSaves; the current savegames are kept as a backup. */
+    private int importSaves(Uri uri) throws IOException {
+        File root = savesRoot();
+        File parent = root.getParentFile();
+        File staging = new File(parent, "saves.import");
+        deleteRecursively(staging);
+        if (!staging.mkdirs()) throw new IOException("cannot create " + staging);
+        int count = 0;
+        String stagingPath = staging.getCanonicalPath() + File.separator;
+        try (InputStream raw = getContentResolver().openInputStream(uri)) {
+            if (raw == null) throw new IOException("the file could not be opened");
+            try (ZipInputStream zip = new ZipInputStream(raw)) {
+                ZipEntry entry;
+                byte[] buffer = new byte[1 << 16];
+                while ((entry = zip.getNextEntry()) != null) {
+                    if (entry.isDirectory()) continue;
+                    String name = entry.getName();
+                    if (name.startsWith("saves/")) name = name.substring("saves/".length());
+                    File out = new File(staging, name);
+                    if (!out.getCanonicalPath().startsWith(stagingPath)) {
+                        throw new IOException("invalid path in the zip: " + entry.getName());
+                    }
+                    File dir = out.getParentFile();
+                    if (dir != null && !dir.isDirectory() && !dir.mkdirs()) {
+                        throw new IOException("cannot create " + dir);
+                    }
+                    try (OutputStream o = new FileOutputStream(out)) {
+                        int n;
+                        while ((n = zip.read(buffer)) > 0) o.write(buffer, 0, n);
+                    }
+                    ++count;
+                }
+            }
+        }
+        if (count == 0) {
+            deleteRecursively(staging);
+            throw new IOException("the zip contains no savegames");
+        }
+        if (root.exists()) {
+            File backup = new File(parent, "saves.backup-" + System.currentTimeMillis());
+            if (!root.renameTo(backup)) throw new IOException("cannot back up " + root);
+        }
+        if (!staging.renameTo(root)) throw new IOException("cannot move the savegames into place");
+        return count;
+    }
+
+    private static void collectFiles(File dir, List<File> out) {
+        File[] children = dir.listFiles();
+        if (children == null) return;
+        for (File child : children) {
+            if (child.isDirectory()) collectFiles(child, out);
+            else if (child.isFile()) out.add(child);
+        }
     }
 
     /** Re-reads the installation state and the install/ folder, then redraws. */
@@ -1655,6 +1779,29 @@ public class LauncherActivity extends Activity {
             if (resultCode == RESULT_OK && data != null) {
                 onSourcePicked(requestCode - REQUEST_SOURCE, data.getData());
             }
+            return;
+        }
+        if ((requestCode == REQUEST_SAVES_EXPORT || requestCode == REQUEST_SAVES_IMPORT)) {
+            if (resultCode != RESULT_OK || data == null || data.getData() == null) return;
+            final Uri savesUri = data.getData();
+            final boolean export = requestCode == REQUEST_SAVES_EXPORT;
+            setBusy(true, export ? "Exporting savegames..." : "Importing savegames...");
+            new Thread(() -> {
+                String message;
+                try {
+                    int n = export ? exportSaves(savesUri) : importSaves(savesUri);
+                    message = (export ? "Exported " : "Imported ") + n + " savegame file"
+                            + (n == 1 ? "" : "s") + ".";
+                } catch (IOException | RuntimeException e) {
+                    Log.e(TAG, "savegame " + (export ? "export" : "import") + " failed", e);
+                    message = (export ? "Export" : "Import") + " failed: " + e.getMessage();
+                }
+                final String finalMessage = message;
+                mMain.post(() -> {
+                    setBusy(false, null);
+                    toast(finalMessage);
+                });
+            }, "Savegames").start();
             return;
         }
         if (requestCode != REQUEST_DRIVER_ZIP || resultCode != RESULT_OK || data == null

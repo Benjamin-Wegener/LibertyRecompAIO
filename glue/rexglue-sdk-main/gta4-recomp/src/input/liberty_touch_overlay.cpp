@@ -976,7 +976,10 @@ bool UpdateAndDrawLibertyTouchOverlay(ImDrawList* draw, ImFont* font, float font
   bool skip_held = false;
   for (size_t i = 0; i < s.placed.size(); ++i)
     if (std::string_view(s.placed[i].spec->id) == "skip" && s.held[i]) skip_held = true;
-  if (skip_held && !s.skip_was_held && !s.editing) s.skip_pulse_until = now + std::chrono::milliseconds(150);
+  if (skip_held && !s.skip_was_held && !s.editing) {
+    s.skip_pulse_until = now + std::chrono::milliseconds(150);
+    if (gta4::presentation::IntroScreensActive()) gta4::presentation::RequestIntroSkip();
+  }
   s.skip_was_held = skip_held;
   // RESUME (menu screen): Start closes the pause menu; leave the forced menu.
   bool resume_held = false;
