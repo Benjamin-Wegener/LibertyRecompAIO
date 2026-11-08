@@ -190,14 +190,20 @@ public class LauncherActivity extends Activity {
         LinearLayout wrapper = new LinearLayout(this);
         wrapper.setOrientation(LinearLayout.HORIZONTAL);
         wrapper.setGravity(Gravity.CENTER);
-        wrapper.addView(githubLink("vaduur", "https://github.com/vaduur/LibertyRecompAndroid"),
+        wrapper.addView(githubLink("Liberty Recomp AIO",
+                        "https://github.com/Benjamin-Wegener/LibertyRecompAIO"),
                 new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT));
         LinearLayout.LayoutParams forkParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         forkParams.leftMargin = dp(12);
-        wrapper.addView(githubLink("prollynotzjay (Mali Support and Extraz)",
-                "https://github.com/prollynotzjay/LibertyRecompAndroidMaliVer"), forkParams);
+        wrapper.addView(githubLink("vaduur", "https://github.com/vaduur/LibertyRecompAndroid"),
+                forkParams);
+        LinearLayout.LayoutParams maliParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        maliParams.leftMargin = dp(12);
+        wrapper.addView(githubLink("prollynotzjay (Mali)",
+                "https://github.com/prollynotzjay/ZMOD-Liberty"), maliParams);
         return wrapper;
     }
 
@@ -445,9 +451,11 @@ public class LauncherActivity extends Activity {
         panel.setPadding(dp(22), dp(18), dp(22), dp(18));
         panel.addView(heading("ABOUT", 24));
         panel.addView(text(versionLine(), 14, R.color.picker_text), matchWrap(dp(8)));
-        panel.addView(text("GTA IV (Xbox 360) running natively through static recompilation, "
-                + "on the phone's own Mali Vulkan driver. Liberty Recompiled team and ReXGlue "
-                + "SDK; Android port by vaduur; Mali Support and Extraz by prollynotzjay.",
+        panel.addView(text("Liberty Recomp AIO: GTA IV (Xbox 360) running natively through "
+                + "static recompilation, one APK for every GPU (Adreno with the bundled Turnip, "
+                + "Mali/Immortalis, Xclipse, PowerVR and others with the system Vulkan driver), "
+                + "European (PAL) disc. Based on Liberty Recompiled and the ReXGlue SDK, "
+                + "the Android port by vaduur and the Mali Edition by prollynotzjay.",
                 13, R.color.picker_muted), matchWrap(dp(8)));
         panel.addView(text("The debug log is saved to Android/data/" + getPackageName()
                 + "/files/" + DebugLog.DIRECTORY + "/. Attach the newest one when you open an issue "
@@ -608,7 +616,7 @@ public class LauncherActivity extends Activity {
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         TextView edition = new TextView(this);
-        edition.setText("Mali Edition");
+        edition.setText("AIO");
         edition.setTextColor(0xF0FFFFFF);
         edition.setIncludeFontPadding(false);
         edition.setSingleLine(true);
@@ -1530,7 +1538,7 @@ public class LauncherActivity extends Activity {
         mDrivers.removeAllViews();
         mDriverModes.clear();
         boolean mali = DriverBridge.isMaliBuild();
-        // Mali builds do not bundle Turnip (Adreno only), so do not offer it.
+        // Turnip only drives Adreno; offer it only there.
         if (!mali) {
             addDriver(DriverBridge.TURNIP, "Turnip 26.3.0-R6 (bundled)",
                     "Recommended for Adreno 6xx/7xx");

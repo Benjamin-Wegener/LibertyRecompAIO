@@ -62,18 +62,27 @@ final class DriverBridge {
 
     private DriverBridge() {}
 
-    /**
-     * The driver used while driver.txt does not exist: the bundled Turnip in
-     * the Adreno build, the device's own driver in the Mali build (Turnip is
-     * Adreno-only and cannot load on any other GPU).
-     */
-    static String defaultMode() {
-        return SYSTEM.equals(BuildConfig.DEFAULT_DRIVER) ? SYSTEM : TURNIP;
+    /** True when the device has a Qualcomm Adreno GPU (KGSL kernel driver). */
+    static boolean hasAdreno() {
+        return new File("/dev/kgsl-3d0").exists() || new File("/sys/class/kgsl").exists();
     }
 
-    /** True in the APK built with -PlibertyGpu=mali. */
+    /**
+     * The driver used while driver.txt does not exist. Liberty Recomp AIO is one
+     * APK for every GPU: the bundled Turnip on Adreno, the device's own driver on
+     * everything else (Mali/Immortalis, Xclipse, PowerVR, ...). Turnip is
+     * Adreno-only and cannot load on any other GPU.
+     */
+    static String defaultMode() {
+        return hasAdreno() ? TURNIP : SYSTEM;
+    }
+
+    /**
+     * True on GPUs that use the system driver path (everything but Adreno).
+     * Kept under its old name: the Mali Edition introduced these defaults.
+     */
     static boolean isMaliBuild() {
-        return "mali".equals(BuildConfig.GPU_FAMILY);
+        return !hasAdreno();
     }
 
     static native String nativeInit(String nativeLibraryDir, String internalDriverDir,

@@ -150,8 +150,8 @@ extern "C" void sub_82614458(PPCContext& ctx,uint8_t* base) {
 }
 #endif  // GTA4_PAL_SAFE_MODE sub_8267CFF8
 
-#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
-extern "C" void sub_82145420(PPCContext& ctx, uint8_t* base) {
+#ifndef GTA4_PAL_SAFE_MODE_RETARGETED  // PAL-retargeted, see tools/pal_retarget_hooks.py
+extern "C" void sub_82124080(PPCContext& ctx, uint8_t* base) {
   const gta4::input::ContextTouchGameplayTransition touch_transition;
   const uint32_t caller = ctx.lr;
   const bool cold = policy::IsColdStart(caller, ctx.r3.u32, ctx.r4.u32);
@@ -163,16 +163,16 @@ extern "C" void sub_82145420(PPCContext& ctx, uint8_t* base) {
   }
   const ParserScope scope(eligible && gta4::presentation::SkipIntroAtLaunch());
   // Keep arguments, asset loading, timer setup and publication entirely retail.
-  __imp__sub_82145420(ctx, base);
+  __imp__sub_82124080(ctx, base);
   if (eligible)
     TraceStartup(base, "cold-start-ready", caller);
 }
 #endif  // GTA4_PAL_SAFE_MODE sub_82145420
 
-#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
-extern "C" void sub_82145968(PPCContext& ctx, uint8_t* base) {
+#ifndef GTA4_PAL_SAFE_MODE_RETARGETED  // PAL-retargeted, see tools/pal_retarget_hooks.py
+extern "C" void sub_82124540(PPCContext& ctx, uint8_t* base) {
   const bool apply = cold_parser_scope && ctx.lr == policy::kParserCaller;
-  __imp__sub_82145968(ctx, base);
+  __imp__sub_82124540(ctx, base);
   if (!apply)
     return;
   if (!GuestSpan(base, kScreenCount, sizeof(uint32_t)))
