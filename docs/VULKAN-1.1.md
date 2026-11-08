@@ -17,12 +17,12 @@ Hard requirements (the device is rejected without them):
 | `bufferDeviceAddress` | `vulkan_device.cpp` ~527-538 | shaders read constants and buffers through 64-bit pointers (see below) |
 | `runtimeDescriptorArray`, `descriptorBindingPartiallyBound` | same check | indexed (bindless-style) texture/sampler arrays |
 | `depthClamp`, `sampleRateShading` | ~125-140 | rendering features |
+| **Dynamic rendering** (`VK_KHR_dynamic_rendering` or API 1.3) | `vulkan_device.cpp` ~539 (`with_dynamic_rendering`) | the native renderer begins every pass with `vkCmdBeginRendering` (about 15 call sites) and creates pipelines with `VkPipelineRenderingCreateInfo` (8 sites). **Correction:** an earlier version of this document listed it as optional; the log of a real 1.1 device proves otherwise (below). |
 
 Not required (already optional or have a fallback):
 
 | Feature | Evidence |
 |---|---|
-| Dynamic rendering (1.3) | only if the caller passes `with_dynamic_rendering`; the native path does not |
 | Timeline semaphores | only enabled for the optional separate offscreen queue (`vulkan_device.cpp` ~655-669) |
 | `shaderInt64` | lowered to 32-bit pairs when the shader loads (`include/rex/ui/vulkan/spirv_int64_lowering.h`) |
 | `shaderClipDistance` | the log says "title clip planes are not applied" and continues |
@@ -68,3 +68,30 @@ The launcher writes the driver status to `Android/data/com.libertyrecomp.aio/fil
 (`driver status: ... "api_version" ... "features":{...bufferDeviceAddress,runtimeDescriptorArray...}`).
 Please attach that file from every 1.1 device (it lists the api version and the three features that
 decide between Stage A and Stage B). The reference device so far: Pixel 9a, Mali-G715, API 1.3.
+
+## Result of the first test on a real Vulkan 1.1 device (2026-11-08)
+
+Device: Redmi 13 5G (2406ERN9CI), Adreno 613, stock driver Vulkan 1.1.128, extensions present:
+`VK_KHR_buffer_device_address`, `VK_EXT_descriptor_indexing`, `VK_KHR_shader_float16_int8`,
+`VK_KHR_sampler_mirror_clamp_to_edge`, `VK_KHR_spirv_1_4`; missing: `VK_KHR_dynamic_rendering`,
+`VK_KHR_timeline_semaphore`, `VK_EXT_depth_clip_control`.
+
+With Stage A (renderer device, driver proxy, launcher check; see branch `feature/vulkan-1.1-stage-a`):
+
+- The launcher check passes (`runtimeDescriptorArray=1`, `descriptorBindingPartiallyBound=1`, `bufferDeviceAddress=1`
+  reported through the extensions) and starts the game.
+- The renderer accepts the extension path for buffer device addresses and descriptor indexing (the device check
+  reaches the next requirement), then stops with:
+  `Vulkan device 'Adreno (TM) 613' doesn't support dynamic rendering required by the native graphics backend`.
+- With the bundled **Turnip** driver (Vulkan 1.3, `driver.txt` = `turnip`) the same phone runs the game at 30 fps.
+
+So Stage A alone is not enough for this phone with its stock driver. New stage:
+
+**Stage A.2 - render pass fallback (large).** When `VK_KHR_dynamic_rendering` is missing, begin passes with
+`VkRenderPass` + `VkFramebuffer` and create the pipelines against a compatible render pass. The presenter already
+has such a path (2 `vkCreateRenderPass`, 3 `vkCmdBeginRenderPass`); the native renderer has ~15 begin sites and 8
+pipeline creation sites that would need a render-pass cache keyed by attachment formats, load/store ops and sample
+count. Without it, 1.1 stock drivers that lack the extension stay unsupported, and Adreno phones use Turnip.
+
+Practical order: (1) Turnip for Adreno phones (works today), (2) Stage A.2 so Mali and other 1.1 stock drivers
+without dynamic rendering can run, (3) Stage B for devices without buffer device addresses.
