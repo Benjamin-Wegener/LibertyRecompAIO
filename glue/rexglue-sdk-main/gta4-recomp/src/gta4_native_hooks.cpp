@@ -4844,22 +4844,22 @@ extern "C" void sub_822F5DE8(PPCContext& ctx, uint8_t* base) {
 }
 #endif  // GTA4_PAL_SAFE_MODE sub_822CC388
 
-#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
-extern "C" void sub_822CC940(PPCContext& ctx, uint8_t* base) {
-  if (!IsNativeMode()) { __imp__sub_822CC940(ctx, base); return; }
+#ifndef GTA4_PAL_SAFE_MODE_RETARGETED  // PAL-retargeted, see tools/pal_retarget_hooks.py
+extern "C" void sub_822F63A0(PPCContext& ctx, uint8_t* base) {
+  if (!IsNativeMode()) { __imp__sub_822F63A0(ctx, base); return; }
   FusionCycleCapture capture;
   capture.destination = ctx.r5.u32;
-  const int32_t hour_override = int32_t(LoadU32(base, 0x82DF3928));
-  const int32_t minute_override = int32_t(LoadU32(base, 0x82DF3920));
-  const float hour = float(hour_override == -1 ? LoadU32(base, 0x82DF3924) : hour_override);
-  const float minute = float(minute_override == -1 ? LoadU32(base, 0x82DF391C) : minute_override);
-  const float second = float(LoadU32(base, 0x82DF3918));
+  const int32_t hour_override = int32_t(LoadU32(base, 0x82CFA284));
+  const int32_t minute_override = int32_t(LoadU32(base, 0x82CFA27C));
+  const float hour = float(hour_override == -1 ? LoadU32(base, 0x82CFA280) : hour_override);
+  const float minute = float(minute_override == -1 ? LoadU32(base, 0x82CFA278) : minute_override);
+  const float second = float(LoadU32(base, 0x82CFA274));
   capture.valid = SampleFusionTimecycle(hour + minute / 60.0f + second / 3600.0f,
-      LoadU32(base, 0x82FEFD6C), LoadU32(base, 0x82FEFD68),
-      std::bit_cast<float>(LoadU32(base, 0x82FEFD58)), capture.values);
+      LoadU32(base, 0x82F14CF4), LoadU32(base, 0x82F14CF0),
+      std::bit_cast<float>(LoadU32(base, 0x82F14CE0)), capture.values);
   auto* previous = g_fusion_cycle_capture;
   g_fusion_cycle_capture = &capture;
-  __imp__sub_822CC940(ctx, base);
+  __imp__sub_822F63A0(ctx, base);
   g_fusion_cycle_capture = previous;
   if (capture.destination >= kCloudDoubleBufferBase) {
     const uint32_t relative = capture.destination - kCloudDoubleBufferBase;
