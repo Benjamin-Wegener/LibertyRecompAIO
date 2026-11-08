@@ -6648,7 +6648,9 @@ extern "C" void sub_8218E768(PPCContext& ctx, uint8_t* base) {
   ScopedNativeLightingExecution lighting_scope(
       base, 0x8218E768, RenderExecutionStage::kRadarMap, LightPassRole::kNone);
   ScopedRenderPhaseMarker phase_scope(device, RenderPhase::kRadarMap, radar_map_section, caller);
-  gta4::aspect::DrawRadarSection(ctx, base, __imp__sub_8218E768);
+  // The map layer is authored for the HUD radar disc; drawing it untransformed
+  // preserves concentric alignment with the player arrow across all camera angles.
+  __imp__sub_8218E768(ctx, base);
 }
 #endif  // GTA4_PAL_SAFE_MODE sub_821BD0A0
 
