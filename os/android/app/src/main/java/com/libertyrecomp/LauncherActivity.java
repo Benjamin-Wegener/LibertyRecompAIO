@@ -678,6 +678,10 @@ public class LauncherActivity extends Activity {
     }
 
     private static final GraphicsSetting[] GRAPHICS_SETTINGS = {
+            new GraphicsSetting("Intro logos", "Skip the Rockstar and partner logo videos at start",
+                    new String[] {"gta4_skip_intro"},
+                    new String[] {"Default", "Show", "Skip"},
+                    new String[] {"false", "true"}),
             new GraphicsSetting("Resolution", "Lower is faster",
                     new String[] {"gta4_output_height_cap"},
                     new String[] {"Default", "540p", "720p", "900p", "1080p", "Screen resolution"},

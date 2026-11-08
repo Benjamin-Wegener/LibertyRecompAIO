@@ -252,8 +252,6 @@ Screen CurrentScreen(bool forced_menu, bool pause_flag_verified, uint32_t* logge
   // Menus first: while a menu is open the player facts are often not
   // readable, so "not valid" must not hide (or replace) the menu controls.
   if (context.frontend || context.map) return Screen::kMenu;
-  // Intro logo screens: show the cutscene layout so they can be skipped by touch.
-  if (gta4::presentation::IntroScreensActive()) return Screen::kCutscene;
   // Boot, legal and loading screens: no controls until the game is running.
   if (!context.valid || context.loading) return Screen::kHidden;
   if (context.cutscene) return Screen::kCutscene;
@@ -978,7 +976,6 @@ bool UpdateAndDrawLibertyTouchOverlay(ImDrawList* draw, ImFont* font, float font
     if (std::string_view(s.placed[i].spec->id) == "skip" && s.held[i]) skip_held = true;
   if (skip_held && !s.skip_was_held && !s.editing) {
     s.skip_pulse_until = now + std::chrono::milliseconds(150);
-    if (gta4::presentation::IntroScreensActive()) gta4::presentation::RequestIntroSkip();
   }
   s.skip_was_held = skip_held;
   // RESUME (menu screen): Start closes the pause menu; leave the forced menu.

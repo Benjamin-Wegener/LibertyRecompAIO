@@ -554,7 +554,6 @@ void GTA4_RegisterTouchExtension(GTA4TouchExtension extension) noexcept {
 }
 
 void GTA4_TouchConsumePoll(PPCContext& context, uint8_t* base, uint64_t epoch) {
-  if (gta4::presentation::ConsumeIntroSkipRequest()) gta4::presentation::SkipIntroNow(base);
   g_replay = {.epoch = epoch};
   g_poll_epoch.store(epoch, std::memory_order_release);
   const GTA4TouchExtension extension = ReadExtension();
