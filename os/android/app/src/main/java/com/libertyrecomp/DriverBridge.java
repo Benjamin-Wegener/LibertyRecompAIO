@@ -90,6 +90,7 @@ final class DriverBridge {
                                     boolean allowSystemFallback);
 
     /** VK_API_VERSION_1_2: the native renderer's minimum. */
+    private static final long VULKAN_1_1 = (1L << 22) | (1L << 12);
     private static final long VULKAN_1_2 = (1L << 22) | (2L << 12);
 
     /** Loads and initializes the proxy. Returns the native status JSON. */
@@ -210,6 +211,22 @@ final class DriverBridge {
                 name = device.optString("name", name);
                 bestFeatures = device.optJSONObject("features");
             }
+        }
+        if (best >= VULKAN_1_1 && best < VULKAN_1_2) {
+            // Vulkan 1.1: the renderer uses the 1.2 features through their extensions. The
+            // driver proxy reports them explicitly (1) only when the extension is exposed.
+            String missing = missingFeatures(bestFeatures);
+            boolean known = bestFeatures != null
+                    && bestFeatures.optInt("bufferDeviceAddress", -1) == 1
+                    && bestFeatures.optInt("runtimeDescriptorArray", -1) == 1
+                    && bestFeatures.optInt("descriptorBindingPartiallyBound", -1) == 1;
+            if (missing.isEmpty() && known) return null;
+            return "This device's GPU (" + name + ") only offers Vulkan 1.1"
+                    + (missing.isEmpty() ? "" : " and lacks " + missing)
+                    + ". The game can run on Vulkan 1.1 only with the extensions "
+                    + "VK_KHR_buffer_device_address and VK_EXT_descriptor_indexing, which this "
+                    + "driver does not report."
+                    + "\n\nA newer system or GPU driver update may add them.";
         }
         if (best >= VULKAN_1_2) {
             String missing = missingFeatures(bestFeatures);

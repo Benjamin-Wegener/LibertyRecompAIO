@@ -215,7 +215,41 @@ std::string CapabilityJson(VkInstance instance, VkPhysicalDevice device, uint32_
     sample_rate = base.sampleRateShading ? 1 : 0;
     blend = base.independentBlend ? 1 : 0;
   }
-  if (features2 && requested_api >= VK_API_VERSION_1_2 && device_api >= VK_API_VERSION_1_2) {
+  if (features2 && requested_api >= VK_API_VERSION_1_1 && device_api >= VK_API_VERSION_1_1 &&
+      device_api < VK_API_VERSION_1_2) {
+    // Vulkan 1.1 device: the renderer gets the same features from the promoted extensions
+    // (VK_KHR_buffer_device_address, VK_EXT_descriptor_indexing). Report them only when the
+    // extension is really exposed; otherwise leave the explicit 0 so the launcher says why.
+    const auto enumerate = Get<PFN_vkEnumerateDeviceExtensionProperties>(
+        instance, "vkEnumerateDeviceExtensionProperties");
+    bool has_bda = false, has_indexing = false;
+    if (enumerate) {
+      uint32_t count = 0;
+      if (enumerate(device, nullptr, &count, nullptr) == VK_SUCCESS && count) {
+        std::vector<VkExtensionProperties> extensions(count);
+        if (enumerate(device, nullptr, &count, extensions.data()) == VK_SUCCESS) {
+          for (const auto& e : extensions) {
+            if (!std::strcmp(e.extensionName, "VK_KHR_buffer_device_address")) has_bda = true;
+            if (!std::strcmp(e.extensionName, "VK_EXT_descriptor_indexing")) has_indexing = true;
+          }
+        }
+      }
+    }
+    VkPhysicalDeviceBufferDeviceAddressFeatures bda{};
+    bda.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
+    VkPhysicalDeviceDescriptorIndexingFeatures indexing{};
+    indexing.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
+    void* chain = nullptr;
+    if (has_bda) { bda.pNext = chain; chain = &bda; }
+    if (has_indexing) { indexing.pNext = chain; chain = &indexing; }
+    VkPhysicalDeviceFeatures2 extended{};
+    extended.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+    extended.pNext = chain;
+    features2(device, &extended);
+    device_address = has_bda && bda.bufferDeviceAddress ? 1 : 0;
+    runtime_array = has_indexing && indexing.runtimeDescriptorArray ? 1 : 0;
+    partially_bound = has_indexing && indexing.descriptorBindingPartiallyBound ? 1 : 0;
+  } else if (features2 && requested_api >= VK_API_VERSION_1_2 && device_api >= VK_API_VERSION_1_2) {
     VkPhysicalDeviceVulkan12Features v12{};
     v12.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
     VkPhysicalDeviceFeatures2 extended{};

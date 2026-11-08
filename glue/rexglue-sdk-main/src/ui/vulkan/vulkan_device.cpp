@@ -31,6 +31,11 @@
 
 #include "graphics/gta4_native/temporal/dlss_bootstrap.h"
 
+REXCVAR_DEFINE_UINT32(vulkan_limit_api_version, 0, "UI/Vulkan",
+                      "Pretend the device only supports this Vulkan version (11 = 1.1, 12 = 1.2); 0 "
+                      "uses the real version. For testing the Vulkan 1.1 device path (core 1.2 "
+                      "features through KHR/EXT extensions) on a newer GPU.");
+
 REXCVAR_DEFINE_BOOL(vulkan_command_counters, false, "UI/Vulkan",
                     "Count barriers, renderings, draws, copies and pipeline binds per frame for "
                     "the pipeline report (a wrapper on every such command)");
@@ -108,13 +113,32 @@ std::unique_ptr<VulkanDevice> VulkanDevice::CreateIfSupported(
         VK_MAKE_API_VERSION(0, 1, 0, VK_API_VERSION_PATCH(properties.apiVersion));
   }
 
+  {
+    const uint32_t limit = REXCVAR_GET(vulkan_limit_api_version);
+    if (limit) {
+      const uint32_t limit_api = VK_MAKE_API_VERSION(0, limit / 10, limit % 10, 0);
+      if (properties.apiVersion > limit_api) {
+        REXLOG_WARN("Vulkan device '{}': API version limited from {}.{} to {}.{} (vulkan_limit_api_version)",
+                    properties.deviceName, VK_VERSION_MAJOR(properties.apiVersion),
+                    VK_VERSION_MINOR(properties.apiVersion), limit / 10, limit % 10);
+        properties.apiVersion = VK_MAKE_API_VERSION(
+            0, limit / 10, limit % 10, VK_API_VERSION_PATCH(properties.apiVersion));
+      }
+    }
+  }
+
   VkPhysicalDeviceFeatures supported_features = {};
   ifn.vkGetPhysicalDeviceFeatures(physical_device, &supported_features);
 
+  // Vulkan 1.1 devices are accepted when they expose the extensions that carry the
+  // Vulkan 1.2 features the native shaders need (VK_KHR_buffer_device_address,
+  // optionally VK_EXT_descriptor_indexing); that is checked once the extensions and
+  // features are known. Below 1.1 the extension-based path does not exist.
   if (with_native_shader_support &&
-      properties.apiVersion < VK_MAKE_API_VERSION(0, 1, 2, 0)) {
+      properties.apiVersion < VK_MAKE_API_VERSION(0, 1, 1, 0)) {
     REXLOG_WARN(
-        "Vulkan device '{}' exposes API {}.{}, but Liberty native shaders require Vulkan 1.2",
+        "Vulkan device '{}' exposes API {}.{}, but Liberty native shaders require Vulkan 1.1 "
+        "with VK_KHR_buffer_device_address (or Vulkan 1.2)",
         properties.deviceName, VK_VERSION_MAJOR(properties.apiVersion),
         VK_VERSION_MINOR(properties.apiVersion));
     return nullptr;
@@ -312,6 +336,21 @@ std::unique_ptr<VulkanDevice> VulkanDevice::CreateIfSupported(
     XE_UI_VULKAN_STRUCT_EXTENSION(EXT_robustness2)
   }
 
+  // Vulkan 1.1 devices: the Vulkan 1.2 features the native shaders need come from their
+  // promoted extensions (enabled only when the device's API version is below 1.2).
+  bool ext_1_2_KHR_buffer_device_address = false;
+  bool ext_1_2_EXT_descriptor_indexing = false;
+  bool ext_1_2_KHR_shader_float16_int8 = false;
+  if (get_physical_device_properties2_supported && with_native_shader_support &&
+      properties.apiVersion >= VK_MAKE_API_VERSION(0, 1, 1, 0)) {
+    XE_UI_VULKAN_LOCAL_PROMOTED_EXTENSION(KHR_buffer_device_address, 1, 2)
+    XE_UI_VULKAN_LOCAL_PROMOTED_EXTENSION(EXT_descriptor_indexing, 1, 2)
+    XE_UI_VULKAN_LOCAL_PROMOTED_EXTENSION(KHR_shader_float16_int8, 1, 2)
+    if (!with_gpu_emulation) {
+      XE_UI_VULKAN_LOCAL_PROMOTED_EXTENSION(KHR_sampler_mirror_clamp_to_edge, 1, 2)
+    }
+  }
+
 #undef XE_UI_VULKAN_STRUCT_EXTENSION
 #undef XE_UI_VULKAN_LOCAL_EXTENSION
 #undef XE_UI_VULKAN_STRUCT_PROMOTED_EXTENSION
@@ -428,6 +467,16 @@ std::unique_ptr<VulkanDevice> VulkanDevice::CreateIfSupported(
   VulkanFeatures<VkPhysicalDeviceVulkan13Features,
                  VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES>
       features_1_3;
+  // Vulkan 1.1 devices: the same Vulkan 1.2 features through their extension structures.
+  VulkanFeatures<VkPhysicalDeviceBufferDeviceAddressFeatures,
+                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES>
+      features_1_2_KHR_buffer_device_address;
+  VulkanFeatures<VkPhysicalDeviceDescriptorIndexingFeatures,
+                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES>
+      features_1_2_EXT_descriptor_indexing;
+  VulkanFeatures<VkPhysicalDeviceShaderFloat16Int8Features,
+                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES>
+      features_1_2_KHR_shader_float16_int8;
   VulkanFeatures<VkPhysicalDevicePortabilitySubsetFeaturesKHR,
                  VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PORTABILITY_SUBSET_FEATURES_KHR>
       features_KHR_portability_subset;
@@ -472,6 +521,16 @@ std::unique_ptr<VulkanDevice> VulkanDevice::CreateIfSupported(
       features_1_2.Link(supported_features_2, device_create_info);
       properties_1_2.pNext = properties_2.pNext;
       properties_2.pNext = &properties_1_2;
+    } else {
+      if (ext_1_2_KHR_buffer_device_address) {
+        features_1_2_KHR_buffer_device_address.Link(supported_features_2, device_create_info);
+      }
+      if (ext_1_2_EXT_descriptor_indexing) {
+        features_1_2_EXT_descriptor_indexing.Link(supported_features_2, device_create_info);
+      }
+      if (ext_1_2_KHR_shader_float16_int8) {
+        features_1_2_KHR_shader_float16_int8.Link(supported_features_2, device_create_info);
+      }
     }
     if (properties.apiVersion >= VK_MAKE_API_VERSION(0, 1, 3, 0)) {
       features_1_3.Link(supported_features_2, device_create_info);
@@ -522,6 +581,30 @@ std::unique_ptr<VulkanDevice> VulkanDevice::CreateIfSupported(
     }
     ifn.vkGetPhysicalDeviceProperties2(physical_device, &properties_2);
     ifn.vkGetPhysicalDeviceFeatures2(physical_device, &supported_features_2);
+  }
+
+  if (properties.apiVersion < VK_MAKE_API_VERSION(0, 1, 2, 0)) {
+    // Present the extension features as the Vulkan 1.2 feature set so that the checks and
+    // the enabling below are the same for both paths.
+    auto& supported_1_2 = features_1_2.supported;
+    if (ext_1_2_KHR_buffer_device_address) {
+      supported_1_2.bufferDeviceAddress =
+          features_1_2_KHR_buffer_device_address.supported.bufferDeviceAddress;
+    }
+    if (ext_1_2_EXT_descriptor_indexing) {
+      const auto& di = features_1_2_EXT_descriptor_indexing.supported;
+      supported_1_2.runtimeDescriptorArray = di.runtimeDescriptorArray;
+      supported_1_2.descriptorBindingPartiallyBound = di.descriptorBindingPartiallyBound;
+      supported_1_2.descriptorBindingSampledImageUpdateAfterBind =
+          di.descriptorBindingSampledImageUpdateAfterBind;
+      supported_1_2.descriptorBindingUpdateUnusedWhilePending =
+          di.descriptorBindingUpdateUnusedWhilePending;
+      supported_1_2.descriptorBindingVariableDescriptorCount =
+          di.descriptorBindingVariableDescriptorCount;
+    }
+    if (ext_1_2_KHR_shader_float16_int8) {
+      supported_1_2.shaderFloat16 = features_1_2_KHR_shader_float16_int8.supported.shaderFloat16;
+    }
   }
 
   if (with_native_shader_support &&
@@ -902,6 +985,32 @@ std::unique_ptr<VulkanDevice> VulkanDevice::CreateIfSupported(
     if (ext_1_2_KHR_sampler_mirror_clamp_to_edge) {
       XE_UI_VULKAN_FEATURE_IMPLIED(samplerMirrorClampToEdge)
     }
+    if (with_native_shader_support && properties.apiVersion >= VK_MAKE_API_VERSION(0, 1, 1, 0)) {
+      // Vulkan 1.1 path: enable through the extension structures.
+      XE_UI_VULKAN_FEATURE_2(features_1_2, shaderFloat16);
+      XE_UI_VULKAN_FEATURE_2(features_1_2, runtimeDescriptorArray);
+      XE_UI_VULKAN_FEATURE_2(features_1_2, descriptorBindingPartiallyBound);
+      XE_UI_VULKAN_FEATURE_2(features_1_2, descriptorBindingSampledImageUpdateAfterBind);
+      XE_UI_VULKAN_FEATURE_2(features_1_2, descriptorBindingUpdateUnusedWhilePending);
+      device->properties_.descriptorBindingSamplerUpdateAfterBind =
+          features_1_2.supported.descriptorBindingSampledImageUpdateAfterBind;
+      XE_UI_VULKAN_FEATURE_2(features_1_2, descriptorBindingVariableDescriptorCount);
+      XE_UI_VULKAN_FEATURE_2(features_1_2, bufferDeviceAddress);
+      features_1_2_KHR_buffer_device_address.enabled.bufferDeviceAddress =
+          features_1_2.enabled.bufferDeviceAddress;
+      auto& di_enabled = features_1_2_EXT_descriptor_indexing.enabled;
+      di_enabled.runtimeDescriptorArray = features_1_2.enabled.runtimeDescriptorArray;
+      di_enabled.descriptorBindingPartiallyBound =
+          features_1_2.enabled.descriptorBindingPartiallyBound;
+      di_enabled.descriptorBindingSampledImageUpdateAfterBind =
+          features_1_2.enabled.descriptorBindingSampledImageUpdateAfterBind;
+      di_enabled.descriptorBindingUpdateUnusedWhilePending =
+          features_1_2.enabled.descriptorBindingUpdateUnusedWhilePending;
+      di_enabled.descriptorBindingVariableDescriptorCount =
+          features_1_2.enabled.descriptorBindingVariableDescriptorCount;
+      features_1_2_KHR_shader_float16_int8.enabled.shaderFloat16 =
+          features_1_2.enabled.shaderFloat16;
+    }
   }
 
   if (properties.apiVersion >= VK_MAKE_API_VERSION(0, 1, 3, 0)) {
@@ -1074,6 +1183,21 @@ std::unique_ptr<VulkanDevice> VulkanDevice::CreateIfSupported(
     }
     if (device->extensions_.ext_1_1_KHR_bind_memory2) {
 #include <rex/ui/vulkan/functions/device_1_1_khr_bind_memory2.inc>
+    }
+  }
+  if (properties.apiVersion >= VK_MAKE_API_VERSION(0, 1, 1, 0) &&
+      properties.apiVersion < VK_MAKE_API_VERSION(0, 1, 2, 0) && with_native_shader_support) {
+    // Vulkan 1.1 device with the 1.2 features from extensions: core 1.1 function, and the
+    // KHR name of the core 1.2 buffer device address function.
+    functions_loaded &=
+        (dfn.vkGetDescriptorSetLayoutSupport = PFN_vkGetDescriptorSetLayoutSupport(
+             ifn.vkGetDeviceProcAddr(device->device_, "vkGetDescriptorSetLayoutSupport"))) !=
+        nullptr;
+    if (ext_1_2_KHR_buffer_device_address) {
+      functions_loaded &=
+          (dfn.vkGetBufferDeviceAddress = PFN_vkGetBufferDeviceAddress(
+               ifn.vkGetDeviceProcAddr(device->device_, "vkGetBufferDeviceAddressKHR"))) !=
+          nullptr;
     }
   }
   if (properties.apiVersion < VK_MAKE_API_VERSION(0, 1, 3, 0)) {
