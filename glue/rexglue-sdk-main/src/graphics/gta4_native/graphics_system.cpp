@@ -31526,9 +31526,13 @@ bool Gta4NativeGraphicsSystem::RecordNativeFrame(
          queued_command.type == CommandType::kClear || queued_command.type == CommandType::kResolve)) {
       // One classification serves both checks.
       const performance::GpuRange range = performance_range_for_command(queued_command);
+      // The shadow interval must work outside the profiler too, where the
+      // kRetailWarpShadow pass tag is not produced; there the pass is
+      // recognized by its depth-only square target, exactly like interval 0.
       if ((skip_water_reflection && range == performance::GpuRange::kWaterReflections) ||
           (skip_environment_reflection && range == performance::GpuRange::kEnvironmentReflections) ||
-          (skip_shadows && range == performance::GpuRange::kRetailWarpShadow)) {
+          (skip_shadows && (range == performance::GpuRange::kRetailWarpShadow ||
+                            shadow_map_draw(queued_command)))) {
         continue;
       }
     }
