@@ -6439,7 +6439,13 @@ loc_822EA77C:
 	ctx.r3.s64 = 3;
 	// bl 0x8249f178
 	ctx.lr = 0x822EA7BC;
+	ctx.r26 = r26;
+	ctx.r28 = r28;
+	ctx.r29 = r29;
+	ctx.r30 = r30;
+	ctx.r31 = r31;
 	sub_8249F178(ctx, base);
+	r30 = ctx.r30;
 	// li r4,1
 	ctx.r4.s64 = 1;
 	// b 0x822ea7dc
@@ -6456,7 +6462,13 @@ loc_822EA7C4:
 	ctx.r3.s64 = 3;
 	// bl 0x8249f178
 	ctx.lr = 0x822EA7D8;
+	ctx.r26 = r26;
+	ctx.r28 = r28;
+	ctx.r29 = r29;
+	ctx.r30 = r30;
+	ctx.r31 = r31;
 	sub_8249F178(ctx, base);
+	r30 = ctx.r30;
 	// li r4,0
 	ctx.r4.s64 = 0;
 loc_822EA7DC:
@@ -6519,7 +6531,13 @@ loc_822EA7F0:
 	ctx.r3.u64 = r28.u64;
 	// bl 0x8249f178
 	ctx.lr = 0x822EA844;
+	ctx.r26 = r26;
+	ctx.r28 = r28;
+	ctx.r29 = r29;
+	ctx.r30 = r30;
+	ctx.r31 = r31;
 	sub_8249F178(ctx, base);
+	r30 = ctx.r30;
 	// li r4,1
 	ctx.r4.s64 = 1;
 	// b 0x822ea864
@@ -6536,7 +6554,13 @@ loc_822EA84C:
 	ctx.r3.u64 = r28.u64;
 	// bl 0x8249f178
 	ctx.lr = 0x822EA860;
+	ctx.r26 = r26;
+	ctx.r28 = r28;
+	ctx.r29 = r29;
+	ctx.r30 = r30;
+	ctx.r31 = r31;
 	sub_8249F178(ctx, base);
+	r30 = ctx.r30;
 	// li r4,0
 	ctx.r4.s64 = 0;
 loc_822EA864:
