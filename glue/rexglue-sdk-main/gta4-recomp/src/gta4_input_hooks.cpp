@@ -190,7 +190,7 @@ constexpr uint32_t kFrontendOneShotFlagAddress = 0x82BEC849;
 // Registered IS_PAUSE_MENU_ACTIVE native sub_8259B780, via sub_825DD3E8.
 constexpr uint32_t kPauseMenuTransitionAddress = 0x82BEC858;
 constexpr uint32_t kPauseMenuVisibleAddress = 0x82BEC860;
-// The registered CAN_PHONE_BE_SEEN_ON_SCREEN native (sub_8217D3E0) loads the
+// The registered CAN_PHONE_BE_SEEN_ON_SCREEN native (sub_821531D0) loads the
 // active phone render object through this index/table pair, then evaluates
 // sub_82197B80. That retail leaf returns the object's byte-17 hidden state;
 // CAN_PHONE_BE_SEEN_ON_SCREEN returns its inverse. The absolute addresses are
@@ -207,7 +207,7 @@ constexpr uint32_t kPhoneHiddenStateOffset = 17;
 // DESTROY_MOBILE_PHONE (sub_821255F8) clears it. The persistent HUD widget
 // queried by CAN_PHONE_BE_SEEN_ON_SCREEN is not proof that a phone exists.
 // Generated sub_823CA860/sub_823C1868 additionally reject the offscreen state
-// written by SCRIPT_IS_MOVING_MOBILE_PHONE_OFFSCREEN (sub_8217D3C0).
+// written by SCRIPT_IS_MOVING_MOBILE_PHONE_OFFSCREEN (sub_821531B0).
 constexpr uint32_t kPhoneCreatedAddress = 0x83137668;
 constexpr uint32_t kPhoneMovingOffscreenAddress = 0x83137BCD;
 constexpr uint32_t kPhoneConsumerDisableFlagAOffset = 528;
@@ -215,11 +215,11 @@ constexpr uint32_t kPhoneConsumerDisableFlagBOffset = 529;
 constexpr uint32_t kPhoneConsumerStateOffset = 640;
 constexpr uint32_t kCurrentPlayerIndexAddress = 0x82A2CFC8;
 constexpr uint32_t kPlayerInfoTableAddress = 0x82C51C10;
-constexpr uint32_t kPlayerInfoPedOffset = 1400;
-constexpr uint32_t kPedVehicleFlagsOffset = 572;
-constexpr uint32_t kPedVehicleOffset = 2688;
+constexpr uint32_t kPlayerInfoPedOffset = 1384;
+constexpr uint32_t kPedVehicleFlagsOffset = 568;
+constexpr uint32_t kPedVehicleOffset = 2656;
 constexpr uint32_t kVehicleDriverOffset = 3904;
-// IS_CHAR_IN_ANY_HELI (sub_825C4400) tests the retail class kind, including
+// IS_CHAR_IN_ANY_HELI (sub_82587400) tests the retail class kind, including
 // derived helicopter models, rather than one particular vtable address.
 constexpr uint32_t kVehicleClassOffset = 4836;
 constexpr uint32_t kHelicopterVehicleClass = 4;
@@ -242,8 +242,8 @@ constexpr uint32_t kDirectWeaponPredicateCaller = 0x823CFD54;
 constexpr uint32_t kVehicleWeaponPressPredicateCaller = 0x823CFB28;
 constexpr uint32_t kVehicleWeaponReleasePredicateCaller = 0x823CFAF0;
 constexpr uint32_t kDirectWeaponSelectionCaller = 0x823CFD94;
-constexpr uint32_t kRadioOffPredicateCaller = 0x822D4A18;
-constexpr uint32_t kPedWeaponManagerOffset = 640;
+constexpr uint32_t kRadioOffPredicateCaller = 0x8225C400;
+constexpr uint32_t kPedWeaponManagerOffset = 624;
 // rage::scrThread* is installed here only while the interpreter is executing
 // a native call. The script key and shared-global layout are recovered from
 // generated sub_827D5840 and the executable parachute_player SCO.
@@ -710,7 +710,7 @@ bool FrontendActive(const PPCContext& parent, uint8_t* base) {
   // menu may own keyboard navigation while this particular widget is inactive.
   PPCContext nested = parent;
   nested.r3.u32 = 0;
-  __imp__sub_8224EEF8(nested, base);
+  __imp__sub_8224B890(nested, base);
   return nested.r3.u8 != 0;
 }
 
@@ -1558,7 +1558,7 @@ InputEpoch CaptureEpoch(const PPCContext& entry_context, uint8_t* base,
   // Match sub_82299AD0's bounded weapon-info lookup. Never use the broad
   // IS_CHAR_ARMED predicate here: it includes melee weapons.
   if (mouse_gameplay) {
-    const uint32_t manager = vehicle.ped + 640;
+    const uint32_t manager = vehicle.ped + 624;
     const uint32_t slot = LoadU32(base, manager);
     if (slot <= 10) {
       const uint32_t type = LoadU32(base, manager + 36 + slot * 8);
@@ -1812,7 +1812,7 @@ void InjectEpoch(uint8_t* base, uint32_t control, uint32_t active_gameplay_contr
   const VehicleMouseActions mouse = RouteVehicleMouse(
       helicopter_driver, IsDown(epoch.state, VirtualKey::kRButton),
       epoch.mouse_x, epoch.mouse_y);
-  // sub_822ABEE0 consumes 32/33 through sub_822B8178 for pitch, and
+  // sub_822ABEE0 consumes 32/33 through sub_821EEDE8 for pitch, and
   // directly decodes 57/58 for yaw. Use the same actions as the numpad so
   // the retail aircraft simulation and controller magnitudes remain intact.
   gameplay_activity |= MergeAxis(base, control, Action::kVehicleMoveUp,
@@ -2094,8 +2094,8 @@ void MaybeForceDirectWeaponAction(PPCContext& ctx, uint8_t* base,
 
 }  // namespace gta4::input
 
-#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
-extern "C" void sub_828CCD60(PPCContext& ctx, uint8_t* base) {
+#ifndef GTA4_PAL_SAFE_MODE_RETARGETED  // PAL-retargeted, see tools/pal_retarget_hooks.py
+extern "C" void sub_82869408(PPCContext& ctx, uint8_t* base) {
   const uint32_t caller = ctx.lr;
   // Select bindings before retail polls XInput, and use that same selection
   // for this epoch's native overlay. No first-frame delay or duplicate keys.
@@ -2103,14 +2103,14 @@ extern "C" void sub_828CCD60(PPCContext& ctx, uint8_t* base) {
       gta4::input::ConfigureKeyboardControllerForPoll(ctx, base);
   const uint64_t touch_epoch = gta4::input::ReadEpoch().sequence + 1;
   GTA4_TouchConsumePoll(ctx, base, touch_epoch);
-  __imp__sub_828CCD60(ctx, base);
+  __imp__sub_82869408(ctx, base);
   const gta4::input::InputEpoch epoch =
       gta4::input::CaptureEpoch(ctx, base, caller, helicopter_controls);
   GTA4_SonyEndPoll(ctx, base);
   gta4::input::ProcessPauseTabShoulders(ctx, base, epoch);
   gta4::GTA4MotionBridge::Get().SetReloadContextActive(
       !epoch.frontend_active && !epoch.phone_visible && !GTA4_TouchTitleInputOwned() &&
-      gta4::input::LoadU32(base, 0x82BA1D40) == 0 &&
+      gta4::input::LoadU32(base, 0x82B806EC) == 0 &&
       !gta4::input::ReadVehicleInputContext(base).vehicle);
   if (rex::input::IsInputTraceEnabled() && epoch.valid) {
     uint32_t retail_controller_flags = 0;
@@ -2578,12 +2578,12 @@ extern "C" void sub_8225B5F0(PPCContext& ctx, uint8_t* base) {
 }
 #endif  // GTA4_PAL_SAFE_MODE sub_822D4158
 
-#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
-extern "C" void sub_825D1AF8(PPCContext& ctx, uint8_t* base) {
+#ifndef GTA4_PAL_SAFE_MODE_RETARGETED  // PAL-retargeted, see tools/pal_retarget_hooks.py
+extern "C" void sub_825930E0(PPCContext& ctx, uint8_t* base) {
   const uint32_t call_context = ctx.r3.u32;
   const uint32_t touch_thread = gta4::input::ReadTouchScriptThread(base);
   const auto touch_context = gta4::input::GetTouchContextSnapshot();
-  __imp__sub_825D1AF8(ctx, base);
+  __imp__sub_825930E0(ctx, base);
   const uint64_t epoch = gta4::input::ReadEpoch().sequence;
   const gta4::input::ParachuteScriptContext parachute =
       gta4::input::ReadParachuteScriptContext(base);
@@ -2601,13 +2601,13 @@ extern "C" void sub_825D1AF8(PPCContext& ctx, uint8_t* base) {
 }
 #endif  // GTA4_PAL_SAFE_MODE sub_825D1AF8
 
-#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
-extern "C" void sub_825D1B40(PPCContext& ctx, uint8_t* base) {
+#ifndef GTA4_PAL_SAFE_MODE_RETARGETED  // PAL-retargeted, see tools/pal_retarget_hooks.py
+extern "C" void sub_82593128(PPCContext& ctx, uint8_t* base) {
   const uint32_t call_context = ctx.r3.u32;
   const uint32_t touch_thread = gta4::input::ReadTouchScriptThread(base);
   const auto touch_context = gta4::input::GetTouchContextSnapshot();
   const auto parachute = gta4::input::ReadTouchParachuteState(base);
-  __imp__sub_825D1B40(ctx, base);
+  __imp__sub_82593128(ctx, base);
   if (parachute)
     gta4::input::ObserveTouchParachuteState(*parachute, touch_context.epoch, touch_thread);
   gta4::input::MergeTouchScriptQueryResult(
@@ -2616,12 +2616,12 @@ extern "C" void sub_825D1B40(PPCContext& ctx, uint8_t* base) {
 }
 #endif  // GTA4_PAL_SAFE_MODE sub_825D1B40
 
-#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
-extern "C" void sub_825D1B88(PPCContext& ctx, uint8_t* base) {
+#ifndef GTA4_PAL_SAFE_MODE_RETARGETED  // PAL-retargeted, see tools/pal_retarget_hooks.py
+extern "C" void sub_82593170(PPCContext& ctx, uint8_t* base) {
   const uint32_t call_context = ctx.r3.u32;
   const uint32_t touch_thread = gta4::input::ReadTouchScriptThread(base);
   const auto touch_context = gta4::input::GetTouchContextSnapshot();
-  __imp__sub_825D1B88(ctx, base);
+  __imp__sub_82593170(ctx, base);
   const uint64_t epoch = gta4::input::ReadEpoch().sequence;
   const gta4::input::ParachuteScriptContext parachute =
       gta4::input::ReadParachuteScriptContext(base);
@@ -2639,12 +2639,12 @@ extern "C" void sub_825D1B88(PPCContext& ctx, uint8_t* base) {
 }
 #endif  // GTA4_PAL_SAFE_MODE sub_825D1B88
 
-#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
-extern "C" void sub_825D1BD0(PPCContext& ctx, uint8_t* base) {
+#ifndef GTA4_PAL_SAFE_MODE_RETARGETED  // PAL-retargeted, see tools/pal_retarget_hooks.py
+extern "C" void sub_825931B8(PPCContext& ctx, uint8_t* base) {
   const uint32_t call_context = ctx.r3.u32;
   const uint32_t touch_thread = gta4::input::ReadTouchScriptThread(base);
   const auto touch_context = gta4::input::GetTouchContextSnapshot();
-  __imp__sub_825D1BD0(ctx, base);
+  __imp__sub_825931B8(ctx, base);
   const uint64_t epoch = gta4::input::ReadEpoch().sequence;
   const gta4::input::ParachuteScriptContext parachute =
       gta4::input::ReadParachuteScriptContext(base);

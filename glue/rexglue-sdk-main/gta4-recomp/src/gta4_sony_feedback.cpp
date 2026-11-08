@@ -27,31 +27,31 @@ namespace {
 namespace sony = rex::input::sony;
 
 // Derived with Python from generated retail PPC; see verify_gta4_sony_sites.py.
-constexpr uint32_t kPrimaryPlayer = 0x82A98778;
-constexpr uint32_t kPlayerInfoTable = 0x82C01C70;
-constexpr uint32_t kPlayerGenerationTable = 0x82C01C30;
+constexpr uint32_t kPrimaryPlayer = 0x82A2CFC8;
+constexpr uint32_t kPlayerInfoTable = 0x82C51C10;
+constexpr uint32_t kPlayerGenerationTable = 0x82C51BD0;
 constexpr uint32_t kRetailPlayerCount = 16;
-constexpr uint32_t kGameplayControl = 0x82B2A2F0;
+constexpr uint32_t kGameplayControl = 0x82ACC138;
 constexpr uint32_t kControlSpan = 4204;
 constexpr uint32_t kControlUserOffset = 3412;
 constexpr uint32_t kActionArray = 2328;
 constexpr uint32_t kActionStride = 12;
 constexpr uint32_t kLastInput = 4200;
-constexpr uint32_t kInputClock = 0x82C6C2A4;
-constexpr uint32_t kEpisode = 0x82B39504;
-constexpr uint32_t kGameMode = 0x82B3950C;
-constexpr uint32_t kAliveThreshold = 0x82000D68;
-constexpr uint32_t kCutscene = 0x82B977F0;
-constexpr uint32_t kMinigame = 0x82BA1D40;
-constexpr uint32_t kPauseVisible = 0x82BFA144;
-constexpr uint32_t kPauseTransition = 0x82BFA13C;
-constexpr uint32_t kFrontendWidgetIndex = 0x82BFA10C;
-constexpr uint32_t kFrontendWidgets = 0x82CC7BD0;
-constexpr uint32_t kFrontendWidgetFlags = 0x82CC7BDC;
-constexpr uint32_t kPhoneCreated = 0x831D4DD4;
-constexpr uint32_t kPhoneOffscreen = 0x831D534C;
+constexpr uint32_t kInputClock = 0x82C7E274;
+constexpr uint32_t kEpisode = 0x82B11174;
+constexpr uint32_t kGameMode = 0x82B1117C;
+constexpr uint32_t kAliveThreshold = 0x820026C8;
+constexpr uint32_t kCutscene = 0x82CC102C;
+constexpr uint32_t kMinigame = 0x82B806EC;
+constexpr uint32_t kPauseVisible = 0x82BEC860;
+constexpr uint32_t kPauseTransition = 0x82BEC858;
+constexpr uint32_t kFrontendWidgetIndex = 0x82BEC82C;
+constexpr uint32_t kFrontendWidgets = 0x82C192F4;
+constexpr uint32_t kFrontendWidgetFlags = 0x82C19300;
+constexpr uint32_t kPhoneCreated = 0x83137668;
+constexpr uint32_t kPhoneOffscreen = 0x83137BCD;
 constexpr uint32_t kPhoneIndex = 0x82B3A0F0;
-constexpr uint32_t kPhoneObjects = 0x82B39990;
+constexpr uint32_t kPhoneObjects = 0x82AAD0D8;
 
 bool GuestSpan(uint8_t* base, uint32_t address, size_t size, bool writable = false) {
   if (!base || !address || !size || size > std::numeric_limits<uint32_t>::max()) return false;
@@ -78,7 +78,7 @@ bool FrontendActive(uint8_t* base) {
     const uint32_t transition = REX_LOAD_U32(kPauseTransition);
     return transition != 2 && transition != 6;
   }
-  // sub_8224EEF8(0) -> sub_8229C4B8. A negative widget sentinel is inactive.
+  // sub_8224B890(0) -> sub_8225E108. A negative widget sentinel is inactive.
   const uint32_t index = REX_LOAD_U32(kFrontendWidgetIndex);
   if (index == static_cast<uint32_t>(-90)) return false;
   if (index >= 3 || !GuestSpan(base, kFrontendWidgetFlags + index, 1) ||
@@ -113,7 +113,7 @@ void ReadAliased(PPCContext&, uint8_t* base) {
   if (index >= kRetailPlayerCount) return;
   const uint32_t info = REX_LOAD_U32(kPlayerInfoTable + index * 4);
   if (!GuestSpan(base, info, 1404) || !GuestSpan(base, kGameplayControl, kControlSpan)) return;
-  const uint32_t ped = REX_LOAD_U32(info + 1400);
+  const uint32_t ped = REX_LOAD_U32(info + 1384);
   if (!GuestSpan(base, ped, 2692)) return;
   const uint32_t user = REX_LOAD_U32(kGameplayControl + kControlUserOffset);
   if (user >= 4) return;
@@ -131,8 +131,8 @@ void ReadAliased(PPCContext&, uint8_t* base) {
   if (GuestSpan(base, data, 204)) {
     state.wanted = static_cast<int>(std::min(REX_LOAD_U32(data + 200), 6u));
   }
-  if (REX_LOAD_U32(ped + 572) & 0x20000000u) {
-    const uint32_t vehicle = REX_LOAD_U32(ped + 2688);
+  if (REX_LOAD_U32(ped + 568) & 0x20000000u) {
+    const uint32_t vehicle = REX_LOAD_U32(ped + 2656);
     if (GuestSpan(base, vehicle, 3908)) {
       player.vehicle = vehicle;
       state.in_vehicle = true;
@@ -143,15 +143,15 @@ void ReadAliased(PPCContext&, uint8_t* base) {
                                            : state.player_identity;
   const float health = FloatAt(base, ped + 484);
   const float threshold = FloatAt(base, kAliveThreshold);
-  const bool playing = REX_LOAD_U32(info + 1232) == 2 && std::isfinite(health) &&
+  const bool playing = REX_LOAD_U32(info + 1216) == 2 && std::isfinite(health) &&
                        std::isfinite(threshold) && health >= threshold;
   bool title_owned = false;
 #if !defined(GTA4_SONY_LEGACY_HOST)
   title_owned = GTA4_TouchTitleInputOwned();
 #endif
   state.active = gta4::sony::GameplayOwned(
-      playing, REX_LOAD_U32(info + 1200), REX_LOAD_U32(kGameMode) == 1,
-      REX_LOAD_U32(ped + 2496), FrontendActive(base), PhoneVisible(base),
+      playing, REX_LOAD_U32(info + 1184), REX_LOAD_U32(kGameMode) == 1,
+      REX_LOAD_U32(ped + 2464), FrontendActive(base), PhoneVisible(base),
       REX_LOAD_U32(kMinigame) != 0, title_owned || REX_LOAD_U32(kCutscene) != 0);
   state.gestures_owned = state.active;
   const uint32_t aim = kGameplayControl + kActionArray + 6 * kActionStride;
@@ -161,7 +161,7 @@ void ReadAliased(PPCContext&, uint8_t* base) {
   // Checked equivalent of sub_823D4D60: both object+600 and manager+32
   // contain pointers, not inline CWeapon structures. Unarmed/special fallback
   // slots are deliberately excluded from trigger resistance.
-  const uint32_t manager = ped + 640;
+  const uint32_t manager = ped + 624;
   const uint32_t slot = REX_LOAD_U32(manager);
   const uint32_t object = REX_LOAD_U32(manager + 20);
   if (slot > 0 && slot < 10 && GuestSpan(base, object, 604)) {

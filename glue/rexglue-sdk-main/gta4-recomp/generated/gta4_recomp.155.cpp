@@ -16375,16 +16375,6 @@ loc_82580918:
 	return;
 }
 
-DEFINE_REX_FUNC(sub_82586AD0) {
-	REX_FUNC_PROLOGUE();
-	// rlwinm r10,r10,0,29,27
-	ctx.r10.u64 = __builtin_rotateleft64(ctx.r10.u32 | (ctx.r10.u64 << 32), 0) & 0xFFFFFFFFFFFFFFF7;
-	// stw r10,556(r11)
-	REX_STORE_U32(ctx.r11.u32 + 556, ctx.r10.u32);
-	// blr 
-	return;
-}
-
 DEFINE_REX_FUNC(sub_82587038) {
 	REX_FUNC_PROLOGUE();
 	PPCXERRegister xer{};

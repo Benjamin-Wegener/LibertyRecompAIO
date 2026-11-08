@@ -16440,21 +16440,6 @@ DEFINE_REX_FUNC(sub_8255DC98) {
 	return;
 }
 
-DEFINE_REX_FUNC(sub_8255FFC0) {
-	REX_FUNC_PROLOGUE();
-	PPCXERRegister xer{};
-	PPCCRRegister cr0{};
-	// lbz r10,3816(r11)
-	ctx.r10.u64 = REX_LOAD_U8(ctx.r11.u32 + 3816);
-	// andi. r10,r10,247
-	ctx.r10.u64 = ctx.r10.u64 & 247;
-	cr0.compare<int32_t>(ctx.r10.s32, 0, xer);
-	// stb r10,3816(r11)
-	REX_STORE_U8(ctx.r11.u32 + 3816, ctx.r10.u8);
-	// blr 
-	return;
-}
-
 DEFINE_REX_FUNC(sub_825606D8) {
 	REX_FUNC_PROLOGUE();
 	PPCXERRegister xer{};

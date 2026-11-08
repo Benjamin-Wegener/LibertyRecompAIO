@@ -16379,20 +16379,6 @@ loc_8255FAB0:
 	return;
 }
 
-DEFINE_REX_FUNC(sub_82560EB4) {
-	REX_FUNC_PROLOGUE();
-	// li r11,0
-	ctx.r11.s64 = 0;
-	// lwz r10,36(r11)
-	ctx.r10.u64 = REX_LOAD_U32(ctx.r11.u32 + 36);
-	// rlwimi r10,r8,31,0,0
-	ctx.r10.u64 = (__builtin_rotateleft64(ctx.r8.u32 | (ctx.r8.u64 << 32), 31) & 0x80000000) | (ctx.r10.u64 & 0xFFFFFFFF7FFFFFFF);
-	// stw r10,36(r11)
-	REX_STORE_U32(ctx.r11.u32 + 36, ctx.r10.u32);
-	// blr 
-	return;
-}
-
 DEFINE_REX_FUNC(sub_82561828) {
 	REX_FUNC_PROLOGUE();
 	PPCRegister temp{};

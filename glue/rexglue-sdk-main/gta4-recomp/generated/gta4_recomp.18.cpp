@@ -17643,20 +17643,6 @@ DEFINE_REX_FUNC(sub_8258B410) {
 	return;
 }
 
-DEFINE_REX_FUNC(sub_8258FE44) {
-	REX_FUNC_PROLOGUE();
-	// li r11,0
-	ctx.r11.s64 = 0;
-	// lwz r11,532(r11)
-	ctx.r11.u64 = REX_LOAD_U32(ctx.r11.u32 + 532);
-	// lwz r11,284(r11)
-	ctx.r11.u64 = REX_LOAD_U32(ctx.r11.u32 + 284);
-	// stw r11,0(r8)
-	REX_STORE_U32(ctx.r8.u32 + 0, ctx.r11.u32);
-	// blr 
-	return;
-}
-
 DEFINE_REX_FUNC(sub_82593200) {
 	REX_FUNC_PROLOGUE();
 	PPCXERRegister xer{};

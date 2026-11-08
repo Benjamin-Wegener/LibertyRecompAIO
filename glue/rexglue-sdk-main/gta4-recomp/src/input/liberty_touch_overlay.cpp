@@ -2,6 +2,7 @@
 // player is doing (on foot, driving, phone, menus), drawn in a GTA-style HUD
 // look, sent to the title as an Xbox 360 pad. Every control can be moved:
 // hold Pause for 1.5 s to edit, drag, tap Pause to save.
+#include "../gta4_presentation_options.h"
 #include "input/liberty_touch_overlay.h"
 
 #include <algorithm>
@@ -973,7 +974,9 @@ bool UpdateAndDrawLibertyTouchOverlay(ImDrawList* draw, ImFont* font, float font
   bool skip_held = false;
   for (size_t i = 0; i < s.placed.size(); ++i)
     if (std::string_view(s.placed[i].spec->id) == "skip" && s.held[i]) skip_held = true;
-  if (skip_held && !s.skip_was_held && !s.editing) s.skip_pulse_until = now + std::chrono::milliseconds(150);
+  if (skip_held && !s.skip_was_held && !s.editing) {
+    s.skip_pulse_until = now + std::chrono::milliseconds(150);
+  }
   s.skip_was_held = skip_held;
   // RESUME (menu screen): Start closes the pause menu; leave the forced menu.
   bool resume_held = false;

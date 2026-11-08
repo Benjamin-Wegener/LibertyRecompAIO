@@ -35,7 +35,7 @@ constexpr uint32_t kEpisode = 0x82B11174, kExecutingThread = 0x830F4FBC, kGlobal
 constexpr uint32_t kPlayerIndex = 0x82A2CFC8, kPlayerTable = 0x82C51C10;
 constexpr uint32_t kPhoneCreated = 0x83137668, kFrontendRequest = 0x82BEC858,
                    kFrontendVisible = 0x82BEC860, kSaveSucceeded = 0x82B94549;
-constexpr uint32_t kPedOffset = 1400, kVehicleFlags = 572, kInVehicle = 0x20000000;
+constexpr uint32_t kPedOffset = 1384, kVehicleFlags = 568, kInVehicle = 0x20000000;
 constexpr uint32_t kThreadProgram = 8, kThreadLocals = 80, kThreadState = 12, kThreadName = 92;
 constexpr uint32_t kMaxSCO = 1024 * 1024;
 std::mutex state_mutex, native_mutex, label_mutex;

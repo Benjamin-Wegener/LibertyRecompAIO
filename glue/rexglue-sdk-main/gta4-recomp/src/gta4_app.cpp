@@ -1,5 +1,6 @@
 #include "gta4_app.h"
 #include "gta4_hack_registry.h"
+#include "gta4_init.h"
 #include "gta4_present_mode_policy.h"
 #include "gta4_streaming_hooks.h"
 
@@ -30,6 +31,9 @@
 #include <rex/ui/window.h>
 
 #include "achievement_bridge_gc.h"
+
+REXCVAR_DEFINE_BOOL(gta4_msr_global_lock, false, "GTA IV/Stability",
+                    "Take the global lock around guest mfmsr/mtmsrd atomics (old behaviour)");
 #include "gta4_frontend_hooks.h"
 #include "gta4_presentation_options.h"
 #include "gta4_keyboard_controller.h"
@@ -690,6 +694,9 @@ std::optional<rex::PathConfig> GTA4App::OnFinalizePaths(
 
 void GTA4App::OnPreSetup(rex::RuntimeConfig& config) {
   gta4::hacks::ApplySafeModeIfRequested();
+  ppc_msr_global_lock_enabled_() = REXCVAR_GET(gta4_msr_global_lock);
+  REXLOG_INFO("msr global lock around guest atomics: {}",
+              ppc_msr_global_lock_enabled_() ? "on" : "off");
   rex::input::mnk::SetNativeControllerCompatibilityBindings(
       gta4::input::KeyboardControllerBindings());
   if (!config.graphics && config.gpu_plugin.empty()) {

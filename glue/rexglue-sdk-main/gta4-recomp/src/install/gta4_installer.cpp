@@ -78,6 +78,7 @@ struct XexInfo {
   uint32_t module_flags = 0;
   uint32_t version = 0;
   uint32_t title_id = 0;
+  uint32_t region = 0;  // xex2_security_info.region (rex::XEX_REGION_*)
   std::array<uint8_t, 0x100> rsa_signature{};
   bool has_security_info = false;
   bool has_execution_info = false;
@@ -275,6 +276,7 @@ bool ParseXex(std::span<const uint8_t> bytes, XexInfo& info, std::string& error)
     const auto* security =
         reinterpret_cast<const rex::xex2_security_info*>(bytes.data() + security_offset);
     std::memcpy(info.rsa_signature.data(), security->rsa_signature, info.rsa_signature.size());
+    info.region = uint32_t(security->region);
     info.has_security_info = true;
   }
 
@@ -851,10 +853,16 @@ bool ValidateStagedEpisode(const std::filesystem::path& path, Episode episode) {
 }
 
 bool ValidateInstalledPair(const std::filesystem::path& game_root, std::string& reason) {
-  // PATCHED (local experiment): the install gate is skipped for the PAL disc.
-  (void)game_root;
-  (void)reason;
-  return true;
+  // PAL: the USA install gate (retail 1.00 + TU8 hashes) does not apply to the
+  // European disc. Only require an installed base executable.
+  {
+    std::error_code ec;
+    if (!std::filesystem::is_regular_file(game_root / "default.xex", ec)) {
+      reason = "not installed";
+      return false;
+    }
+    return true;
+  }
 
   const auto base_path = game_root / "default.xex";
   std::vector<uint8_t> base_bytes;
@@ -959,14 +967,17 @@ Result Install(const Selection& selection, const std::filesystem::path& install_
   }
 
   std::optional<PreparedUpdate> update;
-  if (false && game && selection.update_source.empty()) {
+  // Liberty Recomp AIO: the USA build needs Title Update 8; the European (PAL)
+  // build is recompiled from the disc executable and takes no update.
+  const bool usa_disc = game && (game->xex_info.region & rex::XEX_REGION_NTSCU) != 0;
+  if (usa_disc && selection.update_source.empty()) {
     result.error = "The supported retail 1.00 source requires the GTA IV v8 title update.";
     return result;
   }
   // PATCHED (local experiment): skip the update entirely when none was chosen.
   // The original code always called PrepareUpdateSource, which fails on an empty
   // path with "The selected source does not exist."
-  if (game && !selection.update_source.empty()) {
+  if (game && usa_disc && !selection.update_source.empty()) {
     update = PrepareUpdateSource(selection.update_source, game->xex_info, result.error);
     if (!update) {
       return result;
@@ -1131,6 +1142,11 @@ Result Install(const Selection& selection, const std::filesystem::path& install_
   }
 
   std::filesystem::remove_all(staging_root, fs_error);
+  if (game) {
+    // Which recompiled executable the launcher loads: libmain_usa.so or libmain.so (PAL).
+    std::ofstream region_file(install_root / "region", std::ios::trunc);
+    region_file << (usa_disc ? "usa" : "pal") << '\n';
+  }
   result.success = true;
   return result;
   } catch (const std::filesystem::filesystem_error& exception) {

@@ -1380,6 +1380,18 @@ DEFINE_REX_FUNC(sub_8227F458) {
 	std::abort();
 }
 
+DEFINE_REX_FUNC(sub_8227F5B8) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_8227F5B8 called");
+	std::abort();
+}
+
+DEFINE_REX_FUNC(sub_8227F608) {
+	REX_FUNC_PROLOGUE();
+	REXLOG_ERROR("PAL compat: missing function sub_8227F608 called");
+	std::abort();
+}
+
 DEFINE_REX_FUNC(sub_8227F658) {
 	REX_FUNC_PROLOGUE();
 	REXLOG_ERROR("PAL compat: missing function sub_8227F658 called");

@@ -15237,16 +15237,6 @@ loc_82545580:
 	return;
 }
 
-DEFINE_REX_FUNC(sub_82548108) {
-	REX_FUNC_PROLOGUE();
-	// oris r10,r10,4
-	ctx.r10.u64 = ctx.r10.u64 | 262144;
-	// stw r10,556(r11)
-	REX_STORE_U32(ctx.r11.u32 + 556, ctx.r10.u32);
-	// blr 
-	return;
-}
-
 DEFINE_REX_FUNC(sub_82548310) {
 	REX_FUNC_PROLOGUE();
 	PPCRegister r31{};

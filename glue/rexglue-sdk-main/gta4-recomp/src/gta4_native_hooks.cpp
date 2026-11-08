@@ -1,4 +1,3 @@
-#include <set>
 #include <algorithm>
 #include <array>
 #include <atomic>
@@ -133,13 +132,13 @@ constexpr uint32_t kPresentDescriptorSize = 52;
 constexpr uint32_t kPresentFlag10941Offset = 10941;
 constexpr uint32_t kPresentFlag10942Offset = 10942;
 constexpr uint32_t kMainPresentCaller = 0x828BF4B0;
-constexpr uint32_t kWorkerPresentCaller = 0x82A4F178;
+constexpr uint32_t kWorkerPresentCaller = 0x829DDCD8;
 constexpr uint32_t kTvMuteGlobal = 0x82CB27E5;
 constexpr uint32_t kTvTracePresentBudget = 480;
 // Four bounded game-side join records per traced Present. The budget was
 // calculated by /tmp/calc_tv_trace_event_budget.py.
 constexpr uint32_t kTvTraceEventBudget = 1920;
-constexpr uint32_t kScriptRtResolveCaller = 0x828DA8E0;
+constexpr uint32_t kScriptRtResolveCaller = 0x8286B9C0;
 constexpr uint32_t kDrawParameterVertexRangeOffset = 36;
 constexpr uint32_t kDrawParameterStreamFlagsOffset = 40;
 constexpr uint32_t kDrawParameterTileFlagsOffset = 48;
@@ -172,10 +171,10 @@ constexpr uint32_t kPrimaryDepthSurfaceGlobal = 0x83124C00;
 constexpr uint32_t kDeferredPhaseMarkerEndGlobal = 0x82A351CC;
 constexpr uint32_t kDeferredPhaseMarkerBeginGlobal = 0x82A351C8;
 constexpr uint32_t kDeferredPhaseTailGlobal = 0x82CC1118;
-constexpr uint32_t kDeferredPhaseBeginReturnAddress = 0x824F51C0;
-constexpr uint32_t kEaaParameterUploadReturnAddress = 0x822D07E0;
-constexpr uint32_t kDeferredResolutionSetupReturnAddress = 0x824F8028;
-constexpr uint32_t kVideoGlobalsReadyReturnAddress = 0x828C0C70;
+constexpr uint32_t kDeferredPhaseBeginReturnAddress = 0x8249E130;
+constexpr uint32_t kEaaParameterUploadReturnAddress = 0x822E3B28;
+constexpr uint32_t kDeferredResolutionSetupReturnAddress = 0x824A0F98;
+constexpr uint32_t kVideoGlobalsReadyReturnAddress = 0x82852008;
 constexpr uint32_t kPrimaryVideoWidthGlobal = 0x82A83E84;
 constexpr uint32_t kPrimaryVideoHeightGlobal = 0x82A83E88;
 constexpr uint32_t kSecondaryVideoWidthGlobal = 0x82A83E8C;
@@ -274,7 +273,7 @@ constexpr uint64_t kDeferredPackedDepthAliasTraceSetupLimit = 16;
 constexpr uint32_t kDeferredOriginalRectangleCount = 3;
 constexpr uint32_t kDeferredNativeRectangleCount = 1;
 constexpr uint32_t kDeferredPhaseMarkerLimit = 128;
-constexpr uint32_t kExteriorReflectionProjectionReturnAddress = 0x82522644;
+constexpr uint32_t kExteriorReflectionProjectionReturnAddress = 0x8260D6EC;
 
 struct PendingDrawPrimitiveUp {
   uint32_t device = 0;
@@ -765,10 +764,10 @@ void TraceNativeTitleLightDraw(uint8_t* base, uint32_t object, uint32_t caller, 
 }
 
 constexpr std::array<uint32_t, 4> kDeferredLocalLightSelectorCallers = {
-    0x822B13A4,  // Stencil volume, camera inside.
-    0x822B13C0,  // Stencil volume, camera outside.
-    0x822B142C,  // Accumulation, camera inside.
-    0x822B1448,  // Accumulation, camera outside.
+    0x822EA7BC,  // Stencil volume, camera inside.
+    0x822EA7D8,  // Stencil volume, camera outside.
+    0x822EA844,  // Accumulation, camera inside.
+    0x822EA860,  // Accumulation, camera outside.
 };
 
 bool IsDeferredLocalLightSelectorCaller(uint32_t caller) {
@@ -1019,18 +1018,18 @@ LightingContext CaptureNativeLightingSelection(uint8_t* base, PPCContext& ctx) {
   context.occurrence_id = AcquireNativeLightingOccurrence();
 
   switch (context.selector_caller) {
-    case 0x821BC5D0:
+    case 0x8218DCE0:
       // CDrawDefLight retains its command object in r31 (generated .4).
       context.source = LightSourceKind::kGlobalCommand;
       context.source_function = 0x8218DCC0;
       context.record_address = ctx.r31.u32;
       break;
-    case 0x822B13A4:
-    case 0x822B13C0:
+    case 0x822EA7BC:
+    case 0x822EA7D8:
       context.role = LightPassRole::kLocalStencilSetup;
       [[fallthrough]];
-    case 0x822B142C:
-    case 0x822B1448:
+    case 0x822EA844:
+    case 0x822EA860:
       // sub_822EA320 adds 80 to the list base, then advances by 128.
       context.source = LightSourceKind::kPrimaryRecord;
       context.source_function = 0x822EA320;
@@ -1046,12 +1045,12 @@ LightingContext CaptureNativeLightingSelection(uint8_t* base, PPCContext& ctx) {
                                                     context.view_address, context.occurrence_id);
       }
       break;
-    case 0x822B0E50:
-    case 0x822B0ECC:
-    case 0x822B4C58:
-    case 0x822B4C74:
-    case 0x822B4C90:
-    case 0x822B4CAC: {
+    case 0x822EA268:
+    case 0x822EA2E4:
+    case 0x822EE070:
+    case 0x822EE08C:
+    case 0x822EE0A8:
+    case 0x822EE0C4: {
       const uint32_t records = LoadU32(base, kPrimaryDeferredLightListPointerGlobal);
       context.source = LightSourceKind::kPrimaryRecord;
       context.source_function = context.role == LightPassRole::kAmbientVolume ? 0x822E9FA8
@@ -1059,25 +1058,25 @@ LightingContext CaptureNativeLightingSelection(uint8_t* base, PPCContext& ctx) {
       context.record_address = records ? records + ctx.r29.u32 : 0;
       break;
     }
-    case 0x822B49D0:
-    case 0x822B49E8:
-    case 0x822B4A08:
-    case 0x822B4A20: {
+    case 0x822EDDE8:
+    case 0x822EDE00:
+    case 0x822EDE20:
+    case 0x822EDE38: {
       const uint32_t records = LoadU32(base, kSecondaryDeferredLightListPointerGlobal);
       context.source = LightSourceKind::kSecondaryRecord;
       context.source_function = 0x822EDA58;
       context.record_address = records ? records + ctx.r28.u32 : 0;
       break;
     }
-    case 0x82207454:
+    case 0x82254D84:
       context.source = LightSourceKind::kEffectBatch;
       context.source_function = 0x82254C00;
       break;
-    case 0x8234A734:
+    case 0x821BF84C:
       context.source = LightSourceKind::kEffectBatch;
       context.source_function = 0x821BF718;
       break;
-    case 0x824F7614:
+    case 0x824A0584:
       context.source_function = 0x824A0298;
       context.role = LightPassRole::kGlobalStencil;
       break;
@@ -1349,7 +1348,7 @@ void TraceNativeDeferredSelectorResolution(uint8_t* base, const PPCContext& ctx,
                                            uint32_t effect, uint32_t material_index,
                                            uint32_t explicit_handle, uint32_t active_before) {
   auto* trace = g_native_deferred_selector_trace;
-  if (!trace || caller != 0x824F6464) {
+  if (!trace || caller != 0x8249F3D4) {
     return;
   }
 
@@ -1385,7 +1384,7 @@ void TraceNativeDeferredSelectorResolution(uint8_t* base, const PPCContext& ctx,
 
 void TraceNativeDeferredSelectorPass(uint8_t* base, uint32_t caller) {
   const auto* trace = g_native_deferred_selector_trace;
-  if (!trace || caller != 0x824F6470) {
+  if (!trace || caller != 0x8249F3E0) {
     return;
   }
   const LightingContext& lighting = GetNativeLightingContext();
@@ -1432,7 +1431,7 @@ class ScopedNativeWorldLightProducerTrace {
     // 0x822089C0 passes the attribute wrapper in r3 and entity+ordinal in r9.
     // This retail token is not an allocation generation or a global object ID.
     trace_.caller = uint32_t(ctx.lr);
-    if (trace_.caller == 0x822089C4) {
+    if (trace_.caller == 0x822562F4) {
       trace_.known = true;
       trace_.entity = ctx.r30.u32;
       trace_.model = ctx.r23.u32;
@@ -1483,8 +1482,8 @@ class ScopedNativeLightSubmissionTrace {
     trace_.flags = ctx.r5.u32;
     const auto* world = g_native_world_light_producer_trace;
     if (world && world->known && world->wrapper == trace_.source_r3 &&
-        (trace_.caller == 0x82208328 || trace_.caller == 0x822083F8 ||
-         trace_.caller == 0x822B32B0)) {
+        (trace_.caller == 0x82255C58 || trace_.caller == 0x82255D28 ||
+         trace_.caller == 0x822EC6C8)) {
       trace_.world = *world;
       // sub_82255108 receives the actual attribute from wrapper vtable+12
       // at 0x82207848 and retains it in r31 through these registrar calls.
@@ -1527,7 +1526,7 @@ class ScopedNativeLightSubmissionTrace {
 
 void TraceNativePrimaryLightAdmission(uint8_t* base, uint32_t caller, uint32_t destination,
                                       uint32_t candidate) {
-  if (!destination || (caller != 0x822B278C && caller != 0x822B27E8)) {
+  if (!destination || (caller != 0x822EBBA4 && caller != 0x822EBC00)) {
     return;
   }
   NativeLightSubmissionTrace submission{};
@@ -1551,7 +1550,7 @@ void TraceNativePrimaryLightAdmission(uint8_t* base, uint32_t caller, uint32_t d
       "record-lifetime=arena-slot allocation-generation=unknown",
       g_native_title_light_event_sequence.fetch_add(1, std::memory_order_relaxed) + 1,
       submission.submission, GetNativeLightSubmittedFrame(base), caller,
-      caller == 0x822B278C ? "append" : "replace", destination, candidate,
+      caller == 0x822EBBA4 ? "append" : "replace", destination, candidate,
       LoadU32(base, 0x82A2E590), LoadU32(base, 0x82CC11E0), submission.caller,
       submission.source_r3, submission.type, submission.flags, LoadU32(base, destination + 68),
       LoadU32(base, destination + 72), LoadU32(base, destination + 96),
@@ -1821,35 +1820,35 @@ NativeLocalLightTechniqueSite ResolveNativeLocalLightTechniqueSite(uint8_t* base
   const uint32_t primary_base = LoadU32(base, kPrimaryDeferredLightListPointerGlobal);
   const uint32_t secondary_base = LoadU32(base, kSecondaryDeferredLightListPointerGlobal);
   switch (caller) {
-    case 0x82207454:
+    case 0x82254D84:
       return {NativeLocalLightLoopKind::kCorona, NativeLocalLightSource::kSynthetic,
               0x82254C00, "corona-batch"};
-    case 0x822B0E50:
-    case 0x822B0ECC:
+    case 0x822EA268:
+    case 0x822EA2E4:
       return {NativeLocalLightLoopKind::kTypeThree, NativeLocalLightSource::kPrimary,
               primary_base ? primary_base + ctx.r29.u32 : 0, "type-three"};
-    case 0x822B13A4:
-    case 0x822B13C0:
-    case 0x822B142C:
-    case 0x822B1448:
+    case 0x822EA7BC:
+    case 0x822EA7D8:
+    case 0x822EA844:
+    case 0x822EA860:
       return {NativeLocalLightLoopKind::kPointSpot, NativeLocalLightSource::kPrimary,
               ctx.r30.u32 >= 80 ? ctx.r30.u32 - 80 : 0, "point-spot"};
-    case 0x822B49D0:
-    case 0x822B49E8:
-    case 0x822B4A08:
-    case 0x822B4A20:
+    case 0x822EDDE8:
+    case 0x822EDE00:
+    case 0x822EDE20:
+    case 0x822EDE38:
       return {NativeLocalLightLoopKind::kShaft, NativeLocalLightSource::kSecondary,
               secondary_base ? secondary_base + ctx.r28.u32 : 0, "shaft-secondary"};
-    case 0x822B4C58:
-    case 0x822B4C74:
-    case 0x822B4C90:
-    case 0x822B4CAC:
+    case 0x822EE070:
+    case 0x822EE08C:
+    case 0x822EE0A8:
+    case 0x822EE0C4:
       return {NativeLocalLightLoopKind::kShaft, NativeLocalLightSource::kPrimary,
               primary_base ? primary_base + ctx.r29.u32 : 0, "shaft-primary"};
-    case 0x8234A734:
+    case 0x821BF84C:
       return {NativeLocalLightLoopKind::kWaterFx, NativeLocalLightSource::kBucket,
               ctx.r19.u32 ? LoadU32(base, ctx.r19.u32) : 0, "waterFx-batch"};
-    case 0x824F7614:
+    case 0x824A0584:
       return {NativeLocalLightLoopKind::kGlobalStencil, NativeLocalLightSource::kSynthetic,
               0x824A0298, "global-stencil"};
     default:
@@ -1862,17 +1861,17 @@ NativeLocalLightTechniqueSite ResolveNativeLocalLightBranchSite(uint8_t* base, P
                                                                 uint32_t caller) {
   const uint32_t primary_base = LoadU32(base, kPrimaryDeferredLightListPointerGlobal);
   switch (caller) {
-    case 0x822B0C8C:
-    case 0x822B0D5C:
+    case 0x822EA0A4:
+    case 0x822EA174:
       return {NativeLocalLightLoopKind::kTypeThree, NativeLocalLightSource::kPrimary,
               primary_base ? primary_base + ctx.r29.u32 : 0, "type-three"};
-    case 0x822B104C:
-    case 0x822B1120:
-    case 0x822B1144:
+    case 0x822EA464:
+    case 0x822EA538:
+    case 0x822EA55C:
       return {NativeLocalLightLoopKind::kPointSpot, NativeLocalLightSource::kPrimary,
               ctx.r30.u32 >= 80 ? ctx.r30.u32 - 80 : 0, "point-spot"};
-    case 0x822B4B04:
-    case 0x822B4B30:
+    case 0x822EDF1C:
+    case 0x822EDF48:
       return {NativeLocalLightLoopKind::kShaft, NativeLocalLightSource::kPrimary,
               primary_base ? primary_base + ctx.r29.u32 : 0, "shaft-primary"};
     default:
@@ -1893,8 +1892,8 @@ NativeLocalLightLoopFrame* FindNativeLocalLightLoopFrame(NativeLocalLightLoopKin
 
 void TraceNativeApartmentBulbClassifier(uint8_t* base, PPCContext& ctx) {
   const uint32_t caller = uint32_t(ctx.lr);
-  if (caller != 0x822B13A4 && caller != 0x822B13C0 && caller != 0x822B142C &&
-      caller != 0x822B1448) {
+  if (caller != 0x822EA7BC && caller != 0x822EA7D8 && caller != 0x822EA844 &&
+      caller != 0x822EA860) {
     return;
   }
 
@@ -1955,9 +1954,9 @@ void TraceNativeApartmentBulbClassifier(uint8_t* base, PPCContext& ctx) {
   const double threshold = double(std::bit_cast<float>(threshold_radius_bits)) *
                            double(std::bit_cast<float>(threshold_scale_bits));
   const bool predicate = ctx.r26.u32 == 1 && (ctx.r29.u32 & 0xFFu) == 1;
-  const bool true_branch = caller == 0x822B13A4 || caller == 0x822B142C;
+  const bool true_branch = caller == 0x822EA7BC || caller == 0x822EA844;
   const char* const stage =
-      caller == 0x822B13A4 || caller == 0x822B13C0 ? "stencil" : "accumulation";
+      caller == 0x822EA7BC || caller == 0x822EA7D8 ? "stencil" : "accumulation";
 
   REXLOG_INFO(
       "gta4-native-light-classifier: event={} sequence={} frame={} bulb={} "
@@ -2099,7 +2098,7 @@ void TraceNativeApartmentBulbConstruction(uint8_t* base, uint32_t caller, uint32
   // *(r30) as the current array base. Reconstruct that pointer at the constructor
   // boundary so the asset/list flag can be compared with the constructed record.
   const uint32_t source_record =
-      caller == 0x8216798C && preserved_registers[8]
+      caller == 0x8213C164 && preserved_registers[8]
           ? preserved_registers[9] + LoadU32(base, preserved_registers[8])
           : 0;
   const uint32_t source_word0 = source_record ? LoadU32(base, source_record) : 0;
@@ -2188,18 +2187,18 @@ void TraceNativeLocalLightTechniqueBegin(uint8_t* base, PPCContext& ctx) {
 
 bool IsNativeLocalLightTechniqueEndCaller(uint32_t caller) {
   switch (caller) {
-    case 0x822077A0:
-    case 0x822B0EDC:
-    case 0x822B13D0:
-    case 0x822B1458:
-    case 0x822B49DC:
-    case 0x822B4A14:
-    case 0x822B4A2C:
+    case 0x822550D0:
+    case 0x822EA2F4:
+    case 0x822EA7E8:
+    case 0x822EA870:
+    case 0x822EDDF4:
+    case 0x822EDE2C:
+    case 0x822EDE44:
     case 0x822B4C68:
-    case 0x822B4CA0:
-    case 0x822B4CBC:
-    case 0x8234AA38:
-    case 0x824F767C:
+    case 0x822EE0B8:
+    case 0x822EE0D4:
+    case 0x821BFB50:
+    case 0x824A05EC:
       return true;
     default:
       return false;
@@ -2960,16 +2959,16 @@ bool ShouldLogNativeHookCall(uint64_t call_count);
 
 bool IsNativeDisplayResourceConstructorCaller(uint32_t return_address) {
   switch (return_address) {
-    case 0x828BF2C0:
-    case 0x828BF2F0:
-    case 0x828BF318:
-    case 0x828BF334:
-    case 0x828BF354:
-    case 0x828DBFE0:
-    case 0x828DC2A8:
-    case 0x82A504F4:
-    case 0x82A5052C:
-    case 0x82A50568:
+    case 0x82850620:
+    case 0x82850650:
+    case 0x82850678:
+    case 0x82850694:
+    case 0x828506B4:
+    case 0x8286D120:
+    case 0x8286D3E8:
+    case 0x829DF054:
+    case 0x829DF08C:
+    case 0x829DF0C8:
       return true;
     default:
       return false;
@@ -2980,9 +2979,9 @@ bool IsRageRenderTargetTextureConstructorCaller(uint32_t return_address) {
   switch (return_address) {
     // sub_8284FFD8 creates the texture half of a RAGE render target through
     // one of these three D3D texture paths (2D, cube, or the default type).
-    case 0x828BEFA8:
-    case 0x828BEFEC:
-    case 0x828BF014:
+    case 0x82850308:
+    case 0x8285034C:
+    case 0x82850374:
       return true;
     default:
       return false;
@@ -3126,7 +3125,7 @@ bool PatchNativePackedDepthAlias(uint8_t* base, uint32_t alias_global,
 }
 
 // sub_8286A840 allocates a 52-byte D3D texture header, then binds the source
-// resource's word at +32 masked by 0xFFFFF000 (returns 0x828D97C4 / 0x828D9834).
+// resource's word at +32 masked by 0xFFFFF000 (returns 0x828D97C4 / 0x8286A90C).
 // Capture that exact header without reading backing pixels or resolving guest
 // virtual methods. The address is an observation, not an allocation generation.
 struct NativePackedDepthAliasHeaderTrace {
@@ -3201,8 +3200,8 @@ void TraceNativePackedDepthAliasSetup(uint8_t* base, uint64_t setup, const char*
     const uint32_t height =
         layout_matches ? LoadU16(base, wrapper + kDeferredPackedDepthAliasHeightOffset) : 0;
     const auto header = ReadNativePackedDepthAliasHeader(base, texture);
-    // The first alias is built from GBufferZ (return 0x824F497C). The second
-    // uses the factory's slot +40 with r4=0 (return 0x824F49D4); the GBufferZ
+    // The first alias is built from GBufferZ (return 0x8249D8EC). The second
+    // uses the factory's slot +40 with r4=0 (return 0x8249D944); the GBufferZ
     // fields below are only a comparison for that alias, not a source claim.
     const bool source_is_gbuffer_z = alias_global == kDeferredPackedDepthAliasGlobals.front();
     REXLOG_INFO(
@@ -3218,7 +3217,7 @@ void TraceNativePackedDepthAliasSetup(uint8_t* base, uint64_t setup, const char*
         "gbuffer-z-texture-physical-base-field={:08X}",
         phase, g_native_title_light_event_sequence.fetch_add(1, std::memory_order_relaxed) + 1,
         setup, GetNativeLightSubmittedFrame(base), caller,
-        source_is_gbuffer_z ? 0x824F497C : 0x824F49D4, mode, target_width, target_height,
+        source_is_gbuffer_z ? 0x8249D8EC : 0x8249D944, mode, target_width, target_height,
         alias_global, wrapper, vtable, layout_matches, width, height, texture, header.read,
         FormatNativePackedDepthAliasHeader(header), FormatNativePackedDepthAliasFetch(header),
         header.words[8] & 0xFFFFF000, source_is_gbuffer_z, kDeferredGbufferZWrapperGlobal,
@@ -3556,29 +3555,12 @@ EnvironmentalDataV2 CaptureEnvironmentalData(uint8_t* base, uint32_t postfx) {
 }
 
 void SubmitEnvironmentalData(uint8_t* base, uint32_t device, uint32_t postfx) {
-  static std::atomic<uint32_t> diag{0};
-  const bool log_now = !(diag.fetch_add(1) % 150);
   if (!device) {
-    if (log_now) REXLOG_WARN("PAL env: device==0 postfx={:08X} link={:08X}", postfx, postfx ? LoadU32(base, postfx + 108) : 0);
     return;
   }
   UpdateEnvironmentalDataCommand command{};
   command.device = device;
   command.data = CaptureEnvironmentalData(base, postfx);
-  if (log_now) {
-    const uint32_t ri = LoadU32(base, kPostFxTimecycleIndexGlobal);
-    REXLOG_WARN("PAL env values: skyexp=[{:.4g},{:.4g},{:.4g},{:.4g}] sundir=[{:.3g},{:.3g},{:.3g}] suncol=[{:.4g},{:.4g},{:.4g}] fogdens={:.4g} fogfar={:.5g} azim=[{:.4g},{:.4g},{:.4g},{:.4g}]",
-                command.data.sky_color_exposure[0], command.data.sky_color_exposure[1], command.data.sky_color_exposure[2], command.data.sky_color_exposure[3],
-                command.data.sun_direction[0], command.data.sun_direction[1], command.data.sun_direction[2],
-                command.data.sun_color[0], command.data.sun_color[1], command.data.sun_color[2],
-                command.data.fog_density, command.data.fog_far_clip,
-                command.data.azimuth_color_height[0], command.data.azimuth_color_height[1], command.data.azimuth_color_height[2], command.data.azimuth_color_height[3]);
-    REXLOG_WARN("PAL env: device={:08X} valid={:016X} render_index={} cycles={} sun sky={} dir={} col={} fogfar_raw={:08X}",
-                device, command.data.valid_fields, ri, g_fusion_cycles.size(),
-                g_captured_sun_payload.sky_valid, g_captured_sun_payload.direction_valid,
-                g_captured_sun_payload.color_valid,
-                LoadU32(base, kCloudDoubleBufferBase + (ri & 1) * kCloudDoubleBufferStride + 68));
-  }
   if (!SubmitNativeCommand(command)) {
     static std::atomic<uint64_t> rejection_count{0};
     const uint64_t count = NextNativeHookDiagnosticCall(rejection_count);
@@ -4726,15 +4708,6 @@ SurfaceDescriptor CaptureSurfaceDescriptor(uint8_t* base, uint32_t surface) {
   descriptor.width = (std::rotl(descriptor.packed_dimensions, 14) & 0x3FFF) + 1;
   descriptor.height = (std::rotl(descriptor.packed_dimensions, 29) & 0x7FFF) + 1;
   descriptor.sample_type = DecodeSurfaceSampleType(descriptor.base);
-  if (descriptor.width == 1 && descriptor.height == 1) {  // TEMP PAL diagnostic
-    static std::mutex m; static std::set<uint32_t> seen;
-    std::lock_guard l(m);
-    if (seen.insert(surface).second) {
-      std::string w;
-      for (uint32_t o = 0; o < 64; o += 4) w += fmt::format(" {:08X}", LoadU32(base, surface + o));
-      REXLOG_WARN("PAL 1x1-surface {:08X}:{}", surface, w);
-    }
-  }
   return descriptor;
 }
 
@@ -4871,22 +4844,22 @@ extern "C" void sub_822F5DE8(PPCContext& ctx, uint8_t* base) {
 }
 #endif  // GTA4_PAL_SAFE_MODE sub_822CC388
 
-#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
-extern "C" void sub_822CC940(PPCContext& ctx, uint8_t* base) {
-  if (!IsNativeMode()) { __imp__sub_822CC940(ctx, base); return; }
+#ifndef GTA4_PAL_SAFE_MODE_RETARGETED  // PAL-retargeted, see tools/pal_retarget_hooks.py
+extern "C" void sub_822F63A0(PPCContext& ctx, uint8_t* base) {
+  if (!IsNativeMode()) { __imp__sub_822F63A0(ctx, base); return; }
   FusionCycleCapture capture;
   capture.destination = ctx.r5.u32;
-  const int32_t hour_override = int32_t(LoadU32(base, 0x82DF3928));
-  const int32_t minute_override = int32_t(LoadU32(base, 0x82DF3920));
-  const float hour = float(hour_override == -1 ? LoadU32(base, 0x82DF3924) : hour_override);
-  const float minute = float(minute_override == -1 ? LoadU32(base, 0x82DF391C) : minute_override);
-  const float second = float(LoadU32(base, 0x82DF3918));
+  const int32_t hour_override = int32_t(LoadU32(base, 0x82CFA284));
+  const int32_t minute_override = int32_t(LoadU32(base, 0x82CFA27C));
+  const float hour = float(hour_override == -1 ? LoadU32(base, 0x82CFA280) : hour_override);
+  const float minute = float(minute_override == -1 ? LoadU32(base, 0x82CFA278) : minute_override);
+  const float second = float(LoadU32(base, 0x82CFA274));
   capture.valid = SampleFusionTimecycle(hour + minute / 60.0f + second / 3600.0f,
-      LoadU32(base, 0x82FEFD6C), LoadU32(base, 0x82FEFD68),
-      std::bit_cast<float>(LoadU32(base, 0x82FEFD58)), capture.values);
+      LoadU32(base, 0x82F14CF4), LoadU32(base, 0x82F14CF0),
+      std::bit_cast<float>(LoadU32(base, 0x82F14CE0)), capture.values);
   auto* previous = g_fusion_cycle_capture;
   g_fusion_cycle_capture = &capture;
-  __imp__sub_822CC940(ctx, base);
+  __imp__sub_822F63A0(ctx, base);
   g_fusion_cycle_capture = previous;
   if (capture.destination >= kCloudDoubleBufferBase) {
     const uint32_t relative = capture.destination - kCloudDoubleBufferBase;
@@ -6617,10 +6590,6 @@ extern "C" void sub_82859D68(PPCContext& ctx, uint8_t* base) {
 
 #ifndef GTA4_PAL_SAFE_MODE_RETARGETED  // PAL-retargeted, see tools/pal_retarget_hooks.py
 extern "C" void sub_822E48D8(PPCContext& ctx, uint8_t* base) {
-  {
-    static std::atomic<uint32_t> top{0};
-    if (!(top.fetch_add(1) % 200)) REXLOG_WARN("PAL composite-entry native={} r3={:08X} lr={:08X}", IsNativeMode(), ctx.r3.u32, uint32_t(ctx.lr));
-  }
   if (!IsNativeMode()) {
     __imp__sub_822E48D8(ctx, base);
     return;
@@ -6635,8 +6604,6 @@ extern "C" void sub_822E48D8(PPCContext& ctx, uint8_t* base) {
   uint32_t device = postfx_device_link ? LoadU32(base, postfx_device_link + 24) : 0;
   {  // PAL: link+24 is not the D3D device the draw hooks use; the deferred global is.
     const uint32_t global_device = LoadU32(base, kDeferredDeviceGlobal);
-    static std::atomic<uint32_t> n{0};
-    if (!(n.fetch_add(1) % 300)) REXLOG_WARN("PAL composite: link-device={:08X} global-device={:08X}", device, global_device);
     if (global_device) device = global_device;
   }
   const uint32_t caller = ctx.lr;
@@ -6681,7 +6648,9 @@ extern "C" void sub_8218E768(PPCContext& ctx, uint8_t* base) {
   ScopedNativeLightingExecution lighting_scope(
       base, 0x8218E768, RenderExecutionStage::kRadarMap, LightPassRole::kNone);
   ScopedRenderPhaseMarker phase_scope(device, RenderPhase::kRadarMap, radar_map_section, caller);
-  gta4::aspect::DrawRadarSection(ctx, base, __imp__sub_8218E768);
+  // The map layer is authored for the HUD radar disc; drawing it untransformed
+  // preserves concentric alignment with the player arrow across all camera angles.
+  __imp__sub_8218E768(ctx, base);
 }
 #endif  // GTA4_PAL_SAFE_MODE sub_821BD0A0
 
@@ -6825,6 +6794,12 @@ extern "C" void sub_822E9FA8(PPCContext& ctx, uint8_t* base) {
 
 #ifndef GTA4_PAL_SAFE_MODE_RETARGETED  // PAL-retargeted, see tools/pal_retarget_hooks.py
 extern "C" void sub_822EA320(PPCContext& ctx, uint8_t* base) {
+  static uint32_t trace_count = 0;
+  if (trace_count++ < 10) {
+    REXLOG_WARN("sub_822EA320 [point-spot]: 0x82A35150={:02X} 5151={:02X} 5152={:02X} 5153={:02X}",
+                LoadU8(base, 0x82A35150), LoadU8(base, 0x82A35151),
+                LoadU8(base, 0x82A35152), LoadU8(base, 0x82A35153));
+  }
   ScopedNativeLightingExecution lighting_scope(
       base, 0x822EA320, RenderExecutionStage::kDeferredLighting, LightPassRole::kNone);
   ScopedNativeLocalLightLoop trace(NativeLocalLightLoopKind::kPointSpot, ctx, base);
@@ -6834,6 +6809,12 @@ extern "C" void sub_822EA320(PPCContext& ctx, uint8_t* base) {
 
 #ifndef GTA4_PAL_SAFE_MODE_RETARGETED  // PAL-retargeted, see tools/pal_retarget_hooks.py
 extern "C" void sub_822EDA58(PPCContext& ctx, uint8_t* base) {
+  static uint32_t trace_count = 0;
+  if (trace_count++ < 10) {
+    REXLOG_WARN("sub_822EDA58 [shaft]: 0x82A35150={:02X} 5151={:02X} 5152={:02X} 5153={:02X}",
+                LoadU8(base, 0x82A35150), LoadU8(base, 0x82A35151),
+                LoadU8(base, 0x82A35152), LoadU8(base, 0x82A35153));
+  }
   ScopedNativeLightingExecution lighting_scope(
       base, 0x822EDA58, RenderExecutionStage::kDeferredLighting, LightPassRole::kNone);
   ScopedNativeLocalLightLoop trace(NativeLocalLightLoopKind::kShaft, ctx, base);
@@ -6860,13 +6841,13 @@ extern "C" void sub_824A0298(PPCContext& ctx, uint8_t* base) {
 }
 #endif  // GTA4_PAL_SAFE_MODE sub_824F7328
 
-#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
-extern "C" void sub_827A9A20(PPCContext& ctx, uint8_t* base) {
+#ifndef GTA4_PAL_SAFE_MODE_RETARGETED  // PAL-retargeted, see tools/pal_retarget_hooks.py
+extern "C" void sub_82747950(PPCContext& ctx, uint8_t* base) {
   const bool trace = IsNativeMode() && IsNativeLightLoopTraceEnabled();
   const uint32_t caller = uint32_t(ctx.lr);
-  __imp__sub_827A9A20(ctx, base);
+  __imp__sub_82747950(ctx, base);
   if (trace && !ctx.r3.u32) {
-    // 0x822B104C stores the optional cookie in r18 and continues at 0x822B1058.
+    // 0x822EA464 stores the optional cookie in r18 and continues at 0x822EA470.
     // This result does not reject the local-light record.
     const NativeLocalLightTechniqueSite site = ResolveNativeLocalLightBranchSite(base, ctx, caller);
     if (site.kind != NativeLocalLightLoopKind::kNone && site.instance) {
@@ -7005,12 +6986,6 @@ extern "C" void sub_829CD470(PPCContext& ctx, uint8_t* base) {
   const uint32_t rectangles = ctx.r6.u32;
   const uint32_t width = LoadU32(base, kDeferredWidthGlobal);
   const uint32_t height = LoadU32(base, kDeferredHeightGlobal);
-  {  // TEMP PAL diagnostic
-    static std::atomic<uint32_t> n{0};
-    if (!(n.fetch_add(1) % 120))
-      REXLOG_WARN("PAL deferred: size={}x{} out0={:08X} caller={:08X}", width, height,
-                  LoadU32(base, kDeferredOutputsGlobal), uint32_t(ctx.lr));
-  }
   const bool expected = ctx.r5.u32 == kDeferredOriginalRectangleCount && rectangles && width &&
                         height && LoadU32(base, rectangles) == 0 &&
                         LoadU32(base, rectangles + 4) == 0 &&
@@ -7062,12 +7037,6 @@ extern "C" void sub_8249FA60(PPCContext& ctx, uint8_t* base) {
   const uint32_t device = LoadU32(base, kDeferredDeviceGlobal);
   const uint32_t width = LoadU32(base, kDeferredWidthGlobal);
   const uint32_t height = LoadU32(base, kDeferredHeightGlobal);
-  {  // TEMP PAL diagnostic
-    static std::atomic<uint32_t> n{0};
-    if (!(n.fetch_add(1) % 120))
-      REXLOG_WARN("PAL deferred: size={}x{} out0={:08X} caller={:08X}", width, height,
-                  LoadU32(base, kDeferredOutputsGlobal), uint32_t(ctx.lr));
-  }
   std::array<uint32_t, 4> outputs{};
   for (size_t index = 0; index < outputs.size(); ++index) {
     outputs[index] = LoadU32(base, kDeferredOutputsGlobal + uint32_t(index * sizeof(uint32_t)));

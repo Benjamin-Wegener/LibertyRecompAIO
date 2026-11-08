@@ -24,7 +24,7 @@ constexpr uint32_t kCurrentScreen = 0x83137BC0;
 constexpr uint32_t kScreenCount = 0x83137BC4;
 constexpr uint32_t kIntroPending = 0x83137BC9;
 constexpr uint32_t kDefinitions = 0x83137D18;
-constexpr uint32_t kEpisode = 0x82B11174;  // retail GET_CURRENT_EPISODE, sub_825D4CC8
+constexpr uint32_t kEpisode = 0x82B11174;  // retail GET_CURRENT_EPISODE, sub_825960F0
 constexpr uint32_t kEffectLinkOffset = 108;
 constexpr uint32_t kCompositeTechniqueOffset = 732;
 thread_local bool cold_parser_scope = false;
@@ -150,8 +150,8 @@ extern "C" void sub_82614458(PPCContext& ctx,uint8_t* base) {
 }
 #endif  // GTA4_PAL_SAFE_MODE sub_8267CFF8
 
-#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
-extern "C" void sub_82145420(PPCContext& ctx, uint8_t* base) {
+#ifndef GTA4_PAL_SAFE_MODE_RETARGETED  // PAL-retargeted, see tools/pal_retarget_hooks.py
+extern "C" void sub_82124080(PPCContext& ctx, uint8_t* base) {
   const gta4::input::ContextTouchGameplayTransition touch_transition;
   const uint32_t caller = ctx.lr;
   const bool cold = policy::IsColdStart(caller, ctx.r3.u32, ctx.r4.u32);
@@ -163,16 +163,54 @@ extern "C" void sub_82145420(PPCContext& ctx, uint8_t* base) {
   }
   const ParserScope scope(eligible && gta4::presentation::SkipIntroAtLaunch());
   // Keep arguments, asset loading, timer setup and publication entirely retail.
-  __imp__sub_82145420(ctx, base);
+  __imp__sub_82124080(ctx, base);
   if (eligible)
     TraceStartup(base, "cold-start-ready", caller);
 }
 #endif  // GTA4_PAL_SAFE_MODE sub_82145420
 
-#ifndef GTA4_PAL_SAFE_MODE  // USA address, see tools/pal_guard_hooks.py
-extern "C" void sub_82145968(PPCContext& ctx, uint8_t* base) {
-  const bool apply = cold_parser_scope && ctx.lr == policy::kParserCaller;
-  __imp__sub_82145968(ctx, base);
+// Intro logo screens (touch overlay skip button): the cold-start parse gives
+// the index where the intro ends; each screen advance publishes whether one of
+// the intro screens is showing.
+std::atomic<uint32_t> g_intro_end{0};
+
+void PublishIntroScreenState(uint8_t* base) {
+  const uint32_t end = g_intro_end.load(std::memory_order_relaxed);
+  bool active = false;
+  if (end && GuestSpan(base, kActive, 1) && GuestSpan(base, kCurrentScreen, sizeof(uint32_t)))
+    active = REX_LOAD_U8(kActive) != 0 && REX_LOAD_U32(kCurrentScreen) < end;
+  gta4::presentation::PublishIntroScreens(active);
+}
+
+void SkipIntroScreensNow(uint8_t* base) {
+  if (!GuestSpan(base, kScreenCount, sizeof(uint32_t))) return;
+  const uint32_t count = REX_LOAD_U32(kScreenCount);
+  if (!count || count > policy::kMaxScreens ||
+      !GuestSpan(base, kDefinitions, std::size_t{count} * policy::kScreenStride, true)) return;
+  std::span<uint8_t> table(base + kDefinitions, std::size_t{count} * policy::kScreenStride);
+  const auto plan = policy::CollapseIntro(table, count, true);
+  REXLOG_INFO("gta4-presentation: point=touch-skip status={} prefix={} end-intro={}",
+              int(plan.status), plan.prefix_count, plan.end_intro_index);
+}
+
+void RememberIntroScreens(uint8_t* base) {
+  if (!GuestSpan(base, kScreenCount, sizeof(uint32_t))) return;
+  const uint32_t count = REX_LOAD_U32(kScreenCount);
+  if (!count || count > policy::kMaxScreens ||
+      !GuestSpan(base, kDefinitions, std::size_t{count} * policy::kScreenStride)) return;
+  std::span<const uint8_t> table(base + kDefinitions, std::size_t{count} * policy::kScreenStride);
+  const auto plan = policy::PlanIntro(table, count, true);
+  g_intro_end.store(plan.status == policy::IntroStatus::kReady ? plan.end_intro_index : 0,
+                    std::memory_order_relaxed);
+  PublishIntroScreenState(base);
+}
+
+#ifndef GTA4_PAL_SAFE_MODE_RETARGETED  // PAL-retargeted, see tools/pal_retarget_hooks.py
+extern "C" void sub_82124540(PPCContext& ctx, uint8_t* base) {
+  const bool cold_parse = ctx.lr == policy::kParserCaller;
+  const bool apply = cold_parser_scope && cold_parse;
+  __imp__sub_82124540(ctx, base);
+  if (cold_parse) RememberIntroScreens(base);
   if (!apply)
     return;
   if (!GuestSpan(base, kScreenCount, sizeof(uint32_t)))
@@ -213,6 +251,7 @@ extern "C" void sub_82145968(PPCContext& ctx, uint8_t* base) {
 extern "C" void sub_82123E20(PPCContext& ctx, uint8_t* base) {
   const uint32_t caller = ctx.lr;
   __imp__sub_82123E20(ctx, base);
+  PublishIntroScreenState(base);
   TraceStartup(base, "screen-advanced", caller);
 }
 #endif  // GTA4_PAL_SAFE_MODE sub_82144708
@@ -276,3 +315,7 @@ extern "C" void sub_822E26C0(PPCContext& ctx, uint8_t* base) {
   __imp__sub_822E26C0(ctx, base);
 }
 #endif  // GTA4_PAL_SAFE_MODE sub_822CF300
+
+void gta4::presentation::SkipIntroNow(unsigned char* base) noexcept {
+  if (IntroScreensActive()) SkipIntroScreensNow(base);
+}

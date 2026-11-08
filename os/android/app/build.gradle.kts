@@ -49,7 +49,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.libertyrecomp"
+        applicationId = "com.libertyrecomp.aio"
         // 28: ASharedMemory (26) for guest memory and AAudio (27) for audio.
         minSdk        = 29
         targetSdk     = 35
@@ -59,7 +59,7 @@ android {
         // Shown as e.g. 0.5.9.3-mali-alpha-1.5. The workflow reads both the
         // base version and versionSuffix to name the APK.
         val versionSuffix = "-alpha-1.5"
-        versionName   = "0.5.9.3" + (if (libertyGpu == "mali") "-mali" else "") + versionSuffix
+        versionName   = "0.6.0-aio" + versionSuffix
 
         // Read by DriverBridge.defaultMode(): the driver used when driver.txt
         // does not exist yet.

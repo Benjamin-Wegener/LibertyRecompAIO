@@ -111,10 +111,10 @@ std::once_flag g_player_info_table_warning;
 std::once_flag g_ownership_warning;
 
 constexpr uint8_t kTemporaryAliasPeerId = 0;
-constexpr uint32_t kVoiceEnumerationReturnAddress = 0x82700668;
-constexpr uint32_t kReassignmentNegotiationReturnAddress = 0x82786EC8;
-constexpr uint32_t kReassignmentResetNegotiationReturnAddress = 0x827870FC;
-constexpr uint32_t kReassignmentConfirmationReturnAddress = 0x82787204;
+constexpr uint32_t kVoiceEnumerationReturnAddress = 0x826A9358;
+constexpr uint32_t kReassignmentNegotiationReturnAddress = 0x8271CF50;
+constexpr uint32_t kReassignmentResetNegotiationReturnAddress = 0x8271D184;
+constexpr uint32_t kReassignmentConfirmationReturnAddress = 0x8271D28C;
 
 struct ExtendedAddContext {
   bool active = false;
