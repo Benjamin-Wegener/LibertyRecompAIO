@@ -16,7 +16,7 @@ using rex::input::sony::Event;
 // All offsets below come from generated gta4_recomp.31.cpp:824DC670,
 // 824DB3E0 and 824DB650. These are borrowed synchronous arguments, never queued.
 constexpr uint32_t kPedHealthOffset = 484;
-constexpr uint32_t kPedArmorOffset = 2520;
+constexpr uint32_t kPedArmorOffset = 2488;
 constexpr uint32_t kResponseFlagsOffset = 4;
 
 bool Readable(uint8_t* base, uint32_t address, uint32_t offset, uint32_t bytes,

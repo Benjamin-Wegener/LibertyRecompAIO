@@ -215,9 +215,9 @@ constexpr uint32_t kPhoneConsumerDisableFlagBOffset = 529;
 constexpr uint32_t kPhoneConsumerStateOffset = 640;
 constexpr uint32_t kCurrentPlayerIndexAddress = 0x82A2CFC8;
 constexpr uint32_t kPlayerInfoTableAddress = 0x82C51C10;
-constexpr uint32_t kPlayerInfoPedOffset = 1400;
-constexpr uint32_t kPedVehicleFlagsOffset = 572;
-constexpr uint32_t kPedVehicleOffset = 2688;
+constexpr uint32_t kPlayerInfoPedOffset = 1384;
+constexpr uint32_t kPedVehicleFlagsOffset = 568;
+constexpr uint32_t kPedVehicleOffset = 2656;
 constexpr uint32_t kVehicleDriverOffset = 3904;
 // IS_CHAR_IN_ANY_HELI (sub_82587400) tests the retail class kind, including
 // derived helicopter models, rather than one particular vtable address.
@@ -243,7 +243,7 @@ constexpr uint32_t kVehicleWeaponPressPredicateCaller = 0x823CFB28;
 constexpr uint32_t kVehicleWeaponReleasePredicateCaller = 0x823CFAF0;
 constexpr uint32_t kDirectWeaponSelectionCaller = 0x823CFD94;
 constexpr uint32_t kRadioOffPredicateCaller = 0x8225C400;
-constexpr uint32_t kPedWeaponManagerOffset = 640;
+constexpr uint32_t kPedWeaponManagerOffset = 624;
 // rage::scrThread* is installed here only while the interpreter is executing
 // a native call. The script key and shared-global layout are recovered from
 // generated sub_827D5840 and the executable parachute_player SCO.
@@ -1558,7 +1558,7 @@ InputEpoch CaptureEpoch(const PPCContext& entry_context, uint8_t* base,
   // Match sub_82299AD0's bounded weapon-info lookup. Never use the broad
   // IS_CHAR_ARMED predicate here: it includes melee weapons.
   if (mouse_gameplay) {
-    const uint32_t manager = vehicle.ped + 640;
+    const uint32_t manager = vehicle.ped + 624;
     const uint32_t slot = LoadU32(base, manager);
     if (slot <= 10) {
       const uint32_t type = LoadU32(base, manager + 36 + slot * 8);

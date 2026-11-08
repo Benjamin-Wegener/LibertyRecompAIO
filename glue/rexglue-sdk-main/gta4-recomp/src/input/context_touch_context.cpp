@@ -164,7 +164,7 @@ std::optional<bool> InMelee(const Reader& read, uint32_t intelligence) noexcept 
 
 void ReadWeapon(const Reader& read, uint32_t ped, TouchContextSnapshot& out) noexcept {
   if (uint64_t{ped} + 640 > UINT32_MAX) return;
-  const uint32_t manager = ped + 640;
+  const uint32_t manager = ped + 624;
   // sub_823C3040's forward cycle predicate, with bounded type lookup from
   // sub_82299AD0. This is availability, not permission to bypass the decoder.
   out.inventory_known = true;

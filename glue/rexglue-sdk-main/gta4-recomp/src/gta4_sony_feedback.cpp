@@ -113,7 +113,7 @@ void ReadAliased(PPCContext&, uint8_t* base) {
   if (index >= kRetailPlayerCount) return;
   const uint32_t info = REX_LOAD_U32(kPlayerInfoTable + index * 4);
   if (!GuestSpan(base, info, 1404) || !GuestSpan(base, kGameplayControl, kControlSpan)) return;
-  const uint32_t ped = REX_LOAD_U32(info + 1400);
+  const uint32_t ped = REX_LOAD_U32(info + 1384);
   if (!GuestSpan(base, ped, 2692)) return;
   const uint32_t user = REX_LOAD_U32(kGameplayControl + kControlUserOffset);
   if (user >= 4) return;
@@ -131,8 +131,8 @@ void ReadAliased(PPCContext&, uint8_t* base) {
   if (GuestSpan(base, data, 204)) {
     state.wanted = static_cast<int>(std::min(REX_LOAD_U32(data + 200), 6u));
   }
-  if (REX_LOAD_U32(ped + 572) & 0x20000000u) {
-    const uint32_t vehicle = REX_LOAD_U32(ped + 2688);
+  if (REX_LOAD_U32(ped + 568) & 0x20000000u) {
+    const uint32_t vehicle = REX_LOAD_U32(ped + 2656);
     if (GuestSpan(base, vehicle, 3908)) {
       player.vehicle = vehicle;
       state.in_vehicle = true;
@@ -143,15 +143,15 @@ void ReadAliased(PPCContext&, uint8_t* base) {
                                            : state.player_identity;
   const float health = FloatAt(base, ped + 484);
   const float threshold = FloatAt(base, kAliveThreshold);
-  const bool playing = REX_LOAD_U32(info + 1232) == 2 && std::isfinite(health) &&
+  const bool playing = REX_LOAD_U32(info + 1216) == 2 && std::isfinite(health) &&
                        std::isfinite(threshold) && health >= threshold;
   bool title_owned = false;
 #if !defined(GTA4_SONY_LEGACY_HOST)
   title_owned = GTA4_TouchTitleInputOwned();
 #endif
   state.active = gta4::sony::GameplayOwned(
-      playing, REX_LOAD_U32(info + 1200), REX_LOAD_U32(kGameMode) == 1,
-      REX_LOAD_U32(ped + 2496), FrontendActive(base), PhoneVisible(base),
+      playing, REX_LOAD_U32(info + 1184), REX_LOAD_U32(kGameMode) == 1,
+      REX_LOAD_U32(ped + 2464), FrontendActive(base), PhoneVisible(base),
       REX_LOAD_U32(kMinigame) != 0, title_owned || REX_LOAD_U32(kCutscene) != 0);
   state.gestures_owned = state.active;
   const uint32_t aim = kGameplayControl + kActionArray + 6 * kActionStride;
@@ -161,7 +161,7 @@ void ReadAliased(PPCContext&, uint8_t* base) {
   // Checked equivalent of sub_823D4D60: both object+600 and manager+32
   // contain pointers, not inline CWeapon structures. Unarmed/special fallback
   // slots are deliberately excluded from trigger resistance.
-  const uint32_t manager = ped + 640;
+  const uint32_t manager = ped + 624;
   const uint32_t slot = REX_LOAD_U32(manager);
   const uint32_t object = REX_LOAD_U32(manager + 20);
   if (slot > 0 && slot < 10 && GuestSpan(base, object, 604)) {
