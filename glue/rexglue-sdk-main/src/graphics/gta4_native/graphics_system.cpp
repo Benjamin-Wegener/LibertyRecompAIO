@@ -369,14 +369,6 @@ REXCVAR_DEFINE_UINT32(gta4_fps_guard, 3, "GTA IV/Performance",
 REXCVAR_DEFINE_BOOL(gta4_native_resolve_swap, false, "GTA IV/Graphics/Native Renderer",
                     "Resolves that copy a whole surface into a same-format texture and then clear "
                     "the surface exchange the two images instead of copying");
-REXCVAR_DEFINE_UINT32(gta4_pal_debug_force_lum_handle, 0, "GTA IV/Diagnostics",
-                      "TEMP PAL: after resolving this 1x1 surface, overwrite the texture with gta4_pal_debug_force_lum_value");
-REXCVAR_DEFINE_DOUBLE(gta4_pal_debug_force_lum_value, 1.0, "GTA IV/Diagnostics",
-                      "TEMP PAL: value for gta4_pal_debug_force_lum_handle");
-REXCVAR_DEFINE_BOOL(gta4_pal_debug_red_clear, false, "GTA IV/Diagnostics",
-                    "TEMP PAL: clear 1280x720 colour targets to bright red (test object)");
-REXCVAR_DEFINE_UINT32(gta4_pal_debug_present_handle, 0, "GTA IV/Diagnostics",
-                      "TEMP PAL: present this guest surface handle instead of the frame (0 = off)");
 REXCVAR_DEFINE_BOOL(gta4_native_present_from_surface, true, "GTA IV/Graphics/Native Renderer",
                     "Present the frame's final surface directly instead of first resolving it into "
                     "the RGBA8 frontbuffer when nothing else reads that frontbuffer");
@@ -7256,20 +7248,6 @@ void Gta4NativeGraphicsSystem::RenderWorkerMain() {
             render_phase_stack.empty() ? RenderPhase::kUnknown : render_phase_stack.back().first;
         command.render_phase_object =
             render_phase_stack.empty() ? 0 : render_phase_stack.back().second;
-        if (command.type == CommandType::kClear && REXCVAR_GET(gta4_pal_debug_red_clear) &&
-            command.snapshot_render_targets[0].width == 1280 &&
-            command.snapshot_render_targets[0].height == 720 &&
-            command.bytes.size() >= sizeof(ClearCommand)) {
-          ClearCommand clear;
-          std::memcpy(&clear, command.bytes.data(), sizeof(clear));
-          const float red[4] = {1.0f, 0.0f, 0.0f, 1.0f};
-          std::memcpy(clear.color_bits, red, sizeof(red));
-          std::memcpy(command.bytes.data(), &clear, sizeof(clear));
-          static std::atomic<uint32_t> n{0};
-          if (!(n.fetch_add(1) % 200))
-            REXLOG_WARN("PAL red-clear: rt={:08X} flags={:08X} phase={}", command.snapshot_render_targets[0].handle,
-                        clear.flags, RenderPhaseName(command.render_phase));
-        }
         const bool phase_draw = command.type == CommandType::kDrawPrimitive ||
                                 command.type == CommandType::kDrawPrimitiveUp ||
                                 command.type == CommandType::kDrawIndexedPrimitive;
@@ -7324,25 +7302,6 @@ void Gta4NativeGraphicsSystem::RenderWorkerMain() {
             REXLOG_ERROR("gta4-native-constants: draw constant snapshot failed type={} device={:08X}",
                          CommandTypeName(command.type), device);
             break;
-          }
-          // TEMP PAL: dump pixel constants of composite draws into tiny targets (exposure chain).
-          if (command.render_phase == RenderPhase::kCompositePostFx && command.shader_state &&
-              command.snapshot_render_targets[0].width <= 1 && command.snapshot_render_targets[0].height <= 1) {
-            static std::atomic<uint32_t> n{0};
-            const uint32_t k = n.fetch_add(1);
-            const auto& v = command.shader_state->pixel_constants;
-            if ((k < 12 || !(k % 300)) && v && v->materialized && v->materialized->size() >= 16) {
-              const uint32_t* f = reinterpret_cast<const uint32_t*>(v->materialized->data());
-              const size_t regs = std::min<size_t>(v->materialized->size() / 16, 256);
-              std::string s;
-              for (size_t r = 16; r < regs; ++r) {
-                if (!f[r * 4] && !f[r * 4 + 1] && !f[r * 4 + 2] && !f[r * 4 + 3]) continue;
-                s += fmt::format(" c{}={:08X},{:08X},{:08X},{:08X}", r, f[r * 4], f[r * 4 + 1], f[r * 4 + 2], f[r * 4 + 3]);
-              }
-              const auto* ps = command.pipeline_state ? command.pipeline_state->pixel_shader_resource : nullptr;
-              REXLOG_WARN("PAL exposure-draw #{} rt={:08X} ps={:016X} regs={}{}", k,
-                          command.snapshot_render_targets[0].handle, ps ? ps->hash : 0, regs, s);
-            }
           }
         } else {
           command.pipeline_state = SnapshotPipeline(command, false);
@@ -28923,28 +28882,6 @@ bool Gta4NativeGraphicsSystem::RecordResolve(VkCommandBuffer command_buffer,
       break;
   }
 
-  if (const uint32_t force_handle = REXCVAR_GET(gta4_pal_debug_force_lum_handle);
-      force_handle && (resolve.source.handle == force_handle ||
-                       (force_handle == 1 && resolve.source.width == 1 && resolve.source.height == 1 &&
-                        resolve.source.address == 0x000E0000)) &&
-      (destination->aspect & VK_IMAGE_ASPECT_COLOR_BIT)) {
-    VkMemoryBarrier mb{VK_STRUCTURE_TYPE_MEMORY_BARRIER};
-    mb.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-    mb.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-    dfn.vkCmdPipelineBarrier(command_buffer, VK_PIPELINE_STAGE_TRANSFER_BIT,
-                             VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 1, &mb, 0, nullptr, 0, nullptr);
-    const float v = float(REXCVAR_GET(gta4_pal_debug_force_lum_value));
-    VkClearColorValue cv{};
-    cv.float32[0] = cv.float32[1] = cv.float32[2] = cv.float32[3] = v;
-    VkImageSubresourceRange range{VK_IMAGE_ASPECT_COLOR_BIT, destination_layers.mipLevel, 1,
-                                  destination_layers.baseArrayLayer, destination_layers.layerCount};
-    dfn.vkCmdClearColorImage(command_buffer, destination->resource.image,
-                             VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &cv, 1, &range);
-    static std::atomic<uint32_t> n{0};
-    if (!(n.fetch_add(1) % 120))
-      REXLOG_WARN("PAL force-lum: source={:08X} value={}", force_handle, v);
-  }
-
   destination_barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
   destination_barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
   destination_barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
@@ -32553,7 +32490,7 @@ bool Gta4NativeGraphicsSystem::RecordNativeFrame(
       if (water_reflection_probe_frame && command_index == water_reflection_resolve_index) {
         record_water_reflection_probe(3, command_index, "water-color-before-title-resolve", true);
       }
-      if (diagnostic_frame && ((resolve.flags & 0x04000000u) || (resolve.source.width <= 80 && resolve.source.height <= 45)) && InitializeContentProbeBuffer()) {  // PAL: also probe the luminance chain
+      if (diagnostic_frame && (resolve.flags & 0x04000000u) && InitializeContentProbeBuffer()) {
         if (content_probe_buffer_.pending_frame != submitted_frame) {
           std::memset(content_probe_buffer_.mapping, 0, size_t(kContentProbeBufferSize));
           content_probe_buffer_.pending_frame = submitted_frame;
@@ -37157,15 +37094,6 @@ bool Gta4NativeGraphicsSystem::RecordNativeFrame(
       temporal_generated_frame_.has_generated_frame = false;
     }
     NativeTextureImage surface_present;
-    if (const uint32_t debug_handle = REXCVAR_GET(gta4_pal_debug_present_handle)) {
-      const auto found = surface_images_by_handle_.find(debug_handle);
-      if (found != surface_images_by_handle_.end() && !found->second.empty())
-        present_surface_override_ = found->second.back();
-      static std::atomic<uint32_t> n{0};
-      if (!(n.fetch_add(1) % 120))
-        REXLOG_WARN("PAL debug-present: handle={:08X} found={} temporal={}", debug_handle,
-                    found != surface_images_by_handle_.end(), temporal_present != nullptr);
-    }
     NativeSurfaceImage* const present_surface = temporal_present ? nullptr : present_surface_override_;
     present_surface_override_ = nullptr;
     if (present_surface) {

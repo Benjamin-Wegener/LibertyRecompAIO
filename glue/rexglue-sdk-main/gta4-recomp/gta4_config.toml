@@ -350,6 +350,8 @@ memmove = 0x82A02230              # 40 xrefs — native rexcrt_memmove in memory
 "0x824DC670" = { sync_registers = true }
 "0x824F3418" = { sync_registers = true }
 "0x824F4730" = { sync_registers = true }
+"0x8249F178" = { sync_registers = true }
+"0x8249F3E8" = { sync_registers = true }
 "0x824F6208" = { sync_registers = true }
 "0x824F6478" = { sync_registers = true }
 "0x824F6AF0" = { sync_registers = true }
