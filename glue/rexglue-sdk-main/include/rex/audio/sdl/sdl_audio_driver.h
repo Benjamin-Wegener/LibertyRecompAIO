@@ -55,6 +55,8 @@ class SDLAudioDriver : public AudioDriver {
   std::queue<float*> frames_queued_ = {};
   std::stack<float*> frames_unused_ = {};
   std::mutex frames_mutex_ = {};
+  float last_sample_[6] = {0.0f};
+  bool underrun_active_ = false;
 };
 
 }  // namespace rex::audio::sdl

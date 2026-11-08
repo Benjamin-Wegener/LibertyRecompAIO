@@ -161,16 +161,16 @@ constexpr uint32_t kReplayVertexBooleansOffset = 0x2780;
 constexpr uint32_t kReplayPixelBooleansOffset = 0x2790;
 constexpr uint32_t kReplayFixedStateOffset = 0x28A0;
 constexpr uint32_t kReplayFixedStateSize = 0x8FC;
-constexpr uint32_t kDeferredWidthGlobal = 0x82F1F58C;
-constexpr uint32_t kDeferredHeightGlobal = 0x82F1F590;
-constexpr uint32_t kDeferredOutputsGlobal = 0x82F1F594;
-constexpr uint32_t kDeferredAliasGlobal = 0x82F1F5B4;
-constexpr uint32_t kDeferredDeviceGlobal = 0x83124AF4;
+constexpr uint32_t kDeferredWidthGlobal = 0x82F0F58C;
+constexpr uint32_t kDeferredHeightGlobal = 0x82F0F590;
+constexpr uint32_t kDeferredOutputsGlobal = 0x82F0F594;
+constexpr uint32_t kDeferredAliasGlobal = 0x82F0F5B4;
+constexpr uint32_t kDeferredDeviceGlobal = 0x82FE4AF4;
 // Created by sub_828505E0 and bound by sub_828BF8A8 for the forward path.
-constexpr uint32_t kPrimaryDepthSurfaceGlobal = 0x83124C00;
+constexpr uint32_t kPrimaryDepthSurfaceGlobal = 0x82FE4C00;
 constexpr uint32_t kDeferredPhaseMarkerEndGlobal = 0x82A351CC;
 constexpr uint32_t kDeferredPhaseMarkerBeginGlobal = 0x82A351C8;
-constexpr uint32_t kDeferredPhaseTailGlobal = 0x82CC1118;
+constexpr uint32_t kDeferredPhaseTailGlobal = 0x82CB1118;
 constexpr uint32_t kDeferredPhaseBeginReturnAddress = 0x8249E130;
 constexpr uint32_t kEaaParameterUploadReturnAddress = 0x822E3B28;
 constexpr uint32_t kDeferredResolutionSetupReturnAddress = 0x824A0F98;
@@ -184,7 +184,7 @@ constexpr uint32_t kDefaultLodBlendGlobal = 0x82000BFC;
 constexpr uint32_t kDistanceScaleOutputGlobal = 0x82A2BD9C;
 constexpr uint32_t kDistanceScaleInputGlobal = 0x82A2BDA4;
 constexpr uint32_t kGuestTimeStepGlobal = 0x82A7FB90;
-constexpr uint32_t kCurrentViewportGlobal = 0x83124A30;
+constexpr uint32_t kCurrentViewportGlobal = 0x82FE4A30;
 constexpr uint32_t kPostFxTimecycleIndexGlobal = 0x82AA4D9C;
 constexpr uint32_t kPostFxTimecycleStride = 0xF0;
 constexpr uint32_t kPostFxDirectionalMotionBlurLengthOffset = 0x168;
@@ -252,19 +252,19 @@ constexpr uint32_t kDeferredWrapperLogicalHeightOffset = 54;
 constexpr uint32_t kDeferredWrapperSurfaceOffset = 64;
 constexpr uint32_t kDeferredWrapperTextureOffset = 72;
 constexpr std::array<uint32_t, 9> kDeferredFullSizeWrapperGlobals = {
-    0x82F1F594, 0x82F1F598, 0x82F1F59C, 0x82F1F5A0, 0x82F1F5A4,
-    0x82F1F5A8, 0x82F1F5AC, 0x82F1F5B0, 0x82F1F5B8,
+    0x82F0F594, 0x82F0F598, 0x82F0F59C, 0x82F0F5A0, 0x82F0F5A4,
+    0x82F0F5A8, 0x82F0F5AC, 0x82F0F5B0, 0x82F0F5B8,
 };
 // The deferred phase renders depth into the title-owned multisampled
 // gbuffer-z-aa wrapper. outputs[3] is its resolved sampled-depth wrapper, not
 // the attachment that carries the current depth state.
-constexpr uint32_t kDeferredDepthAaWrapperGlobal = 0x82F1F5B0;
-constexpr uint32_t kDeferredHizRestoreWrapperGlobal = 0x82F1F5BC;
+constexpr uint32_t kDeferredDepthAaWrapperGlobal = 0x82F0F5B0;
+constexpr uint32_t kDeferredHizRestoreWrapperGlobal = 0x82F0F5BC;
 // sub_8249D6A0 constructs these with sub_8286A6F8 / sub_8286A840.
 // They use the packed-depth alias layout, not the render-target layout above.
-constexpr uint32_t kDeferredGbufferZWrapperGlobal = 0x82F1F5A0;
-constexpr std::array<uint32_t, 2> kDeferredPackedDepthAliasGlobals = {0x82F1F5C0,
-                                                                   0x82F1F5C4};
+constexpr uint32_t kDeferredGbufferZWrapperGlobal = 0x82F0F5A0;
+constexpr std::array<uint32_t, 2> kDeferredPackedDepthAliasGlobals = {0x82F0F5C0,
+                                                                   0x82F0F5C4};
 constexpr uint32_t kDeferredPackedDepthAliasVtable = 0x820862AC;
 constexpr uint32_t kDeferredPackedDepthAliasTextureOffset = 24;
 constexpr uint32_t kDeferredPackedDepthAliasWidthOffset = 28;
@@ -940,14 +940,14 @@ bool IsNativeMode();
 
 constexpr uint32_t kPrimaryDeferredLightListPointerGlobal = 0x82A2E594;
 constexpr uint32_t kSecondaryDeferredLightListPointerGlobal = 0x82A2E59C;
-constexpr uint32_t kPrimaryDeferredLightCountGlobal = 0x82CC11D4;
-constexpr uint32_t kSecondaryDeferredLightCountGlobal = 0x82CC11E8;
+constexpr uint32_t kPrimaryDeferredLightCountGlobal = 0x82CB11D4;
+constexpr uint32_t kSecondaryDeferredLightCountGlobal = 0x82CB11E8;
 constexpr uint32_t kPrimaryDeferredLightStride = 128;
 constexpr uint32_t kSecondaryDeferredLightStride = 80;
 constexpr uint32_t kNativeLocalLightCandidateLimit = 2048;
 
-// Verified by sub_82857880/sub_828577E0 in generated/gta4_recomp.65.cpp.
-constexpr uint32_t kActiveDeferredTechniqueGlobal = 0x83126628;
+// Verified by sub_82857880/sub_828577E0 in generated/gta4_recomp.60.cpp.
+constexpr uint32_t kActiveDeferredTechniqueGlobal = 0x82FE6628;
 constexpr uint32_t kDeferredTechniquePassTableOffset = 8;
 constexpr uint32_t kDeferredTechniquePassStride = 32;
 constexpr uint32_t kRetailNullClearColorGlobal = 0x82000BFC;
@@ -1551,7 +1551,7 @@ void TraceNativePrimaryLightAdmission(uint8_t* base, uint32_t caller, uint32_t d
       g_native_title_light_event_sequence.fetch_add(1, std::memory_order_relaxed) + 1,
       submission.submission, GetNativeLightSubmittedFrame(base), caller,
       caller == 0x822EBBA4 ? "append" : "replace", destination, candidate,
-      LoadU32(base, 0x82A2E590), LoadU32(base, 0x82CC11E0), submission.caller,
+      LoadU32(base, 0x82A2E590), LoadU32(base, 0x82CB11E0), submission.caller,
       submission.source_r3, submission.type, submission.flags, LoadU32(base, destination + 68),
       LoadU32(base, destination + 72), LoadU32(base, destination + 96),
       LoadU32(base, destination + 100), world.known, world.caller, world.entity, world.model,
@@ -5023,7 +5023,7 @@ extern "C" void sub_8249C390(PPCContext& ctx, uint8_t* base) {
   // middle slot is absent, without mutating the script-owned global.
   StoreU32(base, ctx.r5.u32, 0);
   StoreU32(base, ctx.r6.u32, 0);
-  StoreU32(base, ctx.r7.u32, LoadU32(base, kDefaultLodBlendGlobal));
+  StoreU32(base, ctx.r7.u32, 0);
 
   static std::atomic<uint64_t> forced_count{0};
   const uint64_t forced = NextNativeHookDiagnosticCall(forced_count);
@@ -6192,9 +6192,8 @@ void SubmitNativeResolve(uint8_t* base, uint32_t device, uint32_t flags,
       command.clear_color_bits[index] = clear_color_bits[index];
     }
   } else {
-    // sub_829CB7C8 loads the same float into all four lanes at 0x82A3CCF8.
-    std::fill(std::begin(command.clear_color_bits), std::end(command.clear_color_bits),
-              LoadU32(base, kRetailNullClearColorGlobal));
+    // sub_829CB7C8 loads the same float into all four lanes at 0x82A3CCF8; retail is +0.0.
+    std::fill(std::begin(command.clear_color_bits), std::end(command.clear_color_bits), 0);
   }
   command.clear_depth_bits = std::bit_cast<uint64_t>(clear_depth);
   command.clear_stencil = clear_stencil;
@@ -6397,11 +6396,11 @@ extern "C" void sub_8249D6A0(PPCContext& ctx, uint8_t* base) {
       PatchDeferredWrapperDimensions(base, hiz_wrapper, hiz_width, hiz_height, ctx.lr);
 
   const bool patched_gbuffer_alias = PatchNativePackedDepthAlias(
-      base, 0x82F1F5C0, LoadU32(base, 0x82F1F5A0), setup_caller);
+      base, 0x82F0F5C0, LoadU32(base, 0x82F0F5A0), setup_caller);
   // sub_8286A348(0) returns factory+64: a different RT wrapper from GBufferZ.
-  const uint32_t target_factory = LoadU32(base, 0x831255F0);
+  const uint32_t target_factory = LoadU32(base, 0x82FE55F0);
   const bool patched_custom_alias = target_factory && PatchNativePackedDepthAlias(
-      base, 0x82F1F5C4, LoadU32(base, target_factory + 64), setup_caller);
+      base, 0x82F0F5C4, LoadU32(base, target_factory + 64), setup_caller);
   REXLOG_INFO("gta4-native-resolution: packed-depth-aliases gbuffer={} custom={}",
               patched_gbuffer_alias, patched_custom_alias);
 
@@ -7537,8 +7536,7 @@ extern "C" void sub_829D4310(PPCContext& ctx, uint8_t* base) {
     }
   } else {
     // generated .81:16055 loads 0x82000BFC into every lane; retail is +0.0.
-    std::fill(std::begin(command.color_bits), std::end(command.color_bits),
-              LoadU32(base, kRetailNullClearColorGlobal));
+    std::fill(std::begin(command.color_bits), std::end(command.color_bits), 0);
   }
   command.depth_bits = std::bit_cast<uint64_t>(ctx.f1.f64);
   command.stencil = ctx.r8.u32;

@@ -103,8 +103,8 @@ void TraceLoadingMask(const UiContext& layout, const Rect& source, const char* k
       mapped.right, mapped.bottom, layout.transform.sx, layout.transform.sy, layout.transform.ox,
       layout.transform.oy);
 }
-constexpr uint32_t kCurrentViewport = 0x83124A30;
-constexpr uint32_t kStartupViewport = 0x83124A24;
+constexpr uint32_t kCurrentViewport = 0x82FE4A30;
+constexpr uint32_t kStartupViewport = 0x82FE4A24;
 constexpr uint32_t kFontStateIndex = 0x82A23394;
 constexpr uint32_t kFontStates = 0x82B8E5A8;
 // The exact address of the HUD object table is generated below from its PPC lis/addi.
@@ -450,8 +450,8 @@ void DrawQuad(PPCContext& ctx, uint8_t* base, GuestFunction original, bool textu
     bounds.top = std::min(bounds.top, y);
     bounds.bottom = std::max(bounds.bottom, y);
   }
-  const bool solid = !textured && Span(base, 0x83125180, 4) && Span(base, 0x83125590, 4) &&
-                     Read(base, 0x83125180) == Read(base, 0x83125590);
+  const bool solid = !textured && Span(base, 0x82FE5180, 4) && Span(base, 0x82FE5590, 4) &&
+                     Read(base, 0x82FE5180) == Read(base, 0x82FE5590);
   if (solid)
     layout.transform = CoveringBackground(layout.transform, bounds);
   const EmitScope emit({layout.transform, !layout.transform.identity()});

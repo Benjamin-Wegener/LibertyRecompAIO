@@ -77,7 +77,7 @@ PhoneTraceContext NewPhoneContext(uint32_t device) {
   if (base && device) {
     c.guest_frame = LoadU32(base, device + kSubmittedFrameOffset);
     c.technique = LoadU32(base, kActiveDeferredTechniqueGlobal);
-    c.pass = LoadU32(base, 0x83126624);
+    c.pass = LoadU32(base, 0x82FE6624);
     c.applied = CapturePhoneGuestState(base, device);
   }
   return c;

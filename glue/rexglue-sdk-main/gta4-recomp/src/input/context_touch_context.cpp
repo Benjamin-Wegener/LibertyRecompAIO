@@ -36,12 +36,12 @@ constexpr uint32_t kPlayerGeneration = 0x82C51BD0;
 constexpr uint32_t kControl = 0x82ACC138;
 constexpr uint32_t kGameMode = 0x82B1117C;
 constexpr uint32_t kAliveThreshold = 0x820026C8;
-constexpr uint32_t kCutscene = 0x82CC102C;
-constexpr uint32_t kCutscenePreparation = 0x82CC1038;
-constexpr uint32_t kLoadingActive = 0x83137BB7;
+constexpr uint32_t kCutscene = 0x82CB102C;
+constexpr uint32_t kCutscenePreparation = 0x82CB1038;
+constexpr uint32_t kLoadingActive = 0x82FF7BB7;
 constexpr uint32_t kMinigame = 0x82B806EC;
-constexpr uint32_t kPhoneCreated = 0x83137668;
-constexpr uint32_t kPhoneOffscreen = 0x83137BCD;
+constexpr uint32_t kPhoneCreated = 0x82FF7668;
+constexpr uint32_t kPhoneOffscreen = 0x82FF7BCD;
 constexpr uint32_t kWeaponScopeWidgetIndex = 0x82B3A0F0;
 constexpr uint32_t kHudWidgets = 0x82AAD0D8;
 
