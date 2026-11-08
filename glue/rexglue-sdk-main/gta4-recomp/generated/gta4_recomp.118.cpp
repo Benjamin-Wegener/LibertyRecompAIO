@@ -1917,7 +1917,7 @@ loc_821A80CC:
 	ctx.r4.u64 = r29.u64;
 	// bl 0x82991268
 	ctx.lr = 0x821A80EC;
-	sub_82991268(ctx, base);
+	ppc_strtok(ctx, base);
 	// mr r31,r3
 	r31.u64 = ctx.r3.u64;
 	// mr r4,r29
@@ -1926,7 +1926,7 @@ loc_821A80CC:
 	ctx.r3.s64 = 0;
 	// bl 0x82991268
 	ctx.lr = 0x821A80FC;
-	sub_82991268(ctx, base);
+	ppc_strtok(ctx, base);
 	// mr r30,r3
 	r30.u64 = ctx.r3.u64;
 	// mr r4,r28

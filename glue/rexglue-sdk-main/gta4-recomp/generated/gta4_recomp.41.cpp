@@ -33032,7 +33032,7 @@ DEFINE_REX_FUNC(sub_829D0218) {
 	REX_STORE_U32(r27.u32 + 0, ctx.r11.u32);
 	// bl 0x829cfe30
 	ctx.lr = 0x829D0248;
-	sub_829CFE30(ctx, base);
+	D3D_MemAllocAligned(ctx, base);
 	// mr. r31,r3
 	r31.u64 = ctx.r3.u64;
 	cr0.compare<int32_t>(r31.s32, 0, xer);

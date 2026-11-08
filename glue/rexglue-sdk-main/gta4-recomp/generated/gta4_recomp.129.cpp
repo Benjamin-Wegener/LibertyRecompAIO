@@ -23991,7 +23991,7 @@ DEFINE_REX_FUNC(sub_8287DE18) {
 	if (cr6.eq) goto loc_8287DE78;
 	// bl 0x829d92e8
 	ctx.lr = 0x8287DE78;
-	sub_829D92E8(ctx, base);
+	D3DResource_Release(ctx, base);
 loc_8287DE78:
 	// li r11,0
 	ctx.r11.s64 = 0;

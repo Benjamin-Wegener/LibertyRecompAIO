@@ -15509,14 +15509,14 @@ loc_82518E34:
 	r31.s64 = 0;
 	// bl 0x82991268
 	ctx.lr = 0x82518E4C;
-	sub_82991268(ctx, base);
+	ppc_strtok(ctx, base);
 	// li r3,0
 	ctx.r3.s64 = 0;
 	// mr r4,r30
 	ctx.r4.u64 = r30.u64;
 	// bl 0x82991268
 	ctx.lr = 0x82518E58;
-	sub_82991268(ctx, base);
+	ppc_strtok(ctx, base);
 	// cmplwi cr6,r3,0
 	cr6.compare<uint32_t>(ctx.r3.u32, 0, xer);
 	// beq cr6,0x82518e84
@@ -15537,7 +15537,7 @@ loc_82518E60:
 	r31.u64 = ctx.r11.u64 | r31.u64;
 	// bl 0x82991268
 	ctx.lr = 0x82518E7C;
-	sub_82991268(ctx, base);
+	ppc_strtok(ctx, base);
 	// cmplwi cr6,r3,0
 	cr6.compare<uint32_t>(ctx.r3.u32, 0, xer);
 	// bne cr6,0x82518e60
@@ -15592,14 +15592,14 @@ loc_82518EC8:
 	r31.s64 = 0;
 	// bl 0x82991268
 	ctx.lr = 0x82518EE0;
-	sub_82991268(ctx, base);
+	ppc_strtok(ctx, base);
 	// li r3,0
 	ctx.r3.s64 = 0;
 	// mr r4,r30
 	ctx.r4.u64 = r30.u64;
 	// bl 0x82991268
 	ctx.lr = 0x82518EEC;
-	sub_82991268(ctx, base);
+	ppc_strtok(ctx, base);
 	// cmplwi cr6,r3,0
 	cr6.compare<uint32_t>(ctx.r3.u32, 0, xer);
 	// beq cr6,0x82518f18
@@ -15620,7 +15620,7 @@ loc_82518EF4:
 	r31.u64 = ctx.r11.u64 | r31.u64;
 	// bl 0x82991268
 	ctx.lr = 0x82518F10;
-	sub_82991268(ctx, base);
+	ppc_strtok(ctx, base);
 	// cmplwi cr6,r3,0
 	cr6.compare<uint32_t>(ctx.r3.u32, 0, xer);
 	// bne cr6,0x82518ef4
@@ -15675,14 +15675,14 @@ loc_82518F5C:
 	r31.s64 = 0;
 	// bl 0x82991268
 	ctx.lr = 0x82518F74;
-	sub_82991268(ctx, base);
+	ppc_strtok(ctx, base);
 	// li r3,0
 	ctx.r3.s64 = 0;
 	// mr r4,r30
 	ctx.r4.u64 = r30.u64;
 	// bl 0x82991268
 	ctx.lr = 0x82518F80;
-	sub_82991268(ctx, base);
+	ppc_strtok(ctx, base);
 	// cmplwi cr6,r3,0
 	cr6.compare<uint32_t>(ctx.r3.u32, 0, xer);
 	// beq cr6,0x82518fac
@@ -15703,7 +15703,7 @@ loc_82518F88:
 	r31.u64 = ctx.r11.u64 | r31.u64;
 	// bl 0x82991268
 	ctx.lr = 0x82518FA4;
-	sub_82991268(ctx, base);
+	ppc_strtok(ctx, base);
 	// cmplwi cr6,r3,0
 	cr6.compare<uint32_t>(ctx.r3.u32, 0, xer);
 	// bne cr6,0x82518f88
@@ -15758,14 +15758,14 @@ loc_82518FF0:
 	r31.s64 = 0;
 	// bl 0x82991268
 	ctx.lr = 0x82519008;
-	sub_82991268(ctx, base);
+	ppc_strtok(ctx, base);
 	// li r3,0
 	ctx.r3.s64 = 0;
 	// mr r4,r30
 	ctx.r4.u64 = r30.u64;
 	// bl 0x82991268
 	ctx.lr = 0x82519014;
-	sub_82991268(ctx, base);
+	ppc_strtok(ctx, base);
 	// cmplwi cr6,r3,0
 	cr6.compare<uint32_t>(ctx.r3.u32, 0, xer);
 	// beq cr6,0x82519040
@@ -15786,7 +15786,7 @@ loc_8251901C:
 	r31.u64 = ctx.r11.u64 | r31.u64;
 	// bl 0x82991268
 	ctx.lr = 0x82519038;
-	sub_82991268(ctx, base);
+	ppc_strtok(ctx, base);
 	// cmplwi cr6,r3,0
 	cr6.compare<uint32_t>(ctx.r3.u32, 0, xer);
 	// bne cr6,0x8251901c

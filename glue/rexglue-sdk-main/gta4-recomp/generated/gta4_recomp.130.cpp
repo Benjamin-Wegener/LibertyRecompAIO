@@ -33045,7 +33045,7 @@ loc_829DF1C0:
 	if (cr0.eq) goto loc_829DF1D4;
 	// bl 0x829d92e8
 	ctx.lr = 0x829DF1D0;
-	sub_829D92E8(ctx, base);
+	D3DResource_Release(ctx, base);
 	// stw r29,14812(r31)
 	REX_STORE_U32(r31.u32 + 14812, r29.u32);
 loc_829DF1D4:
@@ -33057,7 +33057,7 @@ loc_829DF1D4:
 	if (cr0.eq) goto loc_829DF1E8;
 	// bl 0x829d92e8
 	ctx.lr = 0x829DF1E4;
-	sub_829D92E8(ctx, base);
+	D3DResource_Release(ctx, base);
 	// stw r29,14816(r31)
 	REX_STORE_U32(r31.u32 + 14816, r29.u32);
 loc_829DF1E8:
@@ -33069,7 +33069,7 @@ loc_829DF1E8:
 	if (cr0.eq) goto loc_829DF1FC;
 	// bl 0x829d92e8
 	ctx.lr = 0x829DF1F8;
-	sub_829D92E8(ctx, base);
+	D3DResource_Release(ctx, base);
 	// stw r29,14808(r31)
 	REX_STORE_U32(r31.u32 + 14808, r29.u32);
 loc_829DF1FC:

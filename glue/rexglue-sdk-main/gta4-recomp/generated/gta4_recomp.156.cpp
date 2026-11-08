@@ -28687,7 +28687,7 @@ DEFINE_REX_FUNC(sub_8284FC80) {
 	ctx.r3.u64 = REX_LOAD_U32(r31.u32 + 0);
 	// bl 0x829d92e8
 	ctx.lr = 0x8284FCAC;
-	sub_829D92E8(ctx, base);
+	D3DResource_Release(ctx, base);
 	// bl 0x827d8590
 	ctx.lr = 0x8284FCB0;
 	sub_827D8590(ctx, base);

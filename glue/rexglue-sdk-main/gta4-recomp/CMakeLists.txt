@@ -20,6 +20,7 @@ set(GTA4_APP_SOURCES
     src/main.cpp
     src/gta4_app.cpp
     src/gta4_pal_stubs.cpp
+    src/gta4_pal_initterm_scan.cpp
     src/gta4_frontend_hooks.cpp
     src/gta4_font_selection_trace.cpp
     src/gta4_presentation_options.cpp

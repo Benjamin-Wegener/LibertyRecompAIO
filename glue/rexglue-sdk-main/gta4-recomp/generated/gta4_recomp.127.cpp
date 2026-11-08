@@ -14184,7 +14184,7 @@ loc_824C9FD0:
 	REX_STORE_U8(ctx.r11.u32 + 2, ctx.r10.u8);
 	// bl 0x82991268
 	ctx.lr = 0x824C9FF8;
-	sub_82991268(ctx, base);
+	ppc_strtok(ctx, base);
 	// mr r31,r3
 	r31.u64 = ctx.r3.u64;
 	// cmplwi cr6,r31,0
@@ -14269,7 +14269,7 @@ loc_824CA088:
 	ctx.r3.s64 = 0;
 	// bl 0x82991268
 	ctx.lr = 0x824CA094;
-	sub_82991268(ctx, base);
+	ppc_strtok(ctx, base);
 	// mr r30,r3
 	r30.u64 = ctx.r3.u64;
 	// cmplwi cr6,r30,0
@@ -14282,7 +14282,7 @@ loc_824CA088:
 	ctx.r3.s64 = 0;
 	// bl 0x82991268
 	ctx.lr = 0x824CA0AC;
-	sub_82991268(ctx, base);
+	ppc_strtok(ctx, base);
 	// mr r11,r3
 	ctx.r11.u64 = ctx.r3.u64;
 	// cmplwi cr6,r11,0

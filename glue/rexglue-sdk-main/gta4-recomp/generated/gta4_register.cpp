@@ -1058,6 +1058,7 @@ void gta4_RegisterFunctions(rex::runtime::IModuleRegistrar* registrar) {
   registrar->SetFunction(0x8216D7E0, sub_8216D7E0);
   registrar->SetFunction(0x8216DBB0, sub_8216DBB0);
   registrar->SetFunction(0x8216DC88, sub_8216DC88);
+  registrar->SetFunction(0x8216DC90, sub_8216DC90);
   registrar->SetFunction(0x8216DCA8, sub_8216DCA8);
   registrar->SetFunction(0x8216DCB8, sub_8216DCB8);
   registrar->SetFunction(0x8216DD98, sub_8216DD98);
@@ -1093,6 +1094,9 @@ void gta4_RegisterFunctions(rex::runtime::IModuleRegistrar* registrar) {
   registrar->SetFunction(0x82171418, sub_82171418);
   registrar->SetFunction(0x821714C0, sub_821714C0);
   registrar->SetFunction(0x821719F0, sub_821719F0);
+  registrar->SetFunction(0x821719F8, sub_821719F8);
+  registrar->SetFunction(0x82171A00, sub_82171A00);
+  registrar->SetFunction(0x82171A08, sub_82171A08);
   registrar->SetFunction(0x82171A18, sub_82171A18);
   registrar->SetFunction(0x82171A20, sub_82171A20);
   registrar->SetFunction(0x82171B58, sub_82171B58);
@@ -1137,6 +1141,7 @@ void gta4_RegisterFunctions(rex::runtime::IModuleRegistrar* registrar) {
   registrar->SetFunction(0x82172FF8, sub_82172FF8);
   registrar->SetFunction(0x82173028, sub_82173028);
   registrar->SetFunction(0x82173088, sub_82173088);
+  registrar->SetFunction(0x82173090, sub_82173090);
   registrar->SetFunction(0x82173098, sub_82173098);
   registrar->SetFunction(0x821730A0, sub_821730A0);
   registrar->SetFunction(0x82173178, sub_82173178);
@@ -1145,8 +1150,8 @@ void gta4_RegisterFunctions(rex::runtime::IModuleRegistrar* registrar) {
   registrar->SetFunction(0x82173348, sub_82173348);
   registrar->SetFunction(0x821734D8, sub_821734D8);
   registrar->SetFunction(0x82173588, sub_82173588);
-  registrar->SetFunction(0x821735F4, sub_821735F4);
-  registrar->SetFunction(0x82173634, sub_82173634);
+  registrar->SetFunction(0x821735D0, sub_821735D0);
+  registrar->SetFunction(0x82173618, sub_82173618);
   registrar->SetFunction(0x82173650, sub_82173650);
   registrar->SetFunction(0x82173688, sub_82173688);
   registrar->SetFunction(0x82173750, sub_82173750);
@@ -1198,13 +1203,21 @@ void gta4_RegisterFunctions(rex::runtime::IModuleRegistrar* registrar) {
   registrar->SetFunction(0x82177170, sub_82177170);
   registrar->SetFunction(0x821778A0, sub_821778A0);
   registrar->SetFunction(0x821778A8, sub_821778A8);
+  registrar->SetFunction(0x821778B0, sub_821778B0);
+  registrar->SetFunction(0x821778B8, sub_821778B8);
   registrar->SetFunction(0x821778C0, sub_821778C0);
   registrar->SetFunction(0x821778C8, sub_821778C8);
   registrar->SetFunction(0x821778D0, sub_821778D0);
+  registrar->SetFunction(0x821778D8, sub_821778D8);
   registrar->SetFunction(0x821778E0, sub_821778E0);
+  registrar->SetFunction(0x821778E8, sub_821778E8);
+  registrar->SetFunction(0x821778F0, sub_821778F0);
   registrar->SetFunction(0x821778F8, sub_821778F8);
   registrar->SetFunction(0x82177900, sub_82177900);
+  registrar->SetFunction(0x82177908, sub_82177908);
   registrar->SetFunction(0x82177910, sub_82177910);
+  registrar->SetFunction(0x82177918, sub_82177918);
+  registrar->SetFunction(0x82177920, sub_82177920);
   registrar->SetFunction(0x82177938, sub_82177938);
   registrar->SetFunction(0x82177948, sub_82177948);
   registrar->SetFunction(0x82177950, sub_82177950);
@@ -1243,6 +1256,7 @@ void gta4_RegisterFunctions(rex::runtime::IModuleRegistrar* registrar) {
   registrar->SetFunction(0x8217AA80, sub_8217AA80);
   registrar->SetFunction(0x8217AA88, sub_8217AA88);
   registrar->SetFunction(0x8217AA90, sub_8217AA90);
+  registrar->SetFunction(0x8217AA98, sub_8217AA98);
   registrar->SetFunction(0x8217AAA0, sub_8217AAA0);
   registrar->SetFunction(0x8217AAA8, sub_8217AAA8);
   registrar->SetFunction(0x8217AAB0, sub_8217AAB0);
@@ -1251,6 +1265,8 @@ void gta4_RegisterFunctions(rex::runtime::IModuleRegistrar* registrar) {
   registrar->SetFunction(0x8217AAC8, sub_8217AAC8);
   registrar->SetFunction(0x8217AAD0, sub_8217AAD0);
   registrar->SetFunction(0x8217AAD8, sub_8217AAD8);
+  registrar->SetFunction(0x8217AAE0, sub_8217AAE0);
+  registrar->SetFunction(0x8217AAE8, sub_8217AAE8);
   registrar->SetFunction(0x8217AAF0, sub_8217AAF0);
   registrar->SetFunction(0x8217AAF8, sub_8217AAF8);
   registrar->SetFunction(0x8217AB00, sub_8217AB00);
@@ -13888,6 +13904,7 @@ void gta4_RegisterFunctions(rex::runtime::IModuleRegistrar* registrar) {
   registrar->SetFunction(0x82547FD0, sub_82547FD0);
   registrar->SetFunction(0x82547FE8, sub_82547FE8);
   registrar->SetFunction(0x82548010, sub_82548010);
+  registrar->SetFunction(0x82548038, sub_82548038);
   registrar->SetFunction(0x82548048, sub_82548048);
   registrar->SetFunction(0x82548108, sub_82548108);
   registrar->SetFunction(0x82548118, sub_82548118);
@@ -14713,6 +14730,7 @@ void gta4_RegisterFunctions(rex::runtime::IModuleRegistrar* registrar) {
   registrar->SetFunction(0x825613E0, sub_825613E0);
   registrar->SetFunction(0x82561468, sub_82561468);
   registrar->SetFunction(0x825614F0, sub_825614F0);
+  registrar->SetFunction(0x82561510, sub_82561510);
   registrar->SetFunction(0x82561568, sub_82561568);
   registrar->SetFunction(0x82561598, sub_82561598);
   registrar->SetFunction(0x82561608, sub_82561608);
@@ -14795,6 +14813,7 @@ void gta4_RegisterFunctions(rex::runtime::IModuleRegistrar* registrar) {
   registrar->SetFunction(0x82563B88, sub_82563B88);
   registrar->SetFunction(0x82563B98, sub_82563B98);
   registrar->SetFunction(0x82563C18, sub_82563C18);
+  registrar->SetFunction(0x82563C30, sub_82563C30);
   registrar->SetFunction(0x82563C40, sub_82563C40);
   registrar->SetFunction(0x82563C50, sub_82563C50);
   registrar->SetFunction(0x82563C60, sub_82563C60);
@@ -16317,6 +16336,7 @@ void gta4_RegisterFunctions(rex::runtime::IModuleRegistrar* registrar) {
   registrar->SetFunction(0x82596A98, sub_82596A98);
   registrar->SetFunction(0x82596AE0, sub_82596AE0);
   registrar->SetFunction(0x82596AF0, sub_82596AF0);
+  registrar->SetFunction(0x82596BB0, sub_82596BB0);
   registrar->SetFunction(0x82596BD0, sub_82596BD0);
   registrar->SetFunction(0x82597718, sub_82597718);
   registrar->SetFunction(0x825977B0, sub_825977B0);
@@ -23490,6 +23510,7 @@ void gta4_RegisterFunctions(rex::runtime::IModuleRegistrar* registrar) {
   registrar->SetFunction(0x8273A2A8, sub_8273A2A8);
   registrar->SetFunction(0x8273A328, sub_8273A328);
   registrar->SetFunction(0x8273A350, sub_8273A350);
+  registrar->SetFunction(0x8273A360, sub_8273A360);
   registrar->SetFunction(0x8273A370, sub_8273A370);
   registrar->SetFunction(0x8273A3A0, sub_8273A3A0);
   registrar->SetFunction(0x8273A698, sub_8273A698);
@@ -25979,6 +26000,7 @@ void gta4_RegisterFunctions(rex::runtime::IModuleRegistrar* registrar) {
   registrar->SetFunction(0x827D5160, sub_827D5160);
   registrar->SetFunction(0x827D5170, sub_827D5170);
   registrar->SetFunction(0x827D51C0, sub_827D51C0);
+  registrar->SetFunction(0x827D5200, sub_827D5200);
   registrar->SetFunction(0x827D5220, sub_827D5220);
   registrar->SetFunction(0x827D5240, sub_827D5240);
   registrar->SetFunction(0x827D5250, sub_827D5250);
@@ -27024,6 +27046,7 @@ void gta4_RegisterFunctions(rex::runtime::IModuleRegistrar* registrar) {
   registrar->SetFunction(0x82807210, sub_82807210);
   registrar->SetFunction(0x82807468, sub_82807468);
   registrar->SetFunction(0x828076A0, sub_828076A0);
+  registrar->SetFunction(0x828076A8, sub_828076A8);
   registrar->SetFunction(0x828076B0, sub_828076B0);
   registrar->SetFunction(0x82807730, sub_82807730);
   registrar->SetFunction(0x82807810, sub_82807810);
@@ -32956,7 +32979,7 @@ void gta4_RegisterFunctions(rex::runtime::IModuleRegistrar* registrar) {
   registrar->SetFunction(0x82990E70, sub_82990E70);
   registrar->SetFunction(0x82991240, sub_82991240);
   registrar->SetFunction(0x82991244, sub_82991244);
-  registrar->SetFunction(0x82991268, sub_82991268);
+  registrar->SetFunction(0x82991268, ppc_strtok);
   registrar->SetFunction(0x82991388, sub_82991388);
   registrar->SetFunction(0x82991480, sub_82991480);
   registrar->SetFunction(0x82991548, sub_82991548);
@@ -33213,6 +33236,9 @@ void gta4_RegisterFunctions(rex::runtime::IModuleRegistrar* registrar) {
   registrar->SetFunction(0x829A05A0, sub_829A05A0);
   registrar->SetFunction(0x829A0628, sub_829A0628);
   registrar->SetFunction(0x829A0810, xstart);
+  registrar->SetFunction(0x829A082C, sub_829A082C);
+  registrar->SetFunction(0x829A09C0, sub_829A09C0);
+  registrar->SetFunction(0x829A09CC, sub_829A09CC);
   registrar->SetFunction(0x829A09D0, sub_829A09D0);
   registrar->SetFunction(0x829A09F8, sub_829A09F8);
   registrar->SetFunction(0x829A0A78, sub_829A0A78);
@@ -33355,6 +33381,7 @@ void gta4_RegisterFunctions(rex::runtime::IModuleRegistrar* registrar) {
   registrar->SetFunction(0x829A6FC4, sub_829A6FC4);
   registrar->SetFunction(0x829A6FEC, sub_829A6FEC);
   registrar->SetFunction(0x829A7040, sub_829A7040);
+  registrar->SetFunction(0x829A7838, sub_829A7838);
   registrar->SetFunction(0x829A785C, sub_829A785C);
   registrar->SetFunction(0x829A787C, sub_829A787C);
   registrar->SetFunction(0x829A78C0, sub_829A78C0);
@@ -34154,7 +34181,7 @@ void gta4_RegisterFunctions(rex::runtime::IModuleRegistrar* registrar) {
   registrar->SetFunction(0x829CFCE8, sub_829CFCE8);
   registrar->SetFunction(0x829CFD18, sub_829CFD18);
   registrar->SetFunction(0x829CFDD8, sub_829CFDD8);
-  registrar->SetFunction(0x829CFE30, sub_829CFE30);
+  registrar->SetFunction(0x829CFE30, D3D_MemAllocAligned);
   registrar->SetFunction(0x829CFE80, sub_829CFE80);
   registrar->SetFunction(0x829CFF58, sub_829CFF58);
   registrar->SetFunction(0x829CFFB0, sub_829CFFB0);
@@ -34240,7 +34267,7 @@ void gta4_RegisterFunctions(rex::runtime::IModuleRegistrar* registrar) {
   registrar->SetFunction(0x829D5C70, sub_829D5C70);
   registrar->SetFunction(0x829D5CF0, sub_829D5CF0);
   registrar->SetFunction(0x829D5D50, sub_829D5D50);
-  registrar->SetFunction(0x829D5DA8, sub_829D5DA8);
+  registrar->SetFunction(0x829D5DA8, CCommandBuffer_Destroy);
   registrar->SetFunction(0x829D5DF8, sub_829D5DF8);
   registrar->SetFunction(0x829D5EA0, sub_829D5EA0);
   registrar->SetFunction(0x829D6098, sub_829D6098);
@@ -34289,7 +34316,7 @@ void gta4_RegisterFunctions(rex::runtime::IModuleRegistrar* registrar) {
   registrar->SetFunction(0x829D8F28, sub_829D8F28);
   registrar->SetFunction(0x829D9160, sub_829D9160);
   registrar->SetFunction(0x829D9270, sub_829D9270);
-  registrar->SetFunction(0x829D92E8, sub_829D92E8);
+  registrar->SetFunction(0x829D92E8, D3DResource_Release);
   registrar->SetFunction(0x829D9368, sub_829D9368);
   registrar->SetFunction(0x829D9430, sub_829D9430);
   registrar->SetFunction(0x829D9480, sub_829D9480);
@@ -35425,19 +35452,26 @@ void gta4_RegisterFunctions(rex::runtime::IModuleRegistrar* registrar) {
   registrar->SetFunction(0x829F6ED0, sub_829F6ED0);
   registrar->SetFunction(0x829F6EF0, sub_829F6EF0);
   registrar->SetFunction(0x829F6F10, sub_829F6F10);
+  registrar->SetFunction(0x829F6F30, sub_829F6F30);
+  registrar->SetFunction(0x829F6F50, sub_829F6F50);
+  registrar->SetFunction(0x829F6F70, sub_829F6F70);
   registrar->SetFunction(0x829F6F90, sub_829F6F90);
   registrar->SetFunction(0x829F6FB0, sub_829F6FB0);
+  registrar->SetFunction(0x829F6FD0, sub_829F6FD0);
   registrar->SetFunction(0x829F6FF0, sub_829F6FF0);
   registrar->SetFunction(0x829F7010, sub_829F7010);
   registrar->SetFunction(0x829F7030, sub_829F7030);
   registrar->SetFunction(0x829F7050, sub_829F7050);
   registrar->SetFunction(0x829F7070, sub_829F7070);
+  registrar->SetFunction(0x829F7090, sub_829F7090);
+  registrar->SetFunction(0x829F70B0, sub_829F70B0);
   registrar->SetFunction(0x829F70D0, sub_829F70D0);
   registrar->SetFunction(0x829F70F0, sub_829F70F0);
   registrar->SetFunction(0x829F7110, sub_829F7110);
   registrar->SetFunction(0x829F7130, sub_829F7130);
   registrar->SetFunction(0x829F7150, sub_829F7150);
   registrar->SetFunction(0x829F7178, sub_829F7178);
+  registrar->SetFunction(0x829F7198, sub_829F7198);
   registrar->SetFunction(0x829F71B8, sub_829F71B8);
   registrar->SetFunction(0x829F7230, sub_829F7230);
   registrar->SetFunction(0x829F72B0, sub_829F72B0);
@@ -35635,6 +35669,7 @@ void gta4_RegisterFunctions(rex::runtime::IModuleRegistrar* registrar) {
   registrar->SetFunction(0x829F9D10, sub_829F9D10);
   registrar->SetFunction(0x829F9D48, sub_829F9D48);
   registrar->SetFunction(0x829F9D58, sub_829F9D58);
+  registrar->SetFunction(0x829F9D78, sub_829F9D78);
   registrar->SetFunction(0x829F9D98, sub_829F9D98);
   registrar->SetFunction(0x829F9DB8, sub_829F9DB8);
   registrar->SetFunction(0x829F9DD8, sub_829F9DD8);

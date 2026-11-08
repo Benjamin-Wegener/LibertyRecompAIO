@@ -4847,7 +4847,7 @@ DEFINE_REX_FUNC(sub_82274028) {
 	REX_STORE_U8(ctx.r11.u32 + 2, ctx.r10.u8);
 	// bl 0x82991268
 	ctx.lr = 0x82274070;
-	sub_82991268(ctx, base);
+	ppc_strtok(ctx, base);
 loc_82274070:
 	// cmplwi cr6,r30,30
 	cr6.compare<uint32_t>(r30.u32, 30, xer);
@@ -5186,7 +5186,7 @@ loc_82274284:
 	ctx.r3.s64 = 0;
 	// bl 0x82991268
 	ctx.lr = 0x82274290;
-	sub_82991268(ctx, base);
+	ppc_strtok(ctx, base);
 	// addi r30,r30,1
 	r30.s64 = r30.s64 + 1;
 	// cmplwi cr6,r3,0

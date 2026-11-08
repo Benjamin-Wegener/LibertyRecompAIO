@@ -1005,19 +1005,7 @@ DEFINE_REX_FUNC(sub_82177910) {
 	// addi r3,r3,-4
 	ctx.r3.s64 = ctx.r3.s64 + -4;
 	// b 0x82177920
-	goto loc_82177920;
-loc_82177920:
-	// li r11,4
-	ctx.r11.s64 = 4;
-	// li r10,10
-	ctx.r10.s64 = 10;
-	// li r3,0
-	ctx.r3.s64 = 0;
-	// stb r11,0(r4)
-	REX_STORE_U8(ctx.r4.u32 + 0, ctx.r11.u8);
-	// sth r10,2(r4)
-	REX_STORE_U16(ctx.r4.u32 + 2, ctx.r10.u16);
-	// blr 
+	sub_82177920(ctx, base);
 	return;
 }
 

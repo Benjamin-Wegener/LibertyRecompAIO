@@ -25318,7 +25318,7 @@ loc_8286A280:
 	ctx.r3.u64 = REX_LOAD_U32(r31.u32 + 40);
 	// bl 0x829d92e8
 	ctx.lr = 0x8286A2A4;
-	sub_829D92E8(ctx, base);
+	D3DResource_Release(ctx, base);
 loc_8286A2A4:
 	// lwz r10,44(r31)
 	ctx.r10.u64 = REX_LOAD_U32(r31.u32 + 44);
@@ -25354,7 +25354,7 @@ loc_8286A2C0:
 	if (cr6.eq) goto loc_8286A2E4;
 	// bl 0x829d92e8
 	ctx.lr = 0x8286A2E4;
-	sub_829D92E8(ctx, base);
+	D3DResource_Release(ctx, base);
 loc_8286A2E4:
 	// stwx r26,r30,r31
 	REX_STORE_U32(r30.u32 + r31.u32, r26.u32);

@@ -4978,7 +4978,7 @@ DEFINE_REX_FUNC(sub_82270240) {
 	REX_STORE_U8(ctx.r11.u32 + 2, ctx.r10.u8);
 	// bl 0x82991268
 	ctx.lr = 0x8227028C;
-	sub_82991268(ctx, base);
+	ppc_strtok(ctx, base);
 	// lis r6,-32256
 	ctx.r6.s64 = -2113929216;
 	// lis r7,-32256
@@ -5593,7 +5593,7 @@ loc_82270614:
 	ctx.r3.s64 = 0;
 	// bl 0x82991268
 	ctx.lr = 0x82270620;
-	sub_82991268(ctx, base);
+	ppc_strtok(ctx, base);
 	// addi r29,r29,1
 	r29.s64 = r29.s64 + 1;
 	// cmplwi cr6,r3,0

@@ -13014,7 +13014,7 @@ loc_824C434C:
 	REX_STORE_U8(ctx.r11.u32 + 2, ctx.r10.u8);
 	// bl 0x82991268
 	ctx.lr = 0x824C4374;
-	sub_82991268(ctx, base);
+	ppc_strtok(ctx, base);
 	// mr r30,r3
 	r30.u64 = ctx.r3.u64;
 	// cmplwi cr6,r30,0
@@ -13061,7 +13061,7 @@ loc_824C43B8:
 	ctx.r3.s64 = 0;
 	// bl 0x82991268
 	ctx.lr = 0x824C43CC;
-	sub_82991268(ctx, base);
+	ppc_strtok(ctx, base);
 	// cmplwi cr6,r3,0
 	cr6.compare<uint32_t>(ctx.r3.u32, 0, xer);
 	// beq cr6,0x824c4634
@@ -31509,51 +31509,6 @@ DEFINE_REX_FUNC(__savevmx_71) {
 	// stvx128 v127,r11,r12
 	ea = (ctx.r11.u32 + ctx.r12.u32) & ~0xF;
 	simde_mm_store_si128((simde__m128i*)REX_RAW_ADDR(ea), simde_mm_shuffle_epi8(simde_mm_load_si128((simde__m128i*)v127.u8), simde_mm_load_si128((simde__m128i*)VectorMaskL)));
-	// blr 
-	return;
-}
-
-DEFINE_REX_FUNC(sub_829A787C) {
-	REX_FUNC_PROLOGUE();
-	PPCXERRegister xer{};
-	PPCCRRegister cr6{};
-	uint32_t ea{};
-	// std r31,-8(r1)
-	REX_STORE_U64(ctx.r1.u32 + -8, ctx.r31.u64);
-	// addi r31,r12,-320
-	ctx.r31.s64 = ctx.r12.s64 + -320;
-	// std r22,-16(r1)
-	REX_STORE_U64(ctx.r1.u32 + -16, ctx.r22.u64);
-	// mflr r12
-	ctx.r12.u64 = ctx.lr;
-	// stw r12,-24(r1)
-	REX_STORE_U32(ctx.r1.u32 + -24, ctx.r12.u32);
-	// stwu r1,-112(r1)
-	ea = -112 + ctx.r1.u32;
-	REX_STORE_U32(ea, ctx.r1.u32);
-	ctx.r1.u32 = ea;
-	// lwz r11,96(r31)
-	ctx.r11.u64 = REX_LOAD_U32(ctx.r31.u32 + 96);
-	// cmplwi cr6,r11,0
-	cr6.compare<uint32_t>(ctx.r11.u32, 0, xer);
-	// beq cr6,0x829a78a8
-	if (cr6.eq) goto loc_829A78A8;
-	// lwz r3,1408(r22)
-	ctx.r3.u64 = REX_LOAD_U32(ctx.r22.u32 + 1408);
-	// bl 0x82a0267c
-	ctx.lr = 0x829A78A8;
-	__imp__RtlLeaveCriticalSection(ctx, base);
-loc_829A78A8:
-	// lwz r1,0(r1)
-	ctx.r1.u64 = REX_LOAD_U32(ctx.r1.u32 + 0);
-	// ld r31,-8(r1)
-	ctx.r31.u64 = REX_LOAD_U64(ctx.r1.u32 + -8);
-	// ld r22,-16(r1)
-	ctx.r22.u64 = REX_LOAD_U64(ctx.r1.u32 + -16);
-	// lwz r12,-24(r1)
-	ctx.r12.u64 = REX_LOAD_U32(ctx.r1.u32 + -24);
-	// mtlr r12
-	ctx.lr = ctx.r12.u64;
 	// blr 
 	return;
 }

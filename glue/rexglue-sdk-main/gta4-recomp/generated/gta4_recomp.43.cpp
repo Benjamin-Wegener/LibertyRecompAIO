@@ -33619,7 +33619,7 @@ DEFINE_REX_FUNC(sub_829CA028) {
 	return;
 }
 
-DEFINE_REX_FUNC(sub_829CFE30) {
+DEFINE_REX_FUNC(D3D_MemAllocAligned) {
 	REX_FUNC_PROLOGUE();
 	PPCXERRegister xer{};
 	PPCCRRegister cr0{};

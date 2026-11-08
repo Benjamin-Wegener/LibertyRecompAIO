@@ -28202,7 +28202,7 @@ DEFINE_REX_FUNC(sub_8284FF00) {
 	// beqlr cr6
 	if (cr6.eq) return;
 	// b 0x829d92e8
-	sub_829D92E8(ctx, base);
+	D3DResource_Release(ctx, base);
 	return;
 }
 

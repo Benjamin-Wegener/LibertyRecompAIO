@@ -32259,7 +32259,7 @@ loc_829D8F08:
 	ctx.r3.u64 = r31.u64;
 	// bl 0x829d5da8
 	ctx.lr = 0x829D8F10;
-	sub_829D5DA8(ctx, base);
+	CCommandBuffer_Destroy(ctx, base);
 loc_829D8F10:
 	// lis r4,9344
 	ctx.r4.s64 = 612368384;

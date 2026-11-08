@@ -16229,7 +16229,7 @@ DEFINE_REX_FUNC(sub_825BE3F8) {
 	ctx.r4.u64 = r29.u64;
 	// bl 0x82991268
 	ctx.lr = 0x825BE420;
-	sub_82991268(ctx, base);
+	ppc_strtok(ctx, base);
 	// mr r28,r3
 	r28.u64 = ctx.r3.u64;
 	// cmplwi cr6,r28,0
@@ -16281,7 +16281,7 @@ loc_825BE470:
 	ctx.r4.u64 = r29.u64;
 	// bl 0x82991268
 	ctx.lr = 0x825BE47C;
-	sub_82991268(ctx, base);
+	ppc_strtok(ctx, base);
 	// lis r11,-32245
 	ctx.r11.s64 = -2113208320;
 	// mr r6,r3
@@ -31899,7 +31899,7 @@ loc_829C9058:
 	return;
 }
 
-DEFINE_REX_FUNC(sub_829D5DA8) {
+DEFINE_REX_FUNC(CCommandBuffer_Destroy) {
 	REX_FUNC_PROLOGUE();
 	PPCXERRegister xer{};
 	PPCCRRegister cr6{};

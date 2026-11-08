@@ -25327,7 +25327,7 @@ loc_8284FEE0:
 	if (cr6.eq) goto loc_8284FEEC;
 	// bl 0x829d92e8
 	ctx.lr = 0x8284FEEC;
-	sub_829D92E8(ctx, base);
+	D3DResource_Release(ctx, base);
 loc_8284FEEC:
 	// addi r1,r1,96
 	ctx.r1.s64 = ctx.r1.s64 + 96;

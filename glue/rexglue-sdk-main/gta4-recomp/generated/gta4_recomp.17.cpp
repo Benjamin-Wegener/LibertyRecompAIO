@@ -25834,7 +25834,7 @@ loc_8285AD98:
 	if (cr6.eq) goto loc_8285ADA8;
 	// bl 0x829d92e8
 	ctx.lr = 0x8285ADA8;
-	sub_829D92E8(ctx, base);
+	D3DResource_Release(ctx, base);
 loc_8285ADA8:
 	// lwz r3,-4(r31)
 	ctx.r3.u64 = REX_LOAD_U32(r31.u32 + -4);

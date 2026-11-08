@@ -27158,7 +27158,7 @@ DEFINE_REX_FUNC(sub_82851370) {
 	if (cr6.eq) goto loc_828513C8;
 	// bl 0x829d92e8
 	ctx.lr = 0x828513C0;
-	sub_829D92E8(ctx, base);
+	D3DResource_Release(ctx, base);
 	// li r11,0
 	ctx.r11.s64 = 0;
 	// stw r11,8(r31)
@@ -27172,7 +27172,7 @@ loc_828513C8:
 	if (cr6.eq) goto loc_828513E0;
 	// bl 0x829d92e8
 	ctx.lr = 0x828513D8;
-	sub_829D92E8(ctx, base);
+	D3DResource_Release(ctx, base);
 	// li r11,0
 	ctx.r11.s64 = 0;
 	// stw r11,4(r31)
@@ -27186,7 +27186,7 @@ loc_828513E0:
 	if (cr6.eq) goto loc_828513F8;
 	// bl 0x829d92e8
 	ctx.lr = 0x828513F0;
-	sub_829D92E8(ctx, base);
+	D3DResource_Release(ctx, base);
 	// li r11,0
 	ctx.r11.s64 = 0;
 	// stw r11,0(r31)
@@ -27202,7 +27202,7 @@ loc_828513F8:
 	if (cr6.eq) goto loc_82851414;
 	// bl 0x829d92e8
 	ctx.lr = 0x8285140C;
-	sub_829D92E8(ctx, base);
+	D3DResource_Release(ctx, base);
 	// li r11,0
 	ctx.r11.s64 = 0;
 	// stw r11,19184(r31)
@@ -27218,7 +27218,7 @@ loc_82851414:
 	if (cr6.eq) goto loc_82851430;
 	// bl 0x829d92e8
 	ctx.lr = 0x82851428;
-	sub_829D92E8(ctx, base);
+	D3DResource_Release(ctx, base);
 	// li r11,0
 	ctx.r11.s64 = 0;
 	// stw r11,19456(r31)

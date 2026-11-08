@@ -33883,7 +33883,7 @@ DEFINE_REX_FUNC(__restvmx_16) {
 	return;
 }
 
-DEFINE_REX_FUNC(sub_82991268) {
+DEFINE_REX_FUNC(ppc_strtok) {
 	REX_FUNC_PROLOGUE();
 	PPCRegister ctr{};
 	PPCXERRegister xer{};

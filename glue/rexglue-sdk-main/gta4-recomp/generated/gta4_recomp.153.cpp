@@ -27877,7 +27877,7 @@ loc_8286C210:
 	ctx.r3.u64 = REX_LOAD_U32(ctx.r1.u32 + 112);
 	// bl 0x829d92e8
 	ctx.lr = 0x8286C22C;
-	sub_829D92E8(ctx, base);
+	D3DResource_Release(ctx, base);
 loc_8286C22C:
 	// addi r1,r1,336
 	ctx.r1.s64 = ctx.r1.s64 + 336;

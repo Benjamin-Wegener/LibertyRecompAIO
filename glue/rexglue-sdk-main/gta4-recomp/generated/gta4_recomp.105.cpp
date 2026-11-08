@@ -21470,6 +21470,20 @@ loc_82737674:
 	return;
 }
 
+DEFINE_REX_FUNC(sub_8273A360) {
+	REX_FUNC_PROLOGUE();
+	PPCRegister ctr{};
+	// lwz r12,0(r3)
+	ctx.r12.u64 = REX_LOAD_U32(ctx.r3.u32 + 0);
+	// lwz r11,80(r12)
+	ctx.r11.u64 = REX_LOAD_U32(ctx.r12.u32 + 80);
+	// mtctr r11
+	ctr.u64 = ctx.r11.u64;
+	// bctr 
+	REX_CALL_INDIRECT_FUNC(ctr.u32);
+	return;
+}
+
 DEFINE_REX_FUNC(sub_8273ABA8) {
 	REX_FUNC_PROLOGUE();
 	PPCXERRegister xer{};
