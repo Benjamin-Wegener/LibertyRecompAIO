@@ -1,3 +1,8 @@
+> [!IMPORTANT]
+> **This fork has moved.** Development continues as **Liberty Recomp AIO**:
+> https://github.com/Benjamin-Wegener/LibertyRecompAIO - one APK for every GPU (Adreno, Mali,
+> Xclipse, ...) and European (PAL) disc support.
+
 <p align="center">
     <img src="docs/android/images/banner_android_mali_edition.png" alt="Liberty Recompiled for Android - Mali Edition" width="800"/>
 </p>
