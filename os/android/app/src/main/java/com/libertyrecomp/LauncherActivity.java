@@ -849,6 +849,7 @@ public class LauncherActivity extends Activity {
             selectGraphicsValue("Environment reflections", "4");
             selectGraphicsValue("Reflection anti-aliasing", "off");
             selectGraphicsValue("Run-ahead frames", "1");
+            selectGraphicsValue("Colour clear folding", "true");
             markSettingsChanged();
             toast("Low-end profile selected - press Save changes");
         });
