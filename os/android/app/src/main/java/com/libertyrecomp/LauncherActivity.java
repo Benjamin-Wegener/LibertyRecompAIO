@@ -836,8 +836,8 @@ public class LauncherActivity extends Activity {
         for (LinearLayout page : pages) card.addView(page, matchWrap(dp(4)));
         selectGraphicsTab(tabs, pages, 0);
 
-        final String[] presetNames = {"Low  (360p inside, FSR 1)", "Medium  (about 420p inside, FSR 1)",
-                "High  (720p inside, FSR 1)", "Ultra  (native, no upscaler)"};
+        final String[] presetNames = {"Low  (about 430p inside, FSR 1)", "Medium  (about 500p inside, FSR 1)",
+                "High  (about 570p inside, FSR 1)", "Ultra  (native, no upscaler)"};
         final TextView presetLabel = text("Performance preset: move the slider", 17, R.color.picker_text);
         if (mFontBlack != null) presetLabel.setTypeface(mFontBlack);
         card.addView(presetLabel, matchWrap(dp(14)));
@@ -906,8 +906,9 @@ public class LauncherActivity extends Activity {
 
     /**
      * 0 Low, 1 Medium, 2 High, 3 Ultra. FSR 1 renders below the chosen output
-     * height (Performance 2x, Balanced 1.7x, Quality 1.5x), so Low at 720p
-     * output renders at 360p.
+     * (Performance 2x, Balanced 1.7x, Quality 1.5x) but never below 640x360,
+     * so on a 20:9 screen 720p output (1280x570) would fall back to native:
+     * the lower presets use 1080p output (1920x855 -> 960x427 inside).
      */
     private void applyPerformancePreset(int level) {
         // The intro-logo choice is not a quality setting: keep what the person chose.
@@ -925,7 +926,7 @@ public class LauncherActivity extends Activity {
         }
         switch (level) {
             case 0:
-                selectGraphicsValue("Resolution", "720");
+                selectGraphicsValue("Resolution", "1080");
                 selectGraphicsValue("Upscaler", "fsr1");
                 selectGraphicsValue("FSR 1 quality", "performance");
                 selectGraphicsValue("Anti-aliasing", "off");
@@ -941,7 +942,7 @@ public class LauncherActivity extends Activity {
                 selectGraphicsValue("Colour clear folding", "true");
                 break;
             case 1:
-                selectGraphicsValue("Resolution", "720");
+                selectGraphicsValue("Resolution", "1080");
                 selectGraphicsValue("Upscaler", "fsr1");
                 selectGraphicsValue("FSR 1 quality", "balanced");
                 selectGraphicsValue("Anti-aliasing", "off");
