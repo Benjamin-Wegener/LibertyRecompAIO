@@ -123,6 +123,12 @@ public class LauncherActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        for (int i = 0; i < GRAPHICS_SETTINGS.length; ++i) {
+            if (GRAPHICS_SETTINGS[i].label.equals("Frame limit")
+                    && GRAPHICS_SETTINGS[i].values.length == 5) {  // not yet filtered
+                GRAPHICS_SETTINGS[i] = frameLimitForThisScreen(GRAPHICS_SETTINGS[i]);
+            }
+        }
         // The app icon over a running game: some home screens start a second
         // launcher on top of the task instead of bringing it forward. Step
         // aside so the game underneath comes back.
@@ -841,10 +847,16 @@ public class LauncherActivity extends Activity {
         for (LinearLayout page : pages) card.addView(page, matchWrap(dp(4)));
         selectGraphicsTab(tabs, pages, 0);
 
-        final String[] presetNames = {"Saver  (24 FPS, FSR 1 Quality, about 380p inside)",
+        // Saver is 24 FPS: only offered when a refresh rate of the screen is a multiple of 24
+        // (120 Hz), so every frame is shown for the same time. The other steps run at 30 FPS.
+        final boolean saverFits = frameRateFitsDisplay(24);
+        final String[] allPresetNames = {"Saver  (24 FPS, FSR 1 Quality, about 380p inside)",
                 "Low  (30 FPS, FSR 1 Quality, about 380p inside)",
                 "Medium  (30 FPS, FSR 1 Ultra quality, about 440p inside)",
                 "High  (30 FPS, native)", "Ultra  (30 FPS, native, SMAA)"};
+        final int firstLevel = saverFits ? 0 : 1;
+        final String[] presetNames = java.util.Arrays.copyOfRange(allPresetNames, firstLevel,
+                allPresetNames.length);
         final TextView presetLabel = text("Performance preset: move the slider", 17, R.color.picker_text);
         if (mFontBlack != null) presetLabel.setTypeface(mFontBlack);
         card.addView(presetLabel, matchWrap(dp(14)));
@@ -853,7 +865,7 @@ public class LauncherActivity extends Activity {
         presetBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override public void onProgressChanged(SeekBar bar, int progress, boolean fromUser) {
                 presetLabel.setText("Performance preset: " + presetNames[progress]);
-                if (fromUser) applyPerformancePreset(progress);
+                if (fromUser) applyPerformancePreset(progress + firstLevel);
             }
             @Override public void onStartTrackingTouch(SeekBar bar) {}
             @Override public void onStopTrackingTouch(SeekBar bar) {}
@@ -899,6 +911,52 @@ public class LauncherActivity extends Activity {
         resetParams.topMargin = dp(14);
         card.addView(reset, resetParams);
         return card;
+    }
+
+    /** Every refresh rate the screen can run at (a variable-rate screen lists several). */
+    private float[] displayRefreshRates() {
+        try {
+            android.view.Display display = getWindowManager().getDefaultDisplay();
+            android.view.Display.Mode[] modes = display.getSupportedModes();
+            float[] rates = new float[modes.length];
+            for (int i = 0; i < modes.length; ++i) rates[i] = modes[i].getRefreshRate();
+            if (rates.length > 0) return rates;
+            return new float[] {display.getRefreshRate()};
+        } catch (RuntimeException e) {
+            return new float[] {60f};
+        }
+    }
+
+    /** True when some refresh rate of the screen is a whole multiple of {@code fps}. */
+    private boolean frameRateFitsDisplay(int fps) {
+        for (float hz : displayRefreshRates()) {
+            float ratio = hz / fps;
+            if (ratio >= 1f && Math.abs(ratio - Math.round(ratio)) < 0.02f) return true;
+        }
+        return false;
+    }
+
+    /** Frame limit setting without the rates that would judder on this screen. */
+    private GraphicsSetting frameLimitForThisScreen(GraphicsSetting full) {
+        java.util.ArrayList<String> choices = new java.util.ArrayList<>();
+        java.util.ArrayList<String> values = new java.util.ArrayList<>();
+        choices.add(full.choices[0]);  // the default (30 FPS) stays
+        for (int v = 0; v < full.values.length; ++v) {
+            final String value = full.values[v];
+            final boolean unlimited = value.equals("0");
+            if (unlimited || frameRateFitsDisplay(Integer.parseInt(value))) {
+                choices.add(full.choices[v + 1]);
+                values.add(value);
+            }
+        }
+        StringBuilder hz = new StringBuilder();
+        for (float rate : displayRefreshRates()) {
+            if (hz.length() > 0) hz.append("/");
+            hz.append(Math.round(rate));
+        }
+        return new GraphicsSetting(full.label,
+                "Only rates that fit this screen (" + hz + " Hz) are listed, so frames last equally long",
+                full.cvars, choices.toArray(new String[0]), values.toArray(new String[0]));
     }
 
     /** Puts the dropdown of the setting called {@code label} back to Default. */
