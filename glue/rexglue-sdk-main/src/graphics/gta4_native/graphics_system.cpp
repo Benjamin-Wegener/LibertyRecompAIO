@@ -31609,7 +31609,8 @@ bool Gta4NativeGraphicsSystem::RecordNativeFrame(
       const performance::GpuRange range = performance_range_for_command(queued_command);
       if ((skip_water_reflection && range == performance::GpuRange::kWaterReflections) ||
           (skip_environment_reflection && range == performance::GpuRange::kEnvironmentReflections) ||
-          (skip_shadows && range == performance::GpuRange::kRetailWarpShadow)) {
+          (skip_shadows && (range == performance::GpuRange::kRetailWarpShadow ||
+                            shadow_map_draw(queued_command)))) {
         continue;
       }
     }

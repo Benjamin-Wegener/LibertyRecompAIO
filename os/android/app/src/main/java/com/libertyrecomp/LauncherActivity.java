@@ -297,16 +297,18 @@ public class LauncherActivity extends Activity {
         // Left: logo, version, and the GTA-style menu.
         LinearLayout left = new LinearLayout(this);
         left.setOrientation(LinearLayout.VERTICAL);
-        left.setClipChildren(false);  // the handwriting may reach just below the banner
         ImageView banner = new ImageView(this);
         banner.setImageResource(R.drawable.launcher_banner);
         banner.setAdjustViewBounds(true);
         banner.setScaleType(ImageView.ScaleType.FIT_START);
         banner.setMaxHeight(getResources().getDisplayMetrics().heightPixels / 6);
-        left.addView(buildBannerWithEdition(banner), new LinearLayout.LayoutParams(
+        left.addView(banner, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        TextView version = text(versionLine(), 12, R.color.picker_muted);
-        left.addView(version, matchWrap(dp(6)));
+        // Clean header: the version on one line, the device on a muted second line.
+        TextView version = text(prettyVersion(), 13, R.color.picker_text);
+        if (mFontBlack != null) version.setTypeface(mFontBlack);
+        left.addView(version, matchWrap(dp(8)));
+        left.addView(text(deviceLine(), 11, R.color.picker_muted), matchWrap(dp(1)));
         for (int i = 0; i < PANEL_NAMES.length; ++i) {
             final int index = i;
             TextView item = text(PANEL_NAMES[i], 21, R.color.picker_text);
@@ -431,17 +433,6 @@ public class LauncherActivity extends Activity {
         panel.addView(play, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, dp(78)) {{ topMargin = dp(14); }});
 
-        LinearLayout row = new LinearLayout(this);
-        row.setOrientation(LinearLayout.HORIZONTAL);
-        Button debugPlay = button("PLAY WITH DEBUG LOG", false);
-        debugPlay.setOnClickListener(v -> play(true));
-        row.addView(debugPlay, new LinearLayout.LayoutParams(0, dp(54), 1f));
-        Button perfTest = button("PERFORMANCE TEST", false);
-        perfTest.setOnClickListener(v -> showPerformanceTestSettings());
-        LinearLayout.LayoutParams perfParams = new LinearLayout.LayoutParams(0, dp(54), 1f);
-        perfParams.leftMargin = dp(12);
-        row.addView(perfTest, perfParams);
-        panel.addView(row, matchWrap(dp(12)));
 
         panel.addView(text("Tip: hold PAUSE in game to move and resize the touch buttons.",
                 13, R.color.picker_muted), matchWrap(dp(14)));
@@ -547,6 +538,29 @@ public class LauncherActivity extends Activity {
         return group;
     }
 
+    /** "0.6.0-aio-alpha-1.8" shown as "Version 0.6.0 alpha 1.8". */
+    private String prettyVersion() {
+        String version = "?";
+        try {
+            version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        } catch (Exception ignored) {
+        }
+        version = version.replace("-aio", "").replace("-mali", "").replace("-alpha-", " alpha ");
+        return "Version " + version;
+    }
+
+    /** "Pixel 9a  ·  Tensor G4" (the chip name is only known from Android 12 on). */
+    private String deviceLine() {
+        String soc = Build.VERSION.SDK_INT >= 31 ? Build.SOC_MODEL : null;
+        String gpu = readFirstLine(new File("/sys/class/kgsl/kgsl-3d0/gpu_model"));
+        StringBuilder line = new StringBuilder(Build.MODEL);
+        if (soc != null && !soc.isEmpty() && !"unknown".equalsIgnoreCase(soc)) {
+            line.append("  ·  ").append(soc);
+        }
+        if (gpu != null && !gpu.isEmpty()) line.append("  ·  ").append(gpu);
+        return line.toString();
+    }
+
     private String versionLine() {
         String version = "?";
         try {
@@ -609,56 +623,6 @@ public class LauncherActivity extends Activity {
     private LinearLayout mCrashCard;
     private TextView mCrashText;
 
-    // "Mali Edition" scribbled under the logo in a handwriting font (Rock Salt,
-    // Apache License 2.0, assets/fonts/). Positioned from where the banner
-    // image is actually drawn, so it lines up at any screen size.
-    private View buildBannerWithEdition(ImageView banner) {
-        android.widget.FrameLayout frame = new android.widget.FrameLayout(this);
-        frame.setClipChildren(false);
-        frame.addView(banner, new android.widget.FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-
-        TextView edition = new TextView(this);
-        edition.setText("AIO");
-        edition.setTextColor(0xF0FFFFFF);
-        edition.setIncludeFontPadding(false);
-        edition.setSingleLine(true);
-        try {
-            edition.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/RockSalt-Regular.ttf"));
-        } catch (RuntimeException e) {
-            edition.setTypeface(Typeface.create("casual", Typeface.ITALIC));
-        }
-        edition.setRotation(-4f);
-        edition.setPivotX(0f);
-        edition.setVisibility(View.INVISIBLE);
-        frame.addView(edition, new android.widget.FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-
-        banner.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight,
-                oldBottom) -> {
-            android.graphics.drawable.Drawable image = banner.getDrawable();
-            int viewWidth = right - left;
-            int viewHeight = bottom - top;
-            if (image == null || viewWidth <= 0 || viewHeight <= 0) return;
-            int imageWidth = image.getIntrinsicWidth();
-            int imageHeight = image.getIntrinsicHeight();
-            if (imageWidth <= 0 || imageHeight <= 0) return;
-            // FIT_CENTER: scale to fit, centred.
-            float scale = Math.min(viewWidth / (float) imageWidth, viewHeight / (float) imageHeight);
-            float drawnWidth = imageWidth * scale;
-            float drawnHeight = imageHeight * scale;
-            float offsetX = (viewWidth - drawnWidth) / 2f;
-            float offsetY = (viewHeight - drawnHeight) / 2f;
-            float textSize = drawnHeight * 0.15f;
-            edition.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
-            // Under the underline, left of "FOR ANDROID".
-            edition.setTranslationX(offsetX + drawnWidth * 0.215f);
-            edition.setTranslationY(offsetY + drawnHeight * 0.70f);
-            edition.setVisibility(View.VISIBLE);
-        });
-        return frame;
-    }
-
     // Graphics settings: one dropdown per setting, saved to graphics.txt, which
     // LibertyActivity appends after args.txt. The default choice writes nothing,
     // so the value from args.txt applies.
@@ -684,8 +648,9 @@ public class LauncherActivity extends Activity {
                     new String[] {"true"}),
             new GraphicsSetting("Resolution", "Lower is faster",
                     new String[] {"gta4_output_height_cap"},
-                    new String[] {"Screen resolution (Default)", "480p", "540p", "720p", "900p", "1080p"},
-                    new String[] {"480", "540", "720", "900", "1080"}),
+                    new String[] {"Screen resolution (Default)", "360p", "480p", "540p", "720p", "900p",
+                            "1080p"},
+                    new String[] {"360", "480", "540", "720", "900", "1080"}),
             new GraphicsSetting("Upscaler", "FSR 1 renders below the resolution and sharpens",
                     new String[] {"gta4_native_upscaler"},
                     new String[] {"Off (Default)", "FSR 1"},
@@ -712,10 +677,22 @@ public class LauncherActivity extends Activity {
                     new String[] {"Medium / 40% (Default)", "Very low (20%)", "Low (30%)",
                             "High (70%)", "Console (100%)"},
                     new String[] {"0.2", "0.3", "0.7", "1.0"}),
-            new GraphicsSetting("Shadow quality", "High is sharper and costs some GPU time",
+            new GraphicsSetting("Shadow quality", "Low renders the shadow map at half the size and saves GPU time; High is sharper",
                     new String[] {"gta4_shadow_map_base_size"},
-                    new String[] {"Console (Default)", "High"},
-                    new String[] {"512"}),
+                    new String[] {"Console (Default)", "High", "Low (half size)"},
+                    new String[] {"512", "128"}),
+            new GraphicsSetting("Shadow updates", "Updating the shadows every 2nd or 3rd frame saves CPU and GPU time; Off draws no sun shadows",
+                    new String[] {"gta4_native_shadow_interval"},
+                    new String[] {"Every frame (Default)", "Every 2nd frame", "Every 3rd frame", "Off"},
+                    new String[] {"2", "3", "0"}),
+            new GraphicsSetting("Water reflections", "Updating them less often saves GPU time; Off shows a plain colour",
+                    new String[] {"gta4_native_water_reflection_interval"},
+                    new String[] {"Every frame (Default)", "Every 2nd frame", "Every 4th frame", "Off"},
+                    new String[] {"2", "4", "0"}),
+            new GraphicsSetting("Environment reflections", "Car and window reflections; updating them less often saves GPU time",
+                    new String[] {"gta4_native_environment_reflection_interval"},
+                    new String[] {"Every frame (Default)", "Every 2nd frame", "Every 4th frame", "Off"},
+                    new String[] {"2", "4", "0"}),
             new GraphicsSetting("Motion blur", "Makes 30 FPS look smoother",
                     new String[] {"gta4_motion_blur"},
                     new String[] {"Off (Default)", "On"},
@@ -848,6 +825,28 @@ public class LauncherActivity extends Activity {
         for (LinearLayout page : pages) card.addView(page, matchWrap(dp(4)));
         selectGraphicsTab(tabs, pages, 0);
 
+        Button lowEnd = button("LOW-END DEVICE PROFILE", false);
+        lowEnd.setOnClickListener(v -> {
+            // Everything that costs GPU/CPU time turned down together; adjust single rows afterwards.
+            selectGraphicsValue("Resolution", "360");
+            selectGraphicsValue("Anti-aliasing", "off");
+            selectGraphicsValue("Frame limit", "0");
+            selectGraphicsValue("Draw distance", "0.6");
+            selectGraphicsValue("Population density", "0.2");
+            selectGraphicsValue("Shadow quality", "128");
+            selectGraphicsValue("Shadow updates", "2");
+            selectGraphicsValue("Water reflections", "4");
+            selectGraphicsValue("Environment reflections", "4");
+            selectGraphicsValue("Reflection anti-aliasing", "off");
+            selectGraphicsValue("Run-ahead frames", "1");
+            markSettingsChanged();
+            toast("Low-end profile selected - press Save changes");
+        });
+        LinearLayout.LayoutParams lowEndParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, dp(48));
+        lowEndParams.topMargin = dp(14);
+        card.addView(lowEnd, lowEndParams);
+
         Button reset = button("RESET TO DEFAULT", false);
         reset.setOnClickListener(v -> {
             for (int i = 0; i < mGraphicsSpinners.length; ++i) {
@@ -862,6 +861,21 @@ public class LauncherActivity extends Activity {
         resetParams.topMargin = dp(14);
         card.addView(reset, resetParams);
         return card;
+    }
+
+    /** Selects the dropdown of the setting called {@code label} that writes {@code value}. */
+    private void selectGraphicsValue(String label, String value) {
+        for (int i = 0; i < GRAPHICS_SETTINGS.length; ++i) {
+            GraphicsSetting setting = GRAPHICS_SETTINGS[i];
+            if (!setting.label.equals(label)) continue;
+            int position = 0;
+            for (int v = 0; v < setting.values.length; ++v) {
+                if (setting.values[v].equals(value)) position = v + 1;
+            }
+            mGraphicsSpinners[i].setSelection(position, false);
+            mGraphicsPositions[i] = position;
+            return;
+        }
     }
 
     private void selectGraphicsTab(TextView[] tabs, LinearLayout[] pages, int index) {
@@ -879,6 +893,10 @@ public class LauncherActivity extends Activity {
         if (setting.cvars[0].startsWith("gta4_touch")) return 2;
         switch (setting.label) {
             case "Frame limit":
+            case "Shadow quality":
+            case "Shadow updates":
+            case "Water reflections":
+            case "Environment reflections":
             case "Draw distance":
             case "Population density":
             case "Run-ahead frames":

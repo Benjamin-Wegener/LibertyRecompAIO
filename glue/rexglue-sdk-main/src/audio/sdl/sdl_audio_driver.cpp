@@ -242,6 +242,8 @@ void SDLAudioDriver::FlushQueuedFrames() {
     frames_unused_.push(frames_queued_.front());
     frames_queued_.pop();
   }
+  underrun_active_ = true;
+  std::fill(std::begin(last_sample_), std::end(last_sample_), 0.0f);
 }
 
 void SDLAudioDriver::Shutdown() {
@@ -302,13 +304,34 @@ void SDLAudioDriver::SDLCallback(void* userdata, SDL_AudioStream* stream, int ad
       silent_fills = filled = 0;
       next_report = now + std::chrono::seconds(10);
     }
+    const uint32_t channels = std::max<uint8_t>(driver->sdl_device_channels_, 1);
     if (driver->frames_queued_.empty()) {
       ++silent_fills;
       if (sdl_callback_count < 10) {
         REXAPU_DEBUG("SDLCallback: no frames queued (silence)");
         sdl_callback_count++;
       }
-      std::memset(data, 0, len);
+      if (!driver->underrun_active_) {
+        // Smoothly fade out from the last output samples over 64 samples (~1.3 ms)
+        // to prevent harsh DC-step clicks and popping from buffer starvation.
+        constexpr uint32_t kFadeSamples = 64;
+        const uint32_t fade_count = std::min<uint32_t>(kFadeSamples, channel_samples_);
+        for (uint32_t i = 0; i < fade_count; ++i) {
+          const float factor = 1.0f - (float(i) / float(fade_count));
+          for (uint32_t c = 0; c < channels; ++c) {
+            data[i * channels + c] = driver->last_sample_[c] * factor;
+          }
+        }
+        for (uint32_t i = fade_count; i < channel_samples_; ++i) {
+          for (uint32_t c = 0; c < channels; ++c) {
+            data[i * channels + c] = 0.0f;
+          }
+        }
+        std::fill(std::begin(driver->last_sample_), std::end(driver->last_sample_), 0.0f);
+        driver->underrun_active_ = true;
+      } else {
+        std::memset(data, 0, len);
+      }
       if (!SDL_PutAudioStreamData(stream, data, len)) {
         REXAPU_ERROR("SDL_PutAudioStreamData() failed while filling silence: {}", SDL_GetError());
         break;
@@ -320,6 +343,8 @@ void SDLAudioDriver::SDLCallback(void* userdata, SDL_AudioStream* stream, int ad
       driver->frames_queued_.pop();
       if (REXCVAR_GET(audio_mute)) {
         std::memset(data, 0, len);
+        std::fill(std::begin(driver->last_sample_), std::end(driver->last_sample_), 0.0f);
+        driver->underrun_active_ = true;
       } else {
         switch (driver->sdl_device_channels_) {
           case 2:
@@ -331,6 +356,22 @@ void SDLAudioDriver::SDLCallback(void* userdata, SDL_AudioStream* stream, int ad
           default:
             assert_unhandled_case(driver->sdl_device_channels_);
             break;
+        }
+        if (driver->underrun_active_) {
+          // Smooth micro-fade-in over 64 samples (~1.3 ms) when recovering from
+          // an underrun to eliminate initial-transient popping.
+          constexpr uint32_t kFadeSamples = 64;
+          const uint32_t fade_count = std::min<uint32_t>(kFadeSamples, channel_samples_);
+          for (uint32_t i = 0; i < fade_count; ++i) {
+            const float factor = float(i) / float(fade_count);
+            for (uint32_t c = 0; c < channels; ++c) {
+              data[i * channels + c] *= factor;
+            }
+          }
+          driver->underrun_active_ = false;
+        }
+        for (uint32_t c = 0; c < std::min<uint32_t>(channels, 6); ++c) {
+          driver->last_sample_[c] = data[(channel_samples_ - 1) * channels + c];
         }
       }
       if (!SDL_PutAudioStreamData(stream, data, len)) {
