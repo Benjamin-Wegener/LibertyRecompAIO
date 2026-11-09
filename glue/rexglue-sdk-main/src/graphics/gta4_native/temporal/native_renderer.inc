@@ -693,6 +693,7 @@ void Gta4NativeGraphicsSystem::DestroyTemporalResources() {
   if (!device) return;
   fsr_upscaler_.Shutdown(); dlss_upscaler_.Shutdown();
   temporal_frame_generator_.Shutdown();
+  simple_frame_generator_.Shutdown();
   temporal_generated_frame_ = {}; for (auto& leases : temporal_frame_leases_) leases.clear();
   for (const auto& [key, module] : temporal_shader_modules_)
     device->functions().vkDestroyShaderModule(device->device(), module, nullptr);

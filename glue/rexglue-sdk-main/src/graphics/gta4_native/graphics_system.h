@@ -97,6 +97,7 @@
 #include "temporal/shader_contract.h"
 #include "temporal/vulkan_scene.h"
 #include "temporal/vulkan_frame_generation.h"
+#include "temporal/simple_frame_generation.h"
 
 struct ShaderOverrideCacheEntry;
 
@@ -2515,6 +2516,7 @@ class Gta4NativeGraphicsSystem final : public system::IGraphicsSystem {
   temporal::VulkanScene temporal_scene_;
   std::unique_ptr<NativeTextureImage> temporal_output_binding_;
   temporal::VulkanFrameGeneration temporal_frame_generator_;
+  temporal::SimpleFrameGeneration simple_frame_generator_;
   temporal::FrameGenerationOutput temporal_generated_frame_;
   std::array<std::vector<std::shared_ptr<void>>, 2> temporal_frame_leases_;
   NativeSurfaceImage* temporal_composite_source_ = nullptr;

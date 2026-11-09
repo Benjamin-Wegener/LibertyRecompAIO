@@ -298,6 +298,9 @@ REXCVAR_DEFINE_BOOL(gta4_native_fold_color_clears, false, "GTA IV/Graphics/Nativ
                     "Clear colour targets through the rendering scope's load op when a scope opens "
                     "on a full-target clear, instead of loading the old contents and clearing "
                     "again (saves a tile-memory read on tile-based GPUs)");
+REXCVAR_DEFINE_BOOL(gta4_native_frame_generation_simple, false, "GTA IV/Graphics/Native Renderer",
+                    "Experimental: present a generated frame half a frame before every real frame "
+                    "(phase 1: a copy of the previous frame; needs a FIFO swapchain)");
 REXCVAR_DEFINE_BOOL(gta4_native_drop_inert_blending, true, "GTA IV/Graphics/Native Renderer",
                     "Disable blending on targets where it cannot change the result (no channel "
                     "written, or source*1 + destination*0), so Turnip keeps LRZ on");
@@ -38388,6 +38391,26 @@ bool Gta4NativeGraphicsSystem::ClearGuestOutput(
             native_profile_frame_started ? rex::chrono::Clock::QueryHostTickCount() : 0;
         SwitchNativeGpuProfileRange(command_buffer_, performance::GpuRange::kFrameRelease);
         AcquireNativePresenterImage(command_buffer_);
+        bool simple_generation_recorded = false;
+        if (presenter_written && REXCVAR_GET(gta4_native_frame_generation_simple)) {
+          auto* frame_presenter = static_cast<ui::vulkan::VulkanPresenter*>(presenter_.get());
+          if (frame_presenter && frame_presenter->CanPresentGeneratedFrames()) {
+            simple_generation_recorded = simple_frame_generator_.Encode(
+                *vulkan_device, command_buffer_, vulkan_context.image(), VkExtent2D{width, height},
+                presenter_transfer_written ? VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
+                                           : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                presenter_transfer_written ? VK_PIPELINE_STAGE_TRANSFER_BIT
+                                           : VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                presenter_transfer_written ? VK_ACCESS_TRANSFER_WRITE_BIT
+                                           : VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                submitted_frame);
+            if (simple_generation_recorded) {
+              if (auto lease = simple_frame_generator_.pending_lease()) {
+                temporal_frame_leases_[active_frame_slot_].push_back(std::move(lease));
+              }
+            }
+          }
+        }
         phase_log.Enter(CallbackPhaseLog::kFinBarrier);
         VkImageMemoryBarrier release_barrier{};
         release_barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -38520,6 +38543,7 @@ bool Gta4NativeGraphicsSystem::ClearGuestOutput(
           if (submit_result == VK_SUCCESS) {
             MarkFrameTimeline(submitted_frame, kTimelineQueueSubmit);
             vulkan_context.MarkImageAccessSubmitted();
+            if (simple_generation_recorded) simple_frame_generator_.Publish(vulkan_context);
             SubmitTemporalFrame();
             if (temporal_generated_frame_.has_generated_frame)
               temporal_frame_generator_.Publish(vulkan_context, temporal_generated_frame_);
@@ -38530,6 +38554,7 @@ bool Gta4NativeGraphicsSystem::ClearGuestOutput(
             }
           }
         }
+        if (simple_generation_recorded && submit_result != VK_SUCCESS) simple_frame_generator_.Discard();
         gpu_flight::Record("native.queue-submit-end", NativeVulkanHandleIdentity(command_buffer_),
                            submission, submitted_frame, active_frame_slot_, 0,
                            int32_t(submit_result));
