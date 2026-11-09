@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.app.AlertDialog;
 import android.view.WindowManager;
@@ -835,6 +836,25 @@ public class LauncherActivity extends Activity {
         for (LinearLayout page : pages) card.addView(page, matchWrap(dp(4)));
         selectGraphicsTab(tabs, pages, 0);
 
+        final String[] presetNames = {"Low  (360p inside, FSR 1)", "Medium  (about 420p inside, FSR 1)",
+                "High  (720p inside, FSR 1)", "Ultra  (native, no upscaler)"};
+        final TextView presetLabel = text("Performance preset: move the slider", 17, R.color.picker_text);
+        if (mFontBlack != null) presetLabel.setTypeface(mFontBlack);
+        card.addView(presetLabel, matchWrap(dp(14)));
+        final SeekBar presetBar = new SeekBar(this);
+        presetBar.setMax(presetNames.length - 1);
+        presetBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override public void onProgressChanged(SeekBar bar, int progress, boolean fromUser) {
+                presetLabel.setText("Performance preset: " + presetNames[progress]);
+                if (fromUser) applyPerformancePreset(progress);
+            }
+            @Override public void onStartTrackingTouch(SeekBar bar) {}
+            @Override public void onStopTrackingTouch(SeekBar bar) {}
+        });
+        card.addView(presetBar, matchWrap(dp(4)));
+        card.addView(text("Sets resolution, upscaler, effects and density together; adjust single rows afterwards, then press Save changes.",
+                11, R.color.picker_muted), matchWrap(dp(2)));
+
         Button lowEnd = button("LOW-END DEVICE PROFILE", false);
         lowEnd.setOnClickListener(v -> {
             // Everything that costs GPU/CPU time turned down together; adjust single rows afterwards.
@@ -872,6 +892,89 @@ public class LauncherActivity extends Activity {
         resetParams.topMargin = dp(14);
         card.addView(reset, resetParams);
         return card;
+    }
+
+    /** Puts the dropdown of the setting called {@code label} back to Default. */
+    private void selectGraphicsDefault(String label) {
+        for (int i = 0; i < GRAPHICS_SETTINGS.length; ++i) {
+            if (!GRAPHICS_SETTINGS[i].label.equals(label)) continue;
+            mGraphicsSpinners[i].setSelection(0, false);
+            mGraphicsPositions[i] = 0;
+            return;
+        }
+    }
+
+    /**
+     * 0 Low, 1 Medium, 2 High, 3 Ultra. FSR 1 renders below the chosen output
+     * height (Performance 2x, Balanced 1.7x, Quality 1.5x), so Low at 720p
+     * output renders at 360p.
+     */
+    private void applyPerformancePreset(int level) {
+        // The intro-logo choice is not a quality setting: keep what the person chose.
+        int introIndex = -1, introPosition = 0;
+        for (int i = 0; i < GRAPHICS_SETTINGS.length; ++i) {
+            if (GRAPHICS_SETTINGS[i].label.equals("Intro logos")) {
+                introIndex = i;
+                introPosition = mGraphicsPositions[i];
+            }
+        }
+        for (GraphicsSetting setting : GRAPHICS_SETTINGS) selectGraphicsDefault(setting.label);
+        if (introIndex >= 0) {
+            mGraphicsSpinners[introIndex].setSelection(introPosition, false);
+            mGraphicsPositions[introIndex] = introPosition;
+        }
+        switch (level) {
+            case 0:
+                selectGraphicsValue("Resolution", "720");
+                selectGraphicsValue("Upscaler", "fsr1");
+                selectGraphicsValue("FSR 1 quality", "performance");
+                selectGraphicsValue("Anti-aliasing", "off");
+                selectGraphicsValue("Frame limit", "0");
+                selectGraphicsValue("Draw distance", "0.6");
+                selectGraphicsValue("Population density", "0.2");
+                selectGraphicsValue("Shadow quality", "128");
+                selectGraphicsValue("Shadow updates", "3");
+                selectGraphicsValue("Water reflections", "4");
+                selectGraphicsValue("Environment reflections", "4");
+                selectGraphicsValue("Reflection anti-aliasing", "off");
+                selectGraphicsValue("Run-ahead frames", "1");
+                selectGraphicsValue("Colour clear folding", "true");
+                break;
+            case 1:
+                selectGraphicsValue("Resolution", "720");
+                selectGraphicsValue("Upscaler", "fsr1");
+                selectGraphicsValue("FSR 1 quality", "balanced");
+                selectGraphicsValue("Anti-aliasing", "off");
+                selectGraphicsValue("Frame limit", "0");
+                selectGraphicsValue("Draw distance", "0.8");
+                selectGraphicsValue("Population density", "0.3");
+                selectGraphicsValue("Shadow quality", "128");
+                selectGraphicsValue("Shadow updates", "2");
+                selectGraphicsValue("Water reflections", "2");
+                selectGraphicsValue("Environment reflections", "2");
+                selectGraphicsValue("Reflection anti-aliasing", "off");
+                selectGraphicsValue("Run-ahead frames", "1");
+                selectGraphicsValue("Colour clear folding", "true");
+                break;
+            case 2:
+                selectGraphicsValue("Resolution", "1080");
+                selectGraphicsValue("Upscaler", "fsr1");
+                selectGraphicsDefault("FSR 1 quality");
+                selectGraphicsValue("Frame limit", "60");
+                selectGraphicsValue("Shadow updates", "2");
+                selectGraphicsValue("Water reflections", "2");
+                selectGraphicsValue("Environment reflections", "2");
+                selectGraphicsValue("Run-ahead frames", "1");
+                break;
+            default:
+                selectGraphicsValue("Resolution", "1080");
+                selectGraphicsValue("Anti-aliasing", "smaa");
+                selectGraphicsValue("Frame limit", "60");
+                selectGraphicsValue("Run-ahead frames", "1");
+                break;
+        }
+        markSettingsChanged();
+        toast("Preset selected - press Save changes");
     }
 
     /** Selects the dropdown of the setting called {@code label} that writes {@code value}. */
