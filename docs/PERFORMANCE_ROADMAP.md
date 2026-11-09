@@ -120,3 +120,18 @@ time and power for the extra images and the compute pass (the saving only
 exists compared with rendering every frame, not compared with 30 FPS); wrong
 interpolation on transparent effects, particles and the HUD. Not useful on the
 Redmi: it is GPU bound.
+
+### Phase 1 result (v63, Pixel 9a, `gta4_native_frame_generation_simple`)
+The pair path works: no crash or validation error, the display receives two
+images per game frame (21-23 presents/s at 11-12 game frames/s), and the copies
+cost nothing (callback 26-28 ms, same as off). But it throttles the game from
+24-30 to 10-12 frames per second: `pipeline: handoff-wait` rises from 24.5 to
+66.7 ms per frame, i.e. the presenter only takes the next guest output image
+after a pair has been shown (generated, hold `interval_ns`, real). The interval
+is measured from the time between two encodes, so a slow frame lengthens the
+next interval (feedback).
+Next: read the presenter's paint cadence (`vulkan_presenter.cpp` around the
+generated-frame delivery stages) and try a fixed interval of half a refresh
+period instead of the measured one, a pair per display cycle at 60 Hz, and
+whether the refresher callback can run ahead while a pair is still shown.
+Not usable yet; the cvar stays off.
