@@ -174,3 +174,19 @@ runs 42 without generation: a pair needs at least two display slots and the next
 scene is admitted only after the generated image was shown, so guest frame and
 render still run one after the other. The generated image is still a copy of the
 previous frame; phase 2 (motion compensated interpolation) makes it smooth.
+
+### Phase 2 (v69): GPU interpolation
+`simple_frame_generation.comp` (glslc, embedded as `simple_frame_generation_spv.h`)
+runs three compute passes on the GPU: luma of both frames at quarter resolution;
+one vector per 16x16 block (full search of +-48 pixels, a small cost on the
+vector length, and a vector is only kept when it clearly beats standing still);
+then the generated image: bilinear blend of the four nearest block vectors, both
+frames sampled half a vector toward the middle in time, with a fallback to the
+plain mix where the two samples disagree (occlusion, transparency). Two private
+copies of the final frame alternate as "previous" and "current"; the pair shared
+with the presenter holds the generated and a copy of the real frame.
+Pixel 9a, frame limit 30 with the compute pass: game 15.1/s, 30.1 images/s shown,
+no errors. The two screenshots taken (a still room, a camera pan) show no black
+areas, double edges or smearing; which frame (real or generated) a screenshot
+shows is not known, so a proper look needs a switch that shows only generated
+frames. Not measured yet: the GPU time of the three passes.
