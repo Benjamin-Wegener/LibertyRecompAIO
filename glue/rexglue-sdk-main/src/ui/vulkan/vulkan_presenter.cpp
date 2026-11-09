@@ -27,6 +27,8 @@
 #include <utility>
 #include <vector>
 
+#include <chrono>
+
 #include <rex/assert.h>
 #include <rex/chrono/clock.h>
 #include <rex/cvar.h>
@@ -56,6 +58,8 @@
 #include <rex/ui/surface_mac.h>
 #endif
 
+REXCVAR_DEFINE_BOOL(presenter_delivery_log, false, "UI/Vulkan",
+                    "Log every guest output present (single, generated or real) with the time since the previous one");
 REXCVAR_DEFINE_BOOL(present_render_pass_clear, true, "UI/Presenter",
                     "Clear render pass during presentation");
 
@@ -2990,6 +2994,19 @@ Presenter::PaintResult VulkanPresenter::PaintAndPresentImpl(bool execute_ui_draw
         if (Window* window = connected_window())
           window->RequestPaintAfterNanoseconds(frame_pacer().period());
       }
+    }
+    if (REXCVAR_GET(presenter_delivery_log) && guest_output_pass_recorded) {
+      static uint64_t last_ns = 0;
+      const uint64_t now_ns = uint64_t(std::chrono::duration_cast<std::chrono::nanoseconds>(
+          std::chrono::steady_clock::now().time_since_epoch()).count());
+      REXLOG_WARN("presenter-delivery: {} frame={} publication={} dt={:.1f}ms interval={:.1f}ms",
+                  generated_stage == GeneratedFrameDelivery::Stage::kGenerated ? "generated"
+                  : generated_stage == GeneratedFrameDelivery::Stage::kReal    ? "real"
+                                                                               : "single",
+                  guest_output_properties.provenance.submitted_frame, publication,
+                  last_ns ? double(now_ns - last_ns) / 1e6 : 0.0,
+                  selected_generated_frame ? double(selected_generated_frame->interval_ns) / 1e6 : 0.0);
+      last_ns = now_ns;
     }
     if (selected_generated_frame && guest_output_pass_recorded &&
         rex::diagnostics::IsEnabled(rex::diagnostics::Category::kPresenter)) {

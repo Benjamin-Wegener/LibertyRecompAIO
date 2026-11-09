@@ -141,7 +141,7 @@ SimpleFrameGeneration::~SimpleFrameGeneration() = default;
 bool SimpleFrameGeneration::Encode(const ui::vulkan::VulkanDevice& device, VkCommandBuffer commands,
                                    VkImage source, VkExtent2D extent, VkImageLayout source_layout,
                                    VkPipelineStageFlags source_stage, VkAccessFlags source_access,
-                                   uint64_t epoch) {
+                                   uint64_t epoch, uint64_t fixed_interval_ns) {
   Impl& s = *impl_;
   s.pending.reset();
   s.pending_generated = false;
@@ -163,10 +163,13 @@ bool SimpleFrameGeneration::Encode(const ui::vulkan::VulkanDevice& device, VkCom
                                now - s.last_encode).count()) / 2;
   }
   s.last_encode = now;
-  if (!interval_ns || interval_ns > kMaximumIntervalNs) {
-    // First frame, or a stall: start over without publishing this frame.
+  if (!interval_ns || interval_ns > 3 * kMaximumIntervalNs) {
+    // First frame, or a long stall: start over without publishing this frame.
     s.history_valid = false;
   }
+  if (fixed_interval_ns) interval_ns = fixed_interval_ns;
+  interval_ns = std::min(interval_ns, kMaximumIntervalNs);
+  if (!interval_ns) s.history_valid = false;
   auto pair = s.Acquire();
   if (!pair) return false;
 

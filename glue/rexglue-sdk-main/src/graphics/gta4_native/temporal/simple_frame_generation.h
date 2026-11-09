@@ -24,10 +24,12 @@ class SimpleFrameGeneration {
   // frame into a retained `real` image, a copy of the previous frame into the
   // `generated` image and the update of the private history. `source` is the
   // presenter's image in `source_layout`, last written by `source_stage` /
-  // `source_access`; it is returned to that layout. False: nothing recorded.
+  // `source_access`; it is returned to that layout. `fixed_interval_ns` is how long the
+  // generated image stays on screen before the real one (0: half the measured time between
+  // two frames, which oscillates when frames arrive unevenly). False: nothing recorded.
   bool Encode(const ui::vulkan::VulkanDevice& device, VkCommandBuffer commands, VkImage source,
               VkExtent2D extent, VkImageLayout source_layout, VkPipelineStageFlags source_stage,
-              VkAccessFlags source_access, uint64_t epoch);
+              VkAccessFlags source_access, uint64_t epoch, uint64_t fixed_interval_ns = 0);
 
   // The lease of the pair recorded by the last Encode (empty when none): keep it
   // until the submission that contains the copies has completed.

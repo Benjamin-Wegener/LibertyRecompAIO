@@ -38403,7 +38403,10 @@ bool Gta4NativeGraphicsSystem::ClearGuestOutput(
                                            : VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
                 presenter_transfer_written ? VK_ACCESS_TRANSFER_WRITE_BIT
                                            : VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-                submitted_frame);
+                submitted_frame,
+                // The frame limit is the rate of the screen here: one display slot per image.
+                rex::cvar::Query<uint32_t>("gta4_frame_limit")
+                    ? 1'000'000'000ull / rex::cvar::Query<uint32_t>("gta4_frame_limit") : 0);
             if (simple_generation_recorded) {
               if (auto lease = simple_frame_generator_.pending_lease()) {
                 temporal_frame_leases_[active_frame_slot_].push_back(std::move(lease));

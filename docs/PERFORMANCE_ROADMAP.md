@@ -147,3 +147,16 @@ The remedy is on the presenter side: admit the next scene earlier or let the
 refresher run ahead while a pair is still shown. Needs presenter timing logs
 (`diagnostics` category `presenter` prints `delivery=generated|real` with the
 interval) before changing it.
+
+### Phase 1 fixed (v65): steady pairs
+`presenter_delivery_log` (new, off) showed the cause: the hold time between the
+generated and the real image was half the measured time between two encodes,
+and the encodes arrived 130 ms / 70 ms alternately, so the interval flipped
+between 33 and 65 ms (about 98 ms per pair on average). With the interval taken
+from the frame limit (`1 s / limit`: the limit is the rate of the screen, one slot
+per image) the cadence is steady on the Pixel 9a:
+* limit 30: game 15.0 frames/s, 30 images/s shown (generated and real every 33 ms)
+* limit 60: game 30.0 frames/s, 60 images/s shown
+The generated image is still a copy of the previous frame, so the picture shows
+each frame twice; phase 2 (motion compensated interpolation) is what makes it
+look smooth. Next: the compute pass, then the menu entry.
