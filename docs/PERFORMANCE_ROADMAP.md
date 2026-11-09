@@ -29,10 +29,10 @@ PROFILE button that sets them together.
 
 ## Next, in order
 
-1. **Dead resolves** (`gta4-native-resolves` log). Count resolves per frame
-   whose destination texture no later draw of the frame samples. If many are
-   dead and also unused next frame, skip them behind a switch.
-   *Accept:* fewer passes per frame, no visual change over a 10 minute drive.
+1. **Dead resolves** (`gta4-native-resolves` log). Measured on the Redmi:
+   32 resolves per frame, 27 are read later in the frame, 5 are not (the
+   present image, needed, and four tiny targets under 0.4 Mpix in total).
+   Nothing worth skipping. Closed.
 2. **`VK_KHR_dynamic_rendering_local_read`** (Vulkan 1.4 / extension). Read the
    G-buffer on chip instead of loading it (`LLL` x6 per frame) and merge the
    passes that only exist because the G-buffer is sampled. Check first that the
