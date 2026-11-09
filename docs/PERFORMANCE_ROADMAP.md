@@ -76,3 +76,47 @@ PROFILE button that sets them together.
   Turnip bundle; CI builds both libraries (`build-android-apk.yml`).
 * Vulkan 1.1 stage A.2 (render-pass fallback without dynamic rendering) and
   stage B (no buffer device address).
+
+## Frame generation on Android (design, not started in code)
+
+Goal: the game renders 30 FPS, the screen shows 60 (or 24 -> 48/120) with less
+power than rendering every frame.
+
+What exists:
+* `VulkanPresenter::SetGeneratedFrame(generated, real, ...)` presents two images
+  per game frame with pacing (`interval_ns`) on a FIFO swapchain. Platform
+  independent, so it should work on Android.
+* `temporal/vulkan_frame_generation.*` (FSR 3 and DLSS frame generation with
+  motion vectors, depth and camera matrices). Desktop only: the Android build
+  defines only `REX_HAS_FIDELITYFX_FSR1`, has no FSR 3 SDK and no
+  `gta4_native_frame_generation` cvar, and the temporal motion/depth inputs are
+  only produced by the temporal upscaler path, which Android does not use.
+
+What is missing: a producer of the generated image for Android.
+
+Contract of the presenter (read from `generated_frame.h`): both images are
+immutable FP16 presentation images in `kGuestOutputFormat`, created for the
+native/display queue families (concurrent sharing when they differ), submitted
+in the same submission as the real image, with a lease kept until the producer
+is done, and `epoch`/`interval_ns` (at most 100 ms) set.
+
+Phases, each behind `gta4_native_frame_generation_simple` (default off):
+1. Pair presentation with a plain 50 % blend of the previous and the current
+   final frame (HUD included). Validates the image contract, the lease and the
+   pacing on the Pixel. Expected: visible double images on fast motion.
+2. Motion compensation: block matching on half-resolution luma (8x8 blocks, a
+   small search window) in one compute pass, then a warp of both frames to the
+   middle. The Pixel GPU is idle (fence wait 0 ms), a Mali-G715 should afford
+   about 1-2 ms. Fallback to the blend (or a duplicate) when the match is bad.
+3. HUD and minimap: either interpolate before the HUD (needs the scene/HUD split
+   the desktop path has) or mask the HUD region; a plain interpolation smears
+   the rotating minimap.
+4. Menu: a switch next to the frame limit, offered only when the screen refresh
+   rate is a multiple of twice the game rate (60 Hz screen: 30 -> 60; 120 Hz:
+   30 -> 60 or 24 -> 48 on VRR).
+
+Costs and risks: one frame (33 ms at 30 FPS) of extra input delay; extra GPU
+time and power for the extra images and the compute pass (the saving only
+exists compared with rendering every frame, not compared with 30 FPS); wrong
+interpolation on transparent effects, particles and the HUD. Not useful on the
+Redmi: it is GPU bound.
