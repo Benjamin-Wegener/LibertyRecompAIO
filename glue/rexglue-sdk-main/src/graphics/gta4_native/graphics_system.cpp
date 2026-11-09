@@ -30169,6 +30169,45 @@ bool Gta4NativeGraphicsSystem::RecordNativeFrame(
   // Colour attachments of that clear that became load-op clears.
   size_t folded_color_clear_index = SIZE_MAX;
   uint32_t folded_color_clear_mask = 0;
+  // Diagnostic: how many resolves of this frame write a texture that no later
+  // draw of the same frame samples before the next resolve overwrites it.
+  if (REXCVAR_GET(gta4_native_callback_phase_log) && (submitted_frame % 120) == 0) {
+    uint32_t total = 0, read_later = 0, unread = 0;
+    std::string unread_list;
+    for (size_t i = 0; i < current_frame_.size(); ++i) {
+      const NativeCommand& r = current_frame_[i];
+      if (r.type != CommandType::kResolve || !r.resolve_destination) continue;
+      ++total;
+      const uint32_t handle = r.resolve_destination->handle;
+      bool read = false;
+      for (size_t j = i + 1; j < current_frame_.size() && !read; ++j) {
+        const NativeCommand& c = current_frame_[j];
+        if (c.type == CommandType::kResolve && c.resolve_destination &&
+            c.resolve_destination->handle == handle) {
+          break;
+        }
+        if (c.type != CommandType::kDrawPrimitive && c.type != CommandType::kDrawPrimitiveUp &&
+            c.type != CommandType::kDrawIndexedPrimitive) {
+          continue;
+        }
+        for (const auto& texture : c.textures) {
+          if (texture && texture->handle == handle) { read = true; break; }
+        }
+      }
+      if (read) {
+        ++read_later;
+      } else {
+        ++unread;
+        if (unread_list.size() < 400) {
+          unread_list += fmt::format(" {:08X}({}x{}{})", handle, r.resolve_destination->info.width + 1,
+                                     r.resolve_destination->info.height + 1,
+                                     i + 1 == current_frame_.size() ? ",last" : "");
+        }
+      }
+    }
+    REXLOG_WARN("gta4-native-resolves: frame resolves={} read-later-in-frame={} not-read-in-frame={}:{}",
+                total, read_later, unread, unread_list);
+  }
   uint32_t lighting_pass_reuses = 0;
   // Clears recorded this frame, per attachment aspect. A write serial is unique
   // across surfaces, so an unchanged one means nothing touched the aspect since.

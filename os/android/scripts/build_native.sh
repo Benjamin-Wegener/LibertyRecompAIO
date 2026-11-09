@@ -31,6 +31,13 @@ case "${LIBERTY_CPU:-compatible}" in
   *) echo "unknown LIBERTY_CPU '$LIBERTY_CPU' (use compatible or armv9)"; exit 1 ;;
 esac
 CPU_FLAGS="$CPU_TARGET -fno-emulated-tls"
+# LIBERTY_LTO=thin: link-time optimisation of the recompiled game code
+# (off by default: much longer link, more memory; measure before enabling).
+case "${LIBERTY_LTO:-off}" in
+  thin) CPU_FLAGS="$CPU_FLAGS -flto=thin" ;;
+  off) ;;
+  *) echo "unknown LIBERTY_LTO '$LIBERTY_LTO' (use off or thin)"; exit 1 ;;
+esac
 echo "== CPU target: ${LIBERTY_CPU:-compatible} ($CPU_FLAGS)"
 # Reconfigure whenever the flags differ from the cached configuration, so a
 # new CPU target really recompiles everything instead of reusing old objects.
