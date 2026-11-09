@@ -10,6 +10,8 @@
  */
 
 #if defined(__ANDROID__)
+#include "audio_thread_tuning.h"
+#include <chrono>
 #include <sys/resource.h>
 #include <android/log.h>
 #include <cerrno>
@@ -44,6 +46,10 @@
 // behind the picture on Android. 32 (~170 ms) removes the noticeable delay;
 // 16 (~85 ms) was lower still but stuttered briefly with the game's frame
 // hitches, on the Retroid Pocket 5 and on a Snapdragon 8 Elite phone.
+REXCVAR_DEFINE_BOOL(audio_big_cores, true, "Audio",
+                    "Android: keep the guest audio mixer and the XMA decoder on the faster cores "
+                    "(a little core needs most of a 5 ms audio block to mix it)");
+
 REXCVAR_DEFINE_INT32(
     audio_maxqframes, REX_PLATFORM_ANDROID ? 32 : 64, "Audio",
     "Maximum buffered guest audio blocks (range 1-64). The backend selects the initial depth.");
@@ -132,13 +138,22 @@ void AudioSystem::WorkerThreadMain() {
     __android_log_print(ANDROID_LOG_WARN, "LibertyRecomp", "audio-priority %s tid=%d result=%d errno=%d",
                         "audio_system.cpp", int(gettid()), result, result ? errno : 0);
   }
+  if (REXCVAR_GET(audio_big_cores)) PinCallingThreadToBigCores("Audio Worker");
 #endif
   // Initialize driver and ringbuffer.
   Initialize();
 
   // Main run loop.
   uint32_t diag_pump_count = 0;
+  // Mixer timing, logged every 10 s so a stutter report can tell a slow guest
+  // mixer callback from a worker that is simply not woken in time.
+  struct MixerStats {
+    uint32_t calls = 0, slow_calls = 0;
+    double call_ms = 0, call_max_ms = 0, wait_ms = 0, wait_max_ms = 0;
+  } mixer_stats;
+  auto mixer_report_at = std::chrono::steady_clock::now() + std::chrono::seconds(10);
   while (worker_running_) {
+    const auto wait_started = std::chrono::steady_clock::now();
     diagnostics::gta4_transition::RecordSteady(
         diagnostics::gta4_transition::EventSource::kAudio,
         diagnostics::gta4_transition::EventType::kAudioWaitBegin);
@@ -154,6 +169,12 @@ void AudioSystem::WorkerThreadMain() {
             : diagnostics::gta4_transition::kFlagNone,
         static_cast<uint64_t>(result.first), result.second);
     if (handoff_wait_begin) handoff::Record("audio-wait", result.second, {handoff::Clock()-handoff_wait_begin, uint64_t(result.first)});
+    const double waited_ms = std::chrono::duration<double, std::milli>(
+        std::chrono::steady_clock::now() - wait_started).count();
+    if (result.first == rex::thread::WaitResult::kSuccess) {
+      mixer_stats.wait_ms += waited_ms;
+      mixer_stats.wait_max_ms = std::max(mixer_stats.wait_max_ms, waited_ms);
+    }
     if (result.first == rex::thread::WaitResult::kFailed) {
       REXAPU_WARN("AudioWorker: WaitAny failed");
       continue;
@@ -211,8 +232,17 @@ void AudioSystem::WorkerThreadMain() {
             client_callback_arg);
         handoff::Span handoff_callback("guest-mixer", index, client_callback, client_callback_arg);
         uint64_t args[] = {client_callback_arg};
+        const auto call_started = std::chrono::steady_clock::now();
         function_dispatcher_->Execute(worker_thread_->thread_state(), client_callback, args,
                                       rex::countof(args));
+        {
+          const double call_ms = std::chrono::duration<double, std::milli>(
+              std::chrono::steady_clock::now() - call_started).count();
+          ++mixer_stats.calls;
+          mixer_stats.call_ms += call_ms;
+          mixer_stats.call_max_ms = std::max(mixer_stats.call_max_ms, call_ms);
+          if (call_ms > 20.0) ++mixer_stats.slow_calls;
+        }
         diagnostics::gta4_transition::RecordSteady(
             diagnostics::gta4_transition::EventSource::kAudio,
             diagnostics::gta4_transition::EventType::kAudioCallbackEnd,
@@ -227,6 +257,18 @@ void AudioSystem::WorkerThreadMain() {
         REXAPU_DEBUG("AudioWorker: semaphore signaled for client {} but callback is 0", index);
       }
       pumped = true;
+    }
+
+    if (const auto now = std::chrono::steady_clock::now(); now >= mixer_report_at) {
+      if (mixer_stats.calls) {
+        REXAPU_WARN("audio-mixer: {} callbacks, guest mixer avg {:.2f} ms max {:.1f} ms, {} over 20 ms; "
+                    "worker wait avg {:.2f} ms max {:.1f} ms",
+                    mixer_stats.calls, mixer_stats.call_ms / mixer_stats.calls, mixer_stats.call_max_ms,
+                    mixer_stats.slow_calls, mixer_stats.wait_ms / mixer_stats.calls,
+                    mixer_stats.wait_max_ms);
+      }
+      mixer_stats = {};
+      mixer_report_at = now + std::chrono::seconds(10);
     }
 
     if (!worker_running_) {
