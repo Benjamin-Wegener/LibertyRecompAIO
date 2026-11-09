@@ -35663,6 +35663,8 @@ bool Gta4NativeGraphicsSystem::RecordNativeFrame(
           const auto op = color_attachments[index].loadOp;
           kind += op == VK_ATTACHMENT_LOAD_OP_LOAD ? 'L' : op == VK_ATTACHMENT_LOAD_OP_CLEAR ? 'C' : 'D';
         }
+        kind += fmt::format("|ph{}.role{}", uint32_t(command.render_phase),
+                            uint32_t(command.lighting.role));
         std::lock_guard lock(g_rendering_stats.scope_mutex);
         ++g_rendering_stats.scope_kinds[kind];
       }
