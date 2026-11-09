@@ -163,13 +163,17 @@ bool SimpleFrameGeneration::Encode(const ui::vulkan::VulkanDevice& device, VkCom
                                now - s.last_encode).count()) / 2;
   }
   s.last_encode = now;
-  if (!interval_ns || interval_ns > 3 * kMaximumIntervalNs) {
-    // First frame, or a long stall: start over without publishing this frame.
-    s.history_valid = false;
-  }
-  if (fixed_interval_ns) interval_ns = fixed_interval_ns;
+  // `interval_ns` is half the time since the previous frame, used here only to
+  // notice a long stall or the first frame: start over, this frame is shown alone
+  // (no generated image).
+  if (!interval_ns || interval_ns > 3 * kMaximumIntervalNs) s.history_valid = false;
+  // The hold time of the generated image is fixed: the frame limit is the rate of
+  // the screen, one display slot per image (60 Hz when unlimited). A hold time
+  // derived from the measured frame time does not work: a frame time contains the
+  // hold time of its own pair, so every estimate drifts upwards and the game is
+  // held below the pace it can keep.
+  interval_ns = fixed_interval_ns ? fixed_interval_ns : 16'666'667;
   interval_ns = std::min(interval_ns, kMaximumIntervalNs);
-  if (!interval_ns) s.history_valid = false;
   auto pair = s.Acquire();
   if (!pair) return false;
 

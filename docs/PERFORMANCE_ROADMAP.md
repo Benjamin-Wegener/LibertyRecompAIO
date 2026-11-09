@@ -148,15 +148,29 @@ refresher run ahead while a pair is still shown. Needs presenter timing logs
 (`diagnostics` category `presenter` prints `delivery=generated|real` with the
 interval) before changing it.
 
-### Phase 1 fixed (v65): steady pairs
+### Phase 1 fixed (v68): steady pairs
 `presenter_delivery_log` (new, off) showed the cause: the hold time between the
 generated and the real image was half the measured time between two encodes,
 and the encodes arrived 130 ms / 70 ms alternately, so the interval flipped
-between 33 and 65 ms (about 98 ms per pair on average). With the interval taken
-from the frame limit (`1 s / limit`: the limit is the rate of the screen, one slot
-per image) the cadence is steady on the Pixel 9a:
-* limit 30: game 15.0 frames/s, 30 images/s shown (generated and real every 33 ms)
-* limit 60: game 30.0 frames/s, 60 images/s shown
-The generated image is still a copy of the previous frame, so the picture shows
-each frame twice; phase 2 (motion compensated interpolation) is what makes it
-look smooth. Next: the compute pass, then the menu entry.
+between 33 and 65 ms (about 98 ms per pair on average). A hold time that follows
+the measured frame time cannot work (a frame time contains the hold time of its
+own pair, so the estimate only drifts upwards; tried a smoothed and a decaying
+version, both held the game below its pace). The hold time is now fixed from the
+frame limit (`1 s / limit`: the limit is the rate of the screen, one slot per
+image; 60 Hz when unlimited). Measured on the Pixel 9a from the millisecond
+timestamps of the presents (an earlier table was rounded to whole seconds by awk
+in a German locale; use `LC_ALL=C`):
+
+| generation | limit | game | shown |
+|---|---|---|---|
+| on | 30 | 15.0/s | 30.1/s |
+| on | 60 | 25.1/s | 50.0/s |
+| on | 0 | 24.8/s | 49.6/s |
+| off | 60 | 41.9/s | 41.9/s |
+| off | 30 | 30.1/s | 30.1/s |
+
+The 15 -> 30 case is exact. At limit 60 the game only reaches 25 although it
+runs 42 without generation: a pair needs at least two display slots and the next
+scene is admitted only after the generated image was shown, so guest frame and
+render still run one after the other. The generated image is still a copy of the
+previous frame; phase 2 (motion compensated interpolation) makes it smooth.
