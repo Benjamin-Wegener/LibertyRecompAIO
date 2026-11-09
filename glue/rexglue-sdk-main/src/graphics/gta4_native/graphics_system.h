@@ -177,6 +177,9 @@ class Gta4NativeGraphicsSystem final : public system::IGraphicsSystem {
     // Color outputs demoted to private variables, for colorless pipelines.
     std::array<VkShaderModule, 4> colorless_modules{};
     std::string filename;
+    // Vertex shader of a deferred local light volume: its constant bank base (208/215), -1 when it
+    // is not one, -2 until first looked up (gta4_native_max_local_lights).
+    mutable int32_t local_light_base_cache = -2;
     std::vector<NativeVertexInput> vertex_inputs;
     // Reads gl_VertexIndex/gl_InstanceIndex: its draws cannot be concatenated.
     bool uses_vertex_index = false;
@@ -1958,7 +1961,7 @@ class Gta4NativeGraphicsSystem final : public system::IGraphicsSystem {
                               NativeFrameResources& resources);
   bool RecordClear(VkCommandBuffer command_buffer, const NativeCommand& command,
                    const NativeRenderingTarget& target,
-                   bool skip_depth_stencil = false);
+                   bool skip_depth_stencil = false, uint32_t skip_color_mask = 0);
   bool RecordResolve(VkCommandBuffer command_buffer, const NativeCommand& command,
                      uint32_t submitted_frame,
                      NativeTextureImage* high_precision_destination = nullptr,
