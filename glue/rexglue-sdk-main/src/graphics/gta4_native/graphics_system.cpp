@@ -8211,6 +8211,10 @@ RenderingStats g_rendering_stats;
 template <typename Functions>
 void CountedBeginRendering(const Functions& dfn, VkCommandBuffer command_buffer,
                            const VkRenderingInfo* info, uint32_t line) {
+  if (!REXCVAR_GET(gta4_native_callback_phase_log)) {
+    dfn.vkCmdBeginRendering(command_buffer, info);
+    return;
+  }
   g_rendering_stats.passes.fetch_add(1, std::memory_order_relaxed);
   if (line < g_rendering_stats.sites.size()) {
     g_rendering_stats.sites[line].fetch_add(1, std::memory_order_relaxed);
@@ -30306,8 +30310,10 @@ bool Gta4NativeGraphicsSystem::RecordNativeFrame(
   size_t breadcrumb_command = 0, breadcrumb_scope_begin = 0;
   const auto end_rendering = [&](int site = 0) {
     if (site > 0 && site < int(g_rendering_end_sites.size())) ++g_rendering_end_sites[site];
-    ended_target = active_target;
-    ended_by_resolve = pending_resolve_end;
+    if (REXCVAR_GET(gta4_native_callback_phase_log)) {
+      ended_target = active_target;
+      ended_by_resolve = pending_resolve_end;
+    }
     pending_resolve_end = false;
     profile::CpuCall(profile::CpuOp::kDriverRendering, [&] { return dfn.vkCmdEndRendering(command_buffer); });
     if (breadcrumbs) {
@@ -35702,13 +35708,13 @@ bool Gta4NativeGraphicsSystem::RecordNativeFrame(
         ++g_light_reuse_failures[16 + key];
       }
       gpu_labels::BeginSceneScope(vulkan_provider->vulkan_device(), command_buffer, rendering_info, native_gpu_scope_summary_, submitted_frame, uint32_t(command_index));
-      if (ended_by_resolve) {
+      if (ended_by_resolve && REXCVAR_GET(gta4_native_callback_phase_log)) {
         ended_by_resolve = false;
         g_resolve_ends.fetch_add(1, std::memory_order_relaxed);
         (targets_equal(ended_target, target) ? g_resolve_reopen_same : g_resolve_reopen_other)
             .fetch_add(1, std::memory_order_relaxed);
       }
-      {
+      if (REXCVAR_GET(gta4_native_callback_phase_log)) {
         std::string kind = performance::GpuRangeName(performance_range_for_command(command));
         kind += "|";
         for (uint32_t index = 0; index < kRenderTargetCount; ++index) {
