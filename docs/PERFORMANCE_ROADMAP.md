@@ -135,3 +135,15 @@ generated-frame delivery stages) and try a fixed interval of half a refresh
 period instead of the measured one, a pair per display cycle at 60 Hz, and
 whether the refresher callback can run ahead while a pair is still shown.
 Not usable yet; the cvar stays off.
+
+Follow-up measurements (same build, generation on): game 10-12 frames/s and
+18-24 display presents/s at frame limits 30, 60 and 0, so the limit is not the
+cause. The presenter plans every present (generated and real) on the frame
+pacer with `max(1 s / limit, interval)`, and it admits the next scene only after
+the generated image was presented (`AdmitPacedPublication`); the next guest
+frame (about 25 ms) plus its render callback (about 28 ms) then run one after
+the other and are quantised to display slots, which gives about 90 ms per pair.
+The remedy is on the presenter side: admit the next scene earlier or let the
+refresher run ahead while a pair is still shown. Needs presenter timing logs
+(`diagnostics` category `presenter` prints `delivery=generated|real` with the
+interval) before changing it.
