@@ -46,6 +46,9 @@
 // behind the picture on Android. 32 (~170 ms) removes the noticeable delay;
 // 16 (~85 ms) was lower still but stuttered briefly with the game's frame
 // hitches, on the Retroid Pocket 5 and on a Snapdragon 8 Elite phone.
+REXCVAR_DEFINE_BOOL(audio_mixer_log, false, "Audio",
+                    "Log the guest audio mixer timing every 10 s (diagnostic, off in normal play)");
+
 REXCVAR_DEFINE_BOOL(audio_big_cores, true, "Audio",
                     "Android: keep the guest audio mixer and the XMA decoder on the faster cores "
                     "(a little core needs most of a 5 ms audio block to mix it)");
@@ -153,7 +156,9 @@ void AudioSystem::WorkerThreadMain() {
   } mixer_stats;
   auto mixer_report_at = std::chrono::steady_clock::now() + std::chrono::seconds(10);
   while (worker_running_) {
-    const auto wait_started = std::chrono::steady_clock::now();
+    const bool mixer_log = REXCVAR_GET(audio_mixer_log);
+    const auto wait_started = mixer_log ? std::chrono::steady_clock::now()
+                                        : std::chrono::steady_clock::time_point{};
     diagnostics::gta4_transition::RecordSteady(
         diagnostics::gta4_transition::EventSource::kAudio,
         diagnostics::gta4_transition::EventType::kAudioWaitBegin);
@@ -169,9 +174,9 @@ void AudioSystem::WorkerThreadMain() {
             : diagnostics::gta4_transition::kFlagNone,
         static_cast<uint64_t>(result.first), result.second);
     if (handoff_wait_begin) handoff::Record("audio-wait", result.second, {handoff::Clock()-handoff_wait_begin, uint64_t(result.first)});
-    const double waited_ms = std::chrono::duration<double, std::milli>(
+    const double waited_ms = !mixer_log ? 0.0 : std::chrono::duration<double, std::milli>(
         std::chrono::steady_clock::now() - wait_started).count();
-    if (result.first == rex::thread::WaitResult::kSuccess) {
+    if (mixer_log && result.first == rex::thread::WaitResult::kSuccess) {
       mixer_stats.wait_ms += waited_ms;
       mixer_stats.wait_max_ms = std::max(mixer_stats.wait_max_ms, waited_ms);
     }
@@ -232,10 +237,11 @@ void AudioSystem::WorkerThreadMain() {
             client_callback_arg);
         handoff::Span handoff_callback("guest-mixer", index, client_callback, client_callback_arg);
         uint64_t args[] = {client_callback_arg};
-        const auto call_started = std::chrono::steady_clock::now();
+        const auto call_started = mixer_log ? std::chrono::steady_clock::now()
+                                            : std::chrono::steady_clock::time_point{};
         function_dispatcher_->Execute(worker_thread_->thread_state(), client_callback, args,
                                       rex::countof(args));
-        {
+        if (mixer_log) {
           const double call_ms = std::chrono::duration<double, std::milli>(
               std::chrono::steady_clock::now() - call_started).count();
           ++mixer_stats.calls;
@@ -259,7 +265,7 @@ void AudioSystem::WorkerThreadMain() {
       pumped = true;
     }
 
-    if (const auto now = std::chrono::steady_clock::now(); now >= mixer_report_at) {
+    if (mixer_log) if (const auto now = std::chrono::steady_clock::now(); now >= mixer_report_at) {
       if (mixer_stats.calls) {
         REXAPU_WARN("audio-mixer: {} callbacks, guest mixer avg {:.2f} ms max {:.1f} ms, {} over 20 ms; "
                     "worker wait avg {:.2f} ms max {:.1f} ms",
