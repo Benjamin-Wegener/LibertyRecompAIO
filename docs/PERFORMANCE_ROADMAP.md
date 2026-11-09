@@ -38,6 +38,11 @@ PROFILE button that sets them together.
    passes that only exist because the G-buffer is sampled. Check first that the
    bundled Turnip and the Mali driver expose it; keep the current path as the
    fallback (rule: newest Vulkan the device has, else 1.2, else 1.1).
+   The bundled Turnip (Mesa 26.3, Vulkan 1.4.359) lists
+   dynamic_rendering_local_read, attachment_feedback_loop_layout,
+   descriptor_buffer, shader_object, graphics_pipeline_library and
+   push_descriptor; whether the Adreno 613 reports the features must still be
+   checked at runtime.
    *Accept:* pass count and fence wait drop on the Redmi; lights, minimap and
    car lights unchanged.
 3. **Transient attachments** for depth/colour buffers whose store op is
