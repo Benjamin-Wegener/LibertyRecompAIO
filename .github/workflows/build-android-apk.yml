@@ -27,6 +27,11 @@ on:
         type: choice
         options: [mali, adreno]
         default: adreno
+      lto:
+        description: 'Link-time optimisation of the game code (thin = faster CPU code, much longer link)'
+        type: choice
+        options: [off, thin]
+        default: off
       cpu:
         description: 'CPU target: compatible = all phones; armv9 = Dimensity 8400 and newer only (faster, crashes on older phones)'
         type: choice
@@ -51,6 +56,7 @@ jobs:
     env:
       LIBERTY_GPU: ${{ inputs.gpu || 'adreno' }}
       LIBERTY_CPU: ${{ inputs.cpu || 'compatible' }}
+      LIBERTY_LTO: ${{ inputs.lto || 'off' }}
       NDK_VER: 29.0.14206865
       STRIP: '1'
       # ccache is a content-addressed cache: it reuses object files whose
@@ -112,9 +118,9 @@ jobs:
           path: |
             out/build
             out/host-tools
-          key: android-${{ env.LIBERTY_GPU }}-${{ env.LIBERTY_CPU }}-${{ github.sha }}
+          key: android-${{ env.LIBERTY_GPU }}-${{ env.LIBERTY_CPU }}-${{ env.LIBERTY_LTO }}-${{ github.sha }}
           restore-keys: |
-            android-${{ env.LIBERTY_GPU }}-${{ env.LIBERTY_CPU }}-
+            android-${{ env.LIBERTY_GPU }}-${{ env.LIBERTY_CPU }}-${{ env.LIBERTY_LTO }}-
             android-${{ env.LIBERTY_GPU }}-
 
       - name: Restore ccache
@@ -184,7 +190,7 @@ jobs:
           path: |
             out/build
             out/host-tools
-          key: android-${{ env.LIBERTY_GPU }}-${{ env.LIBERTY_CPU }}-${{ github.sha }}
+          key: android-${{ env.LIBERTY_GPU }}-${{ env.LIBERTY_CPU }}-${{ env.LIBERTY_LTO }}-${{ github.sha }}
 
       # Save even when the build failed: a timed-out or broken run still
       # primed ccache with every object it managed to compile.
@@ -209,6 +215,7 @@ jobs:
           SUFFIX="$(grep -o 'versionSuffix *= *"[^"]*"' os/android/app/build.gradle.kts | head -1 | sed 's/.*"\(.*\)"/\1/')"
           VERSION="$VERSION$SUFFIX"
           [ "$LIBERTY_CPU" = "armv9" ] && VERSION="$VERSION-armv9"
+          [ "$LIBERTY_LTO" = "thin" ] && VERSION="$VERSION-lto"
           cp os/android/app/build/outputs/apk/debug/app-debug.apk "LibertyRecompAndroid-$VERSION.apk"
           echo "APK_NAME=LibertyRecompAndroid-$VERSION.apk" >> "$GITHUB_ENV"
           ls -la LibertyRecompAndroid-*.apk
