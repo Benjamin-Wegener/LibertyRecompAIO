@@ -41,8 +41,14 @@ PROFILE button that sets them together.
    The bundled Turnip (Mesa 26.3, Vulkan 1.4.359) lists
    dynamic_rendering_local_read, attachment_feedback_loop_layout,
    descriptor_buffer, shader_object, graphics_pipeline_library and
-   push_descriptor; whether the Adreno 613 reports the features must still be
-   checked at runtime.
+   push_descriptor. Confirmed at runtime on the Redmi (`device-extensions`
+   log): local_read, feedback_loop_layout, descriptor_buffer,
+   graphics_pipeline_library, push_descriptor are present, shader_object is not.
+   **Does not fit the measured splits:** local_read lets a draw read an
+   attachment its own pass writes. The 24 splits per frame are real render
+   target changes (G-buffer, HDR/light, back) and the 24 resolve ends are
+   needed (27 of 32 resolves are read), so they stay pass ends. Only worth it
+   if a log shows passes sampling what they just wrote. Not started.
    *Accept:* pass count and fence wait drop on the Redmi; lights, minimap and
    car lights unchanged.
 3. **Transient attachments** for depth/colour buffers whose store op is
