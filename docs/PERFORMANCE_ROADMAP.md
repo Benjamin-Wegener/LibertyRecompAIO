@@ -49,6 +49,10 @@ PROFILE button that sets them together.
    target changes (G-buffer, HDR/light, back) and the 24 resolve ends are
    needed (27 of 32 resolves are read), so they stay pass ends. Only worth it
    if a log shows passes sampling what they just wrote. Not started.
+   **Measured (`gta4-native-resolve-reopens`, Redmi):** 18-21 passes per frame
+   end on a resolve, only 1.8-2.4 of them reopen on the same target (about 3 %
+   of 71.5 passes); the other 16-19 switch to a different target. At most two
+   passes per frame could ever merge. Closed.
    *Accept:* pass count and fence wait drop on the Redmi; lights, minimap and
    car lights unchanged.
 3. **Transient attachments** for depth/colour buffers whose store op is

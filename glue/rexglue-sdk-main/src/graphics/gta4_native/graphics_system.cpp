@@ -728,6 +728,9 @@ std::atomic<uint64_t> g_worker_ring_draws{0}, g_worker_ring_fallbacks{0};
 std::atomic<uint64_t> g_worker_ring_checked{0}, g_worker_ring_mismatches{0};
 // TEMP: rendering-scope breaks by source line (perf investigation).
 std::array<std::atomic<uint32_t>, 40000> g_rendering_end_sites{};
+// Scopes that a resolve ended, and how many of those were reopened on the
+// identical render target (those could stay one scope).
+std::atomic<uint32_t> g_resolve_ends{0}, g_resolve_reopen_same{0}, g_resolve_reopen_other{0};
 std::array<std::atomic<uint32_t>, 40000> g_barrier_sites{};
 std::array<std::atomic<uint32_t>, 4096> g_rendering_split_reasons{};
 // TEMP: resolve-class GPU work per call site, and resolve reuse totals.
@@ -8341,6 +8344,11 @@ class CallbackPhaseLog {
         for (size_t i = 0; i < kinds.size() && i < 14; ++i) {
           text += fmt::format("\n   {:.1f}/f {}", double(kinds[i].first) / n, kinds[i].second);
         }
+        REXLOG_WARN("gta4-native-resolve-reopens: per frame resolve-ends={:.1f} reopened-on-same-target={:.1f} "
+                    "reopened-on-other-target={:.1f}",
+                    double(g_resolve_ends.exchange(0)) / n,
+                    double(g_resolve_reopen_same.exchange(0)) / n,
+                    double(g_resolve_reopen_other.exchange(0)) / n);
         REXLOG_WARN("gta4-native-pass-kinds: per frame (range|color-format|depth|color-load-ops):{}", text);
         g_rendering_stats.scope_kinds.clear();
       }
@@ -30243,6 +30251,9 @@ bool Gta4NativeGraphicsSystem::RecordNativeFrame(
     }
   };
   NativeRenderingTarget active_target;
+  NativeRenderingTarget ended_target;
+  bool pending_resolve_end = false;
+  bool ended_by_resolve = false;
   if (!recording_resources_.Reset()) return false;
   NativeFrameResources& resources = recording_resources_;
   const auto reset_recording_resources = MakeScopeExit([&] {
@@ -30295,6 +30306,9 @@ bool Gta4NativeGraphicsSystem::RecordNativeFrame(
   size_t breadcrumb_command = 0, breadcrumb_scope_begin = 0;
   const auto end_rendering = [&](int site = 0) {
     if (site > 0 && site < int(g_rendering_end_sites.size())) ++g_rendering_end_sites[site];
+    ended_target = active_target;
+    ended_by_resolve = pending_resolve_end;
+    pending_resolve_end = false;
     profile::CpuCall(profile::CpuOp::kDriverRendering, [&] { return dfn.vkCmdEndRendering(command_buffer); });
     if (breadcrumbs) {
       // Label: the scope that just ended is complete once this marker lands;
@@ -32754,6 +32768,7 @@ bool Gta4NativeGraphicsSystem::RecordNativeFrame(
         present_matches_frame_resolve = true;
       }
       if (rendering) {
+        pending_resolve_end = true;
         end_rendering(__LINE__);
         rendering = false;
       }
@@ -35687,6 +35702,12 @@ bool Gta4NativeGraphicsSystem::RecordNativeFrame(
         ++g_light_reuse_failures[16 + key];
       }
       gpu_labels::BeginSceneScope(vulkan_provider->vulkan_device(), command_buffer, rendering_info, native_gpu_scope_summary_, submitted_frame, uint32_t(command_index));
+      if (ended_by_resolve) {
+        ended_by_resolve = false;
+        g_resolve_ends.fetch_add(1, std::memory_order_relaxed);
+        (targets_equal(ended_target, target) ? g_resolve_reopen_same : g_resolve_reopen_other)
+            .fetch_add(1, std::memory_order_relaxed);
+      }
       {
         std::string kind = performance::GpuRangeName(performance_range_for_command(command));
         kind += "|";
