@@ -841,9 +841,10 @@ public class LauncherActivity extends Activity {
         for (LinearLayout page : pages) card.addView(page, matchWrap(dp(4)));
         selectGraphicsTab(tabs, pages, 0);
 
-        final String[] presetNames = {"Low  (FSR 1 Quality, about 380p inside)",
-                "Medium  (FSR 1 Ultra quality, about 440p inside)", "High  (native)",
-                "Ultra  (native, SMAA)"};  // all four aim at 30 FPS and let the phone idle after each frame
+        final String[] presetNames = {"Saver  (24 FPS, FSR 1 Quality, about 380p inside)",
+                "Low  (30 FPS, FSR 1 Quality, about 380p inside)",
+                "Medium  (30 FPS, FSR 1 Ultra quality, about 440p inside)",
+                "High  (30 FPS, native)", "Ultra  (30 FPS, native, SMAA)"};
         final TextView presetLabel = text("Performance preset: move the slider", 17, R.color.picker_text);
         if (mFontBlack != null) presetLabel.setTypeface(mFontBlack);
         card.addView(presetLabel, matchWrap(dp(14)));
@@ -911,7 +912,7 @@ public class LauncherActivity extends Activity {
     }
 
     /**
-     * 0 Low, 1 Medium, 2 High, 3 Ultra. The game renders at most its native
+     * 0 Saver (24 FPS), 1 Low, 2 Medium, 3 High, 4 Ultra (all but Saver aim at 30 FPS). The game renders at most its native
      * size (1280x570 on a 20:9 screen) and FSR 1 never goes below 640x360, so
      * only Quality (1.5x) and Ultra quality (1.3x) fit; Balanced and
      * Performance would fall back to native.
@@ -934,7 +935,7 @@ public class LauncherActivity extends Activity {
             case 0:
                 selectGraphicsValue("Upscaler", "fsr1");
                 selectGraphicsDefault("FSR 1 quality");
-                selectGraphicsDefault("Frame limit");
+                selectGraphicsValue("Frame limit", "24");
                 selectGraphicsValue("Audio buffer", "16");
                 selectGraphicsValue("Draw distance", "0.6");
                 selectGraphicsValue("Population density", "0.2");
@@ -947,6 +948,21 @@ public class LauncherActivity extends Activity {
                 selectGraphicsValue("Colour clear folding", "true");
                 break;
             case 1:
+                selectGraphicsValue("Upscaler", "fsr1");
+                selectGraphicsDefault("FSR 1 quality");
+                selectGraphicsDefault("Frame limit");
+                selectGraphicsValue("Audio buffer", "16");
+                selectGraphicsValue("Draw distance", "0.6");
+                selectGraphicsValue("Population density", "0.2");
+                selectGraphicsValue("Shadow quality", "128");
+                selectGraphicsValue("Shadow updates", "3");
+                selectGraphicsValue("Water reflections", "4");
+                selectGraphicsValue("Environment reflections", "4");
+                selectGraphicsValue("Reflection anti-aliasing", "off");
+                selectGraphicsValue("Run-ahead frames", "1");
+                selectGraphicsValue("Colour clear folding", "true");
+                break;
+            case 2:
                 selectGraphicsValue("Upscaler", "fsr1");
                 selectGraphicsValue("FSR 1 quality", "ultra_quality");
                 selectGraphicsDefault("Frame limit");
@@ -961,7 +977,7 @@ public class LauncherActivity extends Activity {
                 selectGraphicsValue("Run-ahead frames", "1");
                 selectGraphicsValue("Colour clear folding", "true");
                 break;
-            case 2:
+            case 3:
                 selectGraphicsValue("Shadow updates", "2");
                 selectGraphicsValue("Water reflections", "2");
                 selectGraphicsValue("Environment reflections", "2");
