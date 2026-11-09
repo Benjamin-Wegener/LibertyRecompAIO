@@ -32,6 +32,11 @@ REXCVAR_DEFINE_BOOL(audio_low_latency, false, "Audio",
                     "tens of milliseconds")
     .lifecycle(rex::cvar::Lifecycle::kRequiresRestart);
 
+REXCVAR_DEFINE_UINT32(audio_prebuffer_blocks, 0, "Audio",
+                      "After a gap (no guest frame ready), keep playing silence until this many "
+                      "guest blocks are queued again (a block is about 5 ms). Larger values turn "
+                      "many short gaps into fewer, at the cost of some audio delay; 0 = off");
+
 namespace rex::audio::sdl {
 
 namespace {
@@ -305,7 +310,9 @@ void SDLAudioDriver::SDLCallback(void* userdata, SDL_AudioStream* stream, int ad
       next_report = now + std::chrono::seconds(10);
     }
     const uint32_t channels = std::max<uint8_t>(driver->sdl_device_channels_, 1);
-    if (driver->frames_queued_.empty()) {
+    const uint32_t prebuffer = REXCVAR_GET(audio_prebuffer_blocks);
+    if (driver->frames_queued_.empty() ||
+        (prebuffer && driver->underrun_active_ && driver->frames_queued_.size() < prebuffer)) {
       ++silent_fills;
       if (sdl_callback_count < 10) {
         REXAPU_DEBUG("SDLCallback: no frames queued (silence)");

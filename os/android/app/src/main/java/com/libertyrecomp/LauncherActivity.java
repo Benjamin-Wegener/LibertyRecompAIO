@@ -666,8 +666,8 @@ public class LauncherActivity extends Activity {
                     new String[] {"off", "smaa"}),
             new GraphicsSetting("Frame limit", "30 is the steadiest on most phones",
                     new String[] {"gta4_frame_limit"},
-                    new String[] {"30 FPS (Default)", "40 FPS", "60 FPS", "Unlocked"},
-                    new String[] {"40", "60", "0"}),
+                    new String[] {"30 FPS (Default)", "40 FPS", "60 FPS", "Unlocked", "24 FPS", "20 FPS"},
+                    new String[] {"40", "60", "0", "24", "20"}),
             new GraphicsSetting("Draw distance", "Mostly costs CPU time",
                     new String[] {"gta4_draw_distance_scale"},
                     new String[] {"100% / Console (Default)", "60%", "80%", "120%"},
@@ -716,6 +716,11 @@ public class LauncherActivity extends Activity {
                     new String[] {"gta4_native_fold_color_clears"},
                     new String[] {"Off (Default)", "On"},
                     new String[] {"true"}),
+            new GraphicsSetting("Audio buffer",
+                    "More buffer smooths audio gaps when the game runs slowly; adds a little audio delay",
+                    new String[] {"audio_prebuffer_blocks"},
+                    new String[] {"Off (Default)", "Small (+40 ms)", "Medium (+85 ms)", "Large (+170 ms)"},
+                    new String[] {"8", "16", "32"}),
             new GraphicsSetting("CPU boost",
                     "How hard the game asks Android for CPU speed. Steady keeps the clocks up; Battery saves power",
                     new String[] {"android_performance_hint_target_ms"},
@@ -836,8 +841,9 @@ public class LauncherActivity extends Activity {
         for (LinearLayout page : pages) card.addView(page, matchWrap(dp(4)));
         selectGraphicsTab(tabs, pages, 0);
 
-        final String[] presetNames = {"Low  (about 430p inside, FSR 1)", "Medium  (about 500p inside, FSR 1)",
-                "High  (about 570p inside, FSR 1)", "Ultra  (native, no upscaler)"};
+        final String[] presetNames = {"Low  (FSR 1 Quality, about 380p inside)",
+                "Medium  (FSR 1 Ultra quality, about 440p inside)", "High  (native)",
+                "Ultra  (native, SMAA)"};
         final TextView presetLabel = text("Performance preset: move the slider", 17, R.color.picker_text);
         if (mFontBlack != null) presetLabel.setTypeface(mFontBlack);
         card.addView(presetLabel, matchWrap(dp(14)));
@@ -905,10 +911,10 @@ public class LauncherActivity extends Activity {
     }
 
     /**
-     * 0 Low, 1 Medium, 2 High, 3 Ultra. FSR 1 renders below the chosen output
-     * (Performance 2x, Balanced 1.7x, Quality 1.5x) but never below 640x360,
-     * so on a 20:9 screen 720p output (1280x570) would fall back to native:
-     * the lower presets use 1080p output (1920x855 -> 960x427 inside).
+     * 0 Low, 1 Medium, 2 High, 3 Ultra. The game renders at most its native
+     * size (1280x570 on a 20:9 screen) and FSR 1 never goes below 640x360, so
+     * only Quality (1.5x) and Ultra quality (1.3x) fit; Balanced and
+     * Performance would fall back to native.
      */
     private void applyPerformancePreset(int level) {
         // The intro-logo choice is not a quality setting: keep what the person chose.
@@ -926,11 +932,11 @@ public class LauncherActivity extends Activity {
         }
         switch (level) {
             case 0:
-                selectGraphicsValue("Resolution", "1080");
                 selectGraphicsValue("Upscaler", "fsr1");
-                selectGraphicsValue("FSR 1 quality", "performance");
+                selectGraphicsDefault("FSR 1 quality");
                 selectGraphicsValue("Anti-aliasing", "off");
-                selectGraphicsValue("Frame limit", "0");
+                selectGraphicsValue("Frame limit", "24");
+                selectGraphicsValue("Audio buffer", "16");
                 selectGraphicsValue("Draw distance", "0.6");
                 selectGraphicsValue("Population density", "0.2");
                 selectGraphicsValue("Shadow quality", "128");
@@ -942,11 +948,11 @@ public class LauncherActivity extends Activity {
                 selectGraphicsValue("Colour clear folding", "true");
                 break;
             case 1:
-                selectGraphicsValue("Resolution", "1080");
                 selectGraphicsValue("Upscaler", "fsr1");
-                selectGraphicsValue("FSR 1 quality", "balanced");
+                selectGraphicsValue("FSR 1 quality", "ultra_quality");
                 selectGraphicsValue("Anti-aliasing", "off");
-                selectGraphicsValue("Frame limit", "0");
+                selectGraphicsValue("Frame limit", "24");
+                selectGraphicsValue("Audio buffer", "8");
                 selectGraphicsValue("Draw distance", "0.8");
                 selectGraphicsValue("Population density", "0.3");
                 selectGraphicsValue("Shadow quality", "128");
@@ -958,9 +964,6 @@ public class LauncherActivity extends Activity {
                 selectGraphicsValue("Colour clear folding", "true");
                 break;
             case 2:
-                selectGraphicsValue("Resolution", "1080");
-                selectGraphicsValue("Upscaler", "fsr1");
-                selectGraphicsDefault("FSR 1 quality");
                 selectGraphicsValue("Frame limit", "60");
                 selectGraphicsValue("Shadow updates", "2");
                 selectGraphicsValue("Water reflections", "2");
@@ -968,7 +971,6 @@ public class LauncherActivity extends Activity {
                 selectGraphicsValue("Run-ahead frames", "1");
                 break;
             default:
-                selectGraphicsValue("Resolution", "1080");
                 selectGraphicsValue("Anti-aliasing", "smaa");
                 selectGraphicsValue("Frame limit", "60");
                 selectGraphicsValue("Run-ahead frames", "1");
