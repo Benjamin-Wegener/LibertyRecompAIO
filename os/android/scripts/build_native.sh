@@ -35,8 +35,7 @@ CPU_FLAGS="$CPU_TARGET -fno-emulated-tls"
 # (off by default: much longer link, more memory; measure before enabling).
 case "${LIBERTY_LTO:-off}" in
   thin) CPU_FLAGS="$CPU_FLAGS -flto=thin" ;;
-  off) ;;
-  *) echo "unknown LIBERTY_LTO '$LIBERTY_LTO' (use off or thin)"; exit 1 ;;
+  *) ;;  # off (or anything else, e.g. an unset workflow input): no LTO
 esac
 echo "== CPU target: ${LIBERTY_CPU:-compatible} ($CPU_FLAGS)"
 # Reconfigure whenever the flags differ from the cached configuration, so a

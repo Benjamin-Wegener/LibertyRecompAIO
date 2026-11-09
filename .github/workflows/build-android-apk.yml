@@ -56,7 +56,7 @@ jobs:
     env:
       LIBERTY_GPU: ${{ inputs.gpu || 'adreno' }}
       LIBERTY_CPU: ${{ inputs.cpu || 'compatible' }}
-      LIBERTY_LTO: ${{ inputs.lto || 'off' }}
+      LIBERTY_LTO: ${{ inputs.lto == 'thin' && 'thin' || 'off' }}
       NDK_VER: 29.0.14206865
       STRIP: '1'
       # ccache is a content-addressed cache: it reuses object files whose
@@ -150,7 +150,7 @@ jobs:
           export JAVA_HOME="$(cygpath -u "$JAVA_HOME")"
           # The runner has 4 vCPUs. The script's default (nproc - 2, meant for
           # laptops that are also in use) leaves half of them idle.
-          bash -x os/android/scripts/build_native.sh "$(nproc)"
+          bash os/android/scripts/build_native.sh "$(nproc)"
 
       # The USA/NTSC game version is a separate recompilation (an older commit
       # of the public ZMOD-Liberty repository). Its libmain.so is built in its own tree and staged
