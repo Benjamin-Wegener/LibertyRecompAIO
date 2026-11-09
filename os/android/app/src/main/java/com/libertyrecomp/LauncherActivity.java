@@ -843,7 +843,7 @@ public class LauncherActivity extends Activity {
 
         final String[] presetNames = {"Low  (FSR 1 Quality, about 380p inside)",
                 "Medium  (FSR 1 Ultra quality, about 440p inside)", "High  (native)",
-                "Ultra  (native, SMAA)"};
+                "Ultra  (native, SMAA)"};  // all four aim at 30 FPS and let the phone idle after each frame
         final TextView presetLabel = text("Performance preset: move the slider", 17, R.color.picker_text);
         if (mFontBlack != null) presetLabel.setTypeface(mFontBlack);
         card.addView(presetLabel, matchWrap(dp(14)));
@@ -934,8 +934,7 @@ public class LauncherActivity extends Activity {
             case 0:
                 selectGraphicsValue("Upscaler", "fsr1");
                 selectGraphicsDefault("FSR 1 quality");
-                selectGraphicsValue("Anti-aliasing", "off");
-                selectGraphicsValue("Frame limit", "24");
+                selectGraphicsDefault("Frame limit");
                 selectGraphicsValue("Audio buffer", "16");
                 selectGraphicsValue("Draw distance", "0.6");
                 selectGraphicsValue("Population density", "0.2");
@@ -950,8 +949,7 @@ public class LauncherActivity extends Activity {
             case 1:
                 selectGraphicsValue("Upscaler", "fsr1");
                 selectGraphicsValue("FSR 1 quality", "ultra_quality");
-                selectGraphicsValue("Anti-aliasing", "off");
-                selectGraphicsValue("Frame limit", "24");
+                selectGraphicsDefault("Frame limit");
                 selectGraphicsValue("Audio buffer", "8");
                 selectGraphicsValue("Draw distance", "0.8");
                 selectGraphicsValue("Population density", "0.3");
@@ -964,7 +962,6 @@ public class LauncherActivity extends Activity {
                 selectGraphicsValue("Colour clear folding", "true");
                 break;
             case 2:
-                selectGraphicsValue("Frame limit", "60");
                 selectGraphicsValue("Shadow updates", "2");
                 selectGraphicsValue("Water reflections", "2");
                 selectGraphicsValue("Environment reflections", "2");
@@ -972,7 +969,6 @@ public class LauncherActivity extends Activity {
                 break;
             default:
                 selectGraphicsValue("Anti-aliasing", "smaa");
-                selectGraphicsValue("Frame limit", "60");
                 selectGraphicsValue("Run-ahead frames", "1");
                 break;
         }
