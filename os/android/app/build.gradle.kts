@@ -58,7 +58,7 @@ android {
         versionCode   = 77
         // Shown as e.g. 0.5.9.3-mali-alpha-1.5. The workflow reads both the
         // base version and versionSuffix to name the APK.
-        val versionSuffix = "-alpha-1.6"
+        val versionSuffix = "-alpha-1.7"
         versionName   = "0.6.0-aio" + versionSuffix
 
         // Read by DriverBridge.defaultMode(): the driver used when driver.txt
