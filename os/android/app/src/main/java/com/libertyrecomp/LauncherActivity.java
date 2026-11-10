@@ -699,9 +699,9 @@ public class LauncherActivity extends Activity {
                     new String[] {"gta4_shadow_map_base_size"},
                     new String[] {"Console (Default)", "High", "Low (half size)"},
                     new String[] {"512", "128"}),
-            new GraphicsSetting("Shadow updates", "Updating the shadows every 2nd or 3rd frame saves CPU and GPU time; Off draws no sun shadows",
+            new GraphicsSetting("Sun shadows", "Off draws no sun shadows at all and saves the most; every 2nd or 3rd frame updates them less often",
                     new String[] {"gta4_native_shadow_interval"},
-                    new String[] {"Every frame (Default)", "Every 2nd frame", "Every 3rd frame", "Off"},
+                    new String[] {"On, every frame (Default)", "On, every 2nd frame", "On, every 3rd frame", "Off (no sun shadows)"},
                     new String[] {"2", "3", "0"}),
             new GraphicsSetting("Water reflections", "Updating them less often saves GPU time; Off shows a plain colour",
                     new String[] {"gta4_native_water_reflection_interval"},
@@ -899,7 +899,7 @@ public class LauncherActivity extends Activity {
             selectGraphicsValue("Draw distance", "0.6");
             selectGraphicsValue("Population density", "0.2");
             selectGraphicsValue("Shadow quality", "128");
-            selectGraphicsValue("Shadow updates", "2");
+            selectGraphicsValue("Sun shadows", "2");
             selectGraphicsValue("Water reflections", "4");
             selectGraphicsValue("Environment reflections", "4");
             selectGraphicsValue("Reflection anti-aliasing", "off");
@@ -1014,7 +1014,7 @@ public class LauncherActivity extends Activity {
                 selectGraphicsValue("Draw distance", "0.6");
                 selectGraphicsValue("Population density", "0.2");
                 selectGraphicsValue("Shadow quality", "128");
-                selectGraphicsValue("Shadow updates", "3");
+                selectGraphicsValue("Sun shadows", "3");
                 selectGraphicsValue("Water reflections", "4");
                 selectGraphicsValue("Environment reflections", "4");
                 selectGraphicsValue("Reflection anti-aliasing", "off");
@@ -1029,7 +1029,7 @@ public class LauncherActivity extends Activity {
                 selectGraphicsValue("Draw distance", "0.6");
                 selectGraphicsValue("Population density", "0.2");
                 selectGraphicsValue("Shadow quality", "128");
-                selectGraphicsValue("Shadow updates", "3");
+                selectGraphicsValue("Sun shadows", "3");
                 selectGraphicsValue("Water reflections", "4");
                 selectGraphicsValue("Environment reflections", "4");
                 selectGraphicsValue("Reflection anti-aliasing", "off");
@@ -1044,7 +1044,7 @@ public class LauncherActivity extends Activity {
                 selectGraphicsValue("Draw distance", "0.8");
                 selectGraphicsValue("Population density", "0.3");
                 selectGraphicsValue("Shadow quality", "128");
-                selectGraphicsValue("Shadow updates", "2");
+                selectGraphicsValue("Sun shadows", "2");
                 selectGraphicsValue("Water reflections", "2");
                 selectGraphicsValue("Environment reflections", "2");
                 selectGraphicsValue("Reflection anti-aliasing", "off");
@@ -1052,7 +1052,7 @@ public class LauncherActivity extends Activity {
                 selectGraphicsValue("Colour clear folding", "true");
                 break;
             case 3:
-                selectGraphicsValue("Shadow updates", "2");
+                selectGraphicsValue("Sun shadows", "2");
                 selectGraphicsValue("Water reflections", "2");
                 selectGraphicsValue("Environment reflections", "2");
                 selectGraphicsValue("Run-ahead frames", "1");
@@ -1104,7 +1104,7 @@ public class LauncherActivity extends Activity {
                 return 1;
             case "Frame limit":
             case "Shadow quality":
-            case "Shadow updates":
+            case "Sun shadows":
             case "Water reflections":
             case "Environment reflections":
             case "Draw distance":
