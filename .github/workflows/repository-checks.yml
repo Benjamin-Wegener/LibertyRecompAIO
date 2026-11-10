@@ -68,7 +68,7 @@ jobs:
           echo /usr/lib/llvm-18/bin >> "$GITHUB_PATH"
       - name: Install macOS prerequisites
         if: runner.os == 'macOS'
-        run: brew install llvm pkg-config openssl@3 vulkan-loader
+        run: brew install llvm pkg-config openssl@3 vulkan-loader spirv-cross
       - name: Select the Windows C++ development environment
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
@@ -103,6 +103,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Trust the checkout (container runs as another user)
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - name: Initialize and validate all dependency sources
         run: |
           python tools/setup_repo.py
