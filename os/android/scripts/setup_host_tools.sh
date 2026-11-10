@@ -24,4 +24,4 @@ if [ ! -x glslang/bin/glslangValidator.exe ]; then
   cp glslang/bin/glslang.exe glslang/bin/glslangValidator.exe
 fi
 dxc/bin/x64/dxc.exe --version
-glslang/bin/glslangValidator.exe --version | head -1
+glslang/bin/glslangValidator.exe --version | sed -n 1p

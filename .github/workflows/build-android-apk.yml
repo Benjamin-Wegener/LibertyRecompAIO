@@ -26,7 +26,12 @@ on:
         description: 'GPU family the APK defaults to'
         type: choice
         options: [mali, adreno]
-        default: mali
+        default: adreno
+      lto:
+        description: 'Link-time optimisation of the game code (thin = faster CPU code, much longer link)'
+        type: choice
+        options: [off, thin]
+        default: off
       cpu:
         description: 'CPU target: compatible = all phones; armv9 = Dimensity 8400 and newer only (faster, crashes on older phones)'
         type: choice
@@ -42,15 +47,16 @@ concurrency:
 
 jobs:
   apk:
-    name: APK (${{ inputs.gpu || 'mali' }}, ${{ inputs.cpu || 'compatible' }})
+    name: APK (${{ inputs.gpu || 'adreno' }}, ${{ inputs.cpu || 'compatible' }})
     runs-on: windows-2022
     timeout-minutes: 360
     defaults:
       run:
         shell: bash
     env:
-      LIBERTY_GPU: ${{ inputs.gpu || 'mali' }}
+      LIBERTY_GPU: ${{ inputs.gpu || 'adreno' }}
       LIBERTY_CPU: ${{ inputs.cpu || 'compatible' }}
+      LIBERTY_LTO: ${{ inputs.lto == 'thin' && 'thin' || 'off' }}
       NDK_VER: 29.0.14206865
       STRIP: '1'
       # ccache is a content-addressed cache: it reuses object files whose
@@ -112,9 +118,9 @@ jobs:
           path: |
             out/build
             out/host-tools
-          key: android-${{ env.LIBERTY_GPU }}-${{ env.LIBERTY_CPU }}-${{ github.sha }}
+          key: android-${{ env.LIBERTY_GPU }}-${{ env.LIBERTY_CPU }}-${{ env.LIBERTY_LTO }}-${{ github.sha }}
           restore-keys: |
-            android-${{ env.LIBERTY_GPU }}-${{ env.LIBERTY_CPU }}-
+            android-${{ env.LIBERTY_GPU }}-${{ env.LIBERTY_CPU }}-${{ env.LIBERTY_LTO }}-
             android-${{ env.LIBERTY_GPU }}-
 
       - name: Restore ccache
@@ -146,6 +152,37 @@ jobs:
           # laptops that are also in use) leaves half of them idle.
           bash os/android/scripts/build_native.sh "$(nproc)"
 
+      # The USA/NTSC game version is a separate recompilation (an older commit
+      # of the public ZMOD-Liberty repository). Its libmain.so is built in its own tree and staged
+      # as libmain_usa.so, so one APK runs both the PAL and the USA disc.
+      - name: Restore USA build cache
+        id: usacache
+        uses: actions/cache/restore@v4
+        with:
+          path: usa-src/out/build
+          key: android-usa-20dc1b2b-${{ env.LIBERTY_GPU }}-${{ env.LIBERTY_CPU }}
+          restore-keys: |
+            android-usa-20dc1b2b-
+
+      - name: Build the USA libmain
+        timeout-minutes: 220
+        run: |
+          export ANDROID_HOME="$(cygpath -u "$ANDROID_HOME")"
+          export JAVA_HOME="$(cygpath -u "$JAVA_HOME")"
+          git fetch --depth 1 https://github.com/Benjamin-Wegener/ZMOD-Liberty.git 20dc1b2b420c8a64387759bcf23411fe9831a1d9
+          git worktree add usa-src 20dc1b2b420c8a64387759bcf23411fe9831a1d9
+          (cd usa-src && python tools/setup_repo.py && bash os/android/scripts/build_native.sh "$(nproc)")
+          cp usa-src/os/android/app/src/main/jniLibs/arm64-v8a/libmain.so \
+             os/android/app/src/main/jniLibs/arm64-v8a/libmain_usa.so
+          ls -la os/android/app/src/main/jniLibs/arm64-v8a/libmain*.so
+
+      - name: Save USA build cache
+        if: always() && steps.usacache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: usa-src/out/build
+          key: android-usa-20dc1b2b-${{ env.LIBERTY_GPU }}-${{ env.LIBERTY_CPU }}
+
       - name: Save build cache
         if: always() && steps.cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
@@ -153,7 +190,7 @@ jobs:
           path: |
             out/build
             out/host-tools
-          key: android-${{ env.LIBERTY_GPU }}-${{ env.LIBERTY_CPU }}-${{ github.sha }}
+          key: android-${{ env.LIBERTY_GPU }}-${{ env.LIBERTY_CPU }}-${{ env.LIBERTY_LTO }}-${{ github.sha }}
 
       # Save even when the build failed: a timed-out or broken run still
       # primed ccache with every object it managed to compile.
@@ -178,6 +215,7 @@ jobs:
           SUFFIX="$(grep -o 'versionSuffix *= *"[^"]*"' os/android/app/build.gradle.kts | head -1 | sed 's/.*"\(.*\)"/\1/')"
           VERSION="$VERSION$SUFFIX"
           [ "$LIBERTY_CPU" = "armv9" ] && VERSION="$VERSION-armv9"
+          [ "$LIBERTY_LTO" = "thin" ] && VERSION="$VERSION-lto"
           cp os/android/app/build/outputs/apk/debug/app-debug.apk "LibertyRecompAndroid-$VERSION.apk"
           echo "APK_NAME=LibertyRecompAndroid-$VERSION.apk" >> "$GITHUB_ENV"
           ls -la LibertyRecompAndroid-*.apk

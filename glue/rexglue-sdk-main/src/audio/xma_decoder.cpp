@@ -11,6 +11,7 @@
 
 #if defined(__ANDROID__)
 #include <sys/resource.h>
+#include "audio_thread_tuning.h"
 #include <android/log.h>
 #include <cerrno>
 #include <unistd.h>
@@ -37,6 +38,7 @@ extern "C" {
 }  // extern "C"
 
 REXCVAR_DEFINE_BOOL(ffmpeg_verbose, false, "Audio", "Verbose FFmpeg output (debug and above)");
+REXCVAR_DECLARE(bool, audio_big_cores);
 
 // As with normal Microsoft, there are like twelve different ways to access
 // the audio APIs. Early games use XMA*() methods almost exclusively to touch
@@ -157,6 +159,7 @@ void XmaDecoder::WorkerThreadMain() {
     __android_log_print(ANDROID_LOG_WARN, "LibertyRecomp", "audio-priority %s tid=%d result=%d errno=%d",
                         "xma_decoder.cpp", int(gettid()), result, result ? errno : 0);
   }
+  if (REXCVAR_GET(audio_big_cores)) PinCallingThreadToBigCores("XMA Decoder");
 #endif
   while (worker_running_) {
     // Process only contexts made ready by a kick instead of scanning all 320
