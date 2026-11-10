@@ -97,6 +97,7 @@
 #include "temporal/shader_contract.h"
 #include "temporal/vulkan_scene.h"
 #include "temporal/vulkan_frame_generation.h"
+#include "temporal/simple_frame_generation.h"
 
 struct ShaderOverrideCacheEntry;
 
@@ -150,7 +151,12 @@ class Gta4NativeGraphicsSystem final : public system::IGraphicsSystem {
   };
 
   struct NativeVertexInput {
+    // The Xenos semantic id (usage/usage index): matches a vertex declaration element.
     uint32_t location = 0;
+    // The Vulkan input location the shader module declares. Equal to `location` unless the
+    // device's maxVertexInputAttributes is below the highest semantic id (16 on many Adreno
+    // and other drivers); then the module's inputs are renumbered densely.
+    uint32_t slot = 0;
     NativeVertexNumericType numeric_type = NativeVertexNumericType::kFloat;
     uint32_t component_count = 0;
 
@@ -172,6 +178,9 @@ class Gta4NativeGraphicsSystem final : public system::IGraphicsSystem {
     // Color outputs demoted to private variables, for colorless pipelines.
     std::array<VkShaderModule, 4> colorless_modules{};
     std::string filename;
+    // Vertex shader of a deferred local light volume: its constant bank base (208/215), -1 when it
+    // is not one, -2 until first looked up (gta4_native_max_local_lights).
+    mutable int32_t local_light_base_cache = -2;
     std::vector<NativeVertexInput> vertex_inputs;
     // Reads gl_VertexIndex/gl_InstanceIndex: its draws cannot be concatenated.
     bool uses_vertex_index = false;
@@ -1953,7 +1962,7 @@ class Gta4NativeGraphicsSystem final : public system::IGraphicsSystem {
                               NativeFrameResources& resources);
   bool RecordClear(VkCommandBuffer command_buffer, const NativeCommand& command,
                    const NativeRenderingTarget& target,
-                   bool skip_depth_stencil = false);
+                   bool skip_depth_stencil = false, uint32_t skip_color_mask = 0);
   bool RecordResolve(VkCommandBuffer command_buffer, const NativeCommand& command,
                      uint32_t submitted_frame,
                      NativeTextureImage* high_precision_destination = nullptr,
@@ -2507,6 +2516,7 @@ class Gta4NativeGraphicsSystem final : public system::IGraphicsSystem {
   temporal::VulkanScene temporal_scene_;
   std::unique_ptr<NativeTextureImage> temporal_output_binding_;
   temporal::VulkanFrameGeneration temporal_frame_generator_;
+  temporal::SimpleFrameGeneration simple_frame_generator_;
   temporal::FrameGenerationOutput temporal_generated_frame_;
   std::array<std::vector<std::shared_ptr<void>>, 2> temporal_frame_leases_;
   NativeSurfaceImage* temporal_composite_source_ = nullptr;

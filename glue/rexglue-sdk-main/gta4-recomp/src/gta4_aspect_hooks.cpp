@@ -461,24 +461,21 @@ void DrawRadarSection(PPCContext& ctx, uint8_t* base, GuestFunction original) {
   const DcScope dc(ctx, base);
   const auto current = CurrentUi(base);
   // The pause-menu map draws its blips and route through these emitters too.
-  // Moving them by the minimap's bottom-left layout put them off the map by a
-  // distance growing away from that corner, so on wider-than-16:9 screens they
-  // slid across the map as it scrolled. In the pause menu they follow the
-  // frontend layout like the map itself.
+  // In the pause menu they follow the frontend layout like the map itself.
   constexpr uint32_t kPauseMenuVisibleAddress = 0x82BEC860;
   const bool pause_menu =
       Span(base, kPauseMenuVisibleAddress, 1) &&
       *reinterpret_cast<const uint8_t*>(rex::memory::GuestPtr(base, kPauseMenuVisibleAddress)) != 0;
-  const auto layout = current.active && current.role == UiRole::kRadar ? current
-                      : pause_menu                                     ? current
-                                                                       : RadarUi(base);
-  const auto transform = layout.transform;
-  // These are radar-section emitters, not generic UI sections. Some retail
-  // callers reach them without the enclosing HUD_RADAR scope; falling back to
-  // CurrentUi() in that case centered the route while the radar itself stayed
-  // bottom-left anchored, visibly separating the GPS line from the minimap.
-  const EmitScope emit({transform, layout.active && !transform.identity()});
-  original(ctx, base);
+  if (pause_menu) {
+    const auto transform = current.transform;
+    const EmitScope emit({transform, current.active && !transform.identity()});
+    original(ctx, base);
+  } else {
+    // In-game HUD minimap: the map layer (sub_8218E768) is drawn untransformed.
+    // Keep blips (sub_8218E8E0) and GPS route (sub_8218E900) untransformed as well
+    // so they stay in 1:1 concentric alignment with streets and player arrow.
+    original(ctx, base);
+  }
 }
 void DrawWindow(PPCContext& ctx, uint8_t* base, GuestFunction original) {
   // Generated sub_821F6E38 forwards normalized measured bounds unchanged to

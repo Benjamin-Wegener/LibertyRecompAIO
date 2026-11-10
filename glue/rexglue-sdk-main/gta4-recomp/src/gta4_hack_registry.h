@@ -36,6 +36,7 @@ struct Entry {
 
 inline constexpr auto kRegistry = std::to_array<Entry>({
     // --- Renderer shortcuts that can change the image when they are wrong ---
+    {"gta4_msr_global_lock", Kind::kShortcut, "true", "guest mtmsrd atomics without the global lock"},
     {"gta4_native_fold_depth_clears", Kind::kShortcut, "false", "depth clears as load-op clears (LRZ)"},
     {"gta4_native_drop_inert_blending", Kind::kShortcut, "false", "no-op blending dropped (LRZ)"},
     {"gta4_native_materialize_by_copy", Kind::kShortcut, "false", "same-format materialization as an image copy"},

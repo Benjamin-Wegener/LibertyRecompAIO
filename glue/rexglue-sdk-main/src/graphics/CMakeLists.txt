@@ -307,6 +307,7 @@ if(REXGLUE_USE_VULKAN)
         gta4_native/temporal/shader_archive.cpp
         gta4_native/temporal/vulkan_scene.cpp
         gta4_native/temporal/vulkan_frame_generation.cpp
+        gta4_native/temporal/simple_frame_generation.cpp
         gta4_native/plugin_main.cpp
         "${GTA4_NATIVE_SHADER_CACHE_ROOT}/shader/shader_cache.cpp"
         "${GTA4_NATIVE_SHADER_OVERRIDE_CPP}"

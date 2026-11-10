@@ -349,23 +349,39 @@ inline std::atomic<i32>& ppc_global_lock_count_() {
   return count;
 }
 
-#define REX_CHECK_GLOBAL_LOCK()                                        \
-  ([&]() -> u64 {                                                      \
-    auto lock_ = rex::thread::global_critical_region::AcquireDirect(); \
-    return ppc_global_lock_count_().load() ? 0 : 0x8000;               \
+// Liberty Recomp AIO: every guest mfmsr/mtmsrd pair in this executable wraps
+// only a lwarx/stwcx. (or ldarx/stdcx.) atomic, which the recompiler already
+// emits as a host compare-exchange. On the console, disabling interrupts never
+// excluded the other cores, so the guest does not rely on mutual exclusion here;
+// taking the emulator's global lock (twice per atomic) only serialized the job
+// workers. Off unless gta4_msr_global_lock (safe mode) is set before guest code runs.
+inline bool& ppc_msr_global_lock_enabled_() {
+  static bool enabled = true;
+  return enabled;
+}
+
+#define REX_CHECK_GLOBAL_LOCK()                                          \
+  ([&]() -> u64 {                                                        \
+    if (!ppc_msr_global_lock_enabled_()) return 0x8000;                  \
+    auto lock_ = rex::thread::global_critical_region::AcquireDirect();   \
+    return ppc_global_lock_count_().load() ? 0 : 0x8000;                 \
   }())
 
-#define REX_ENTER_GLOBAL_LOCK()                          \
-  do {                                                   \
-    rex::thread::global_critical_region::mutex().lock(); \
-    ppc_global_lock_count_().fetch_add(1);               \
+#define REX_ENTER_GLOBAL_LOCK()                            \
+  do {                                                     \
+    if (ppc_msr_global_lock_enabled_()) {                  \
+      rex::thread::global_critical_region::mutex().lock(); \
+      ppc_global_lock_count_().fetch_add(1);               \
+    }                                                      \
   } while (0)
 
-#define REX_LEAVE_GLOBAL_LOCK()                                                           \
-  do {                                                                                    \
-    auto old_count_ = ppc_global_lock_count_().fetch_sub(1);                              \
-    assert(old_count_ >= 1 && "LeaveGlobalLock called without matching EnterGlobalLock"); \
-    rex::thread::global_critical_region::mutex().unlock();                                \
+#define REX_LEAVE_GLOBAL_LOCK()                                                             \
+  do {                                                                                      \
+    if (ppc_msr_global_lock_enabled_()) {                                                   \
+      auto old_count_ = ppc_global_lock_count_().fetch_sub(1);                              \
+      assert(old_count_ >= 1 && "LeaveGlobalLock called without matching EnterGlobalLock"); \
+      rex::thread::global_critical_region::mutex().unlock();                                \
+    }                                                                                       \
   } while (0)
 
 DECLARE_REX_FUNC(sub_82120000);

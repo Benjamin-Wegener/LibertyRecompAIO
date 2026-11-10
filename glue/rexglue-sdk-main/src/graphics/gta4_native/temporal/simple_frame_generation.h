@@ -1,0 +1,49 @@
+#pragma once
+
+#include <cstdint>
+#include <memory>
+
+#include <rex/ui/vulkan/presenter.h>
+
+namespace rex::graphics::gta4_native::temporal {
+
+// Cheap Android frame generation: the presenter shows a "generated" image half
+// a frame before the "real" one (VulkanPresenter::SetGeneratedFrame). The
+// generated image is the plain 50 % mix of the previous and the current final
+// frame, computed in one compute pass. (A motion-compensated version was tried
+// and dropped: see docs/PERFORMANCE_ROADMAP.md.)
+class SimpleFrameGeneration {
+ public:
+  SimpleFrameGeneration();
+  ~SimpleFrameGeneration();
+  SimpleFrameGeneration(const SimpleFrameGeneration&) = delete;
+  SimpleFrameGeneration& operator=(const SimpleFrameGeneration&) = delete;
+
+  // Records, before the presenter image's release barrier, a copy of the final
+  // frame into a retained `real` image, a copy of the previous frame into the
+  // `generated` image and the update of the private history. `source` is the
+  // presenter's image in `source_layout`, last written by `source_stage` /
+  // `source_access`; it is returned to that layout. `fixed_interval_ns` is how long the
+  // generated image stays on screen before the real one (0: half the measured time between
+  // two frames, which oscillates when frames arrive unevenly). False: nothing recorded.
+  bool Encode(const ui::vulkan::VulkanDevice& device, VkCommandBuffer commands, VkImage source,
+              VkExtent2D extent, VkImageLayout source_layout, VkPipelineStageFlags source_stage,
+              VkAccessFlags source_access, uint64_t epoch, uint64_t fixed_interval_ns = 0);
+
+  // The lease of the pair recorded by the last Encode (empty when none): keep it
+  // until the submission that contains the copies has completed.
+  std::shared_ptr<void> pending_lease() const;
+
+  // After the submission succeeded and the presenter image access was marked.
+  bool Publish(ui::vulkan::VulkanPresenter::VulkanGuestOutputRefreshContext& context);
+  // The submission failed: forget the recorded pair.
+  void Discard();
+  // Waits for the GPU and frees everything.
+  void Shutdown();
+
+ private:
+  struct Impl;
+  std::unique_ptr<Impl> impl_;
+};
+
+}  // namespace rex::graphics::gta4_native::temporal

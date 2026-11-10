@@ -65,7 +65,7 @@ inline constexpr uint32_t kTemporalCompositeExecution = 1u << 8;
 inline constexpr uint32_t kTemporalFinalCompositeExecution = 1u << 9;
 constexpr uint32_t TemporalCompositeExecutionFlags(const LightingContext& lighting,bool final) {
   if(lighting.stage!=RenderExecutionStage::kCompositePostFx||
-      lighting.source_function!=0x822D1710||!lighting.occurrence_id)return 0;
+      (lighting.source_function!=0x822D1710 && lighting.source_function!=0x822E48D8)||!lighting.occurrence_id)return 0;
   return kTemporalCompositeExecution|(final?kTemporalFinalCompositeExecution:0);
 }
 // IDs belong to the executing retail list, not the asynchronous host phase
