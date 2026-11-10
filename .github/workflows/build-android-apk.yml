@@ -153,7 +153,7 @@ jobs:
           bash os/android/scripts/build_native.sh "$(nproc)"
 
       # The USA/NTSC game version is a separate recompilation (an older commit
-      # of the public ZMOD-Liberty repository). Its libmain.so is built in its own tree and staged
+      # of the this repository (a fork of the Mali edition)). Its libmain.so is built in its own tree and staged
       # as libmain_usa.so, so one APK runs both the PAL and the USA disc.
       - name: Restore USA build cache
         id: usacache
@@ -169,7 +169,7 @@ jobs:
         run: |
           export ANDROID_HOME="$(cygpath -u "$ANDROID_HOME")"
           export JAVA_HOME="$(cygpath -u "$JAVA_HOME")"
-          git fetch --depth 1 https://github.com/Benjamin-Wegener/ZMOD-Liberty.git 20dc1b2b420c8a64387759bcf23411fe9831a1d9
+          git fetch --depth 1 https://github.com/Benjamin-Wegener/LibertyRecompAIO.git 20dc1b2b420c8a64387759bcf23411fe9831a1d9
           # The cache restore already created usa-src/out/build: put it aside, check
           # the tree out (git refuses a non-empty directory) and move it back.
           [ -d usa-src ] && mv usa-src usa-cache
