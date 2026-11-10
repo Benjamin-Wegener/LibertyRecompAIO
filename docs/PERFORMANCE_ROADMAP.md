@@ -198,5 +198,5 @@ frames. Pixel 9a, frame limit 30: a still room and a slow camera pan show no
 double edges, smearing or black borders, and the HUD and minimap stay intact.
 Not yet looked at: fast driving, car headlights, the rotating minimap. The GPU
 time of the three passes is still not measured.
-The launcher has a "Frame generation" row (off by default) and shows the
+The launcher has a "Frame generation (alpha, not finished)" row (off by default) and shows the
 version as "0.6.0 AIO alpha 1.6".
