@@ -111,7 +111,7 @@ public class LauncherActivity extends Activity {
     private final TextView[] mNavItems = new TextView[PANEL_NAMES.length];
     private int mPanel = PANEL_PLAY;
     private View mSaveBar;
-    private static final int ORANGE = 0xFFF0A030;
+    private static final int ACCENT = 0xFF2F8CFF;
     /** Launcher interface scale: every dp() and text size goes through it. */
     private static final float UI_SCALE = 0.78f;
     private static final int MENU_GREY = 0xFFCDCDCD;
@@ -278,7 +278,7 @@ public class LauncherActivity extends Activity {
 
     private View buildLayout() {
         android.widget.FrameLayout root = new android.widget.FrameLayout(this);
-        root.setBackgroundColor(0xFF0A0B0D);
+        root.setBackgroundColor(0xFF060A14);
         // Liberty City behind the menu, darker on the left where the menu is.
         ImageView backdrop = new ImageView(this);
         backdrop.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -291,7 +291,7 @@ public class LauncherActivity extends Activity {
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         View shade = new View(this);
         shade.setBackground(new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT,
-                new int[] {0xF20A0B0D, 0xC80A0B0D, 0x780A0B0D}));
+                new int[] {0xF2060A14, 0xC8060A14, 0x78060A14}));
         root.addView(shade, new android.widget.FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
@@ -378,7 +378,7 @@ public class LauncherActivity extends Activity {
             TextView item = mNavItems[i];
             if (item == null) continue;
             boolean selected = i == index;
-            item.setTextColor(selected ? ORANGE : MENU_GREY);
+            item.setTextColor(selected ? ACCENT : MENU_GREY);
             item.setText(selected ? PANEL_NAMES[i] + "  \u203A" : PANEL_NAMES[i]);
             item.setBackground(selected ? menuSelectedBackground() : focusBackground(Color.TRANSPARENT));
         }
@@ -392,8 +392,8 @@ public class LauncherActivity extends Activity {
     private android.graphics.drawable.Drawable menuSelectedBackground() {
         GradientDrawable fill = rounded(0x33F0A030, dp(10));
         GradientDrawable focusedFill = rounded(0x33F0A030, dp(10));
-        focusedFill.setStroke(dp(2), ORANGE);
-        GradientDrawable bar = rounded(ORANGE, dp(2));
+        focusedFill.setStroke(dp(2), ACCENT);
+        GradientDrawable bar = rounded(ACCENT, dp(2));
         StateListDrawable states = new StateListDrawable();
         for (boolean focused : new boolean[] {true, false}) {
             android.graphics.drawable.LayerDrawable layers = new android.graphics.drawable.LayerDrawable(
@@ -428,10 +428,10 @@ public class LauncherActivity extends Activity {
         TextView play = new TextView(this);
         play.setText("PLAY");
         play.setTextSize(TypedValue.COMPLEX_UNIT_SP, 32 * UI_SCALE);
-        play.setTextColor(0xFF19120A);
+        play.setTextColor(0xFFFFFFFF);
         if (mFontBlack != null) play.setTypeface(mFontBlack);
         play.setGravity(Gravity.CENTER);
-        play.setBackground(focusBackground(ORANGE));
+        play.setBackground(focusBackground(ACCENT));
         play.setFocusable(true);
         play.setClickable(true);
         play.setContentDescription("Play");
@@ -784,7 +784,7 @@ public class LauncherActivity extends Activity {
         card.addView(text("Press Save changes, then Play.", 12, R.color.picker_muted), matchWrap(dp(2)));
 
         // Tabs like GTA IV's pause menu: Display, Performance, Touch.
-        String[] tabNames = {"Display", "Performance", "Touch"};
+        String[] tabNames = {"Display", "Performance", "Touch", "Experimental"};
         final TextView[] tabs = new TextView[tabNames.length];
         final LinearLayout[] pages = new LinearLayout[tabNames.length];
         LinearLayout tabRow = new LinearLayout(this);
@@ -1072,7 +1072,7 @@ public class LauncherActivity extends Activity {
 
     private void selectGraphicsTab(TextView[] tabs, LinearLayout[] pages, int index) {
         for (int t = 0; t < tabs.length; ++t) {
-            tabs[t].setTextColor(t == index ? ORANGE : color(R.color.picker_muted));
+            tabs[t].setTextColor(t == index ? ACCENT : color(R.color.picker_muted));
             tabs[t].setPaintFlags(t == index
                     ? tabs[t].getPaintFlags() | android.graphics.Paint.UNDERLINE_TEXT_FLAG
                     : tabs[t].getPaintFlags() & ~android.graphics.Paint.UNDERLINE_TEXT_FLAG);
@@ -1080,10 +1080,17 @@ public class LauncherActivity extends Activity {
         }
     }
 
-    /** Which tab a setting belongs on: 0 Display, 1 Performance, 2 Touch. */
+    /** Which tab a setting belongs on: 0 Display, 1 Performance, 2 Touch, 3 Experimental. */
     private static int graphicsTab(GraphicsSetting setting) {
         if (setting.cvars[0].startsWith("gta4_touch")) return 2;
         switch (setting.label) {
+            case "Local light limit":
+            case "Colour clear folding":
+            case "64-bit shader fallback":
+            case "Frame generation (alpha, not finished)":
+                return 3;
+            case "Audio buffer":
+                return 1;
             case "Frame limit":
             case "Shadow quality":
             case "Shadow updates":
@@ -1170,7 +1177,7 @@ public class LauncherActivity extends Activity {
 
         private void update() {
             value.setText(choices[position]);
-            value.setTextColor(position == 0 ? color(R.color.picker_muted) : ORANGE);
+            value.setTextColor(position == 0 ? color(R.color.picker_muted) : ACCENT);
         }
     }
 
@@ -2535,10 +2542,10 @@ public class LauncherActivity extends Activity {
         Button button = new Button(this);
         button.setText(label);
         button.setAllCaps(false);
-        button.setTextColor(primary ? 0xFF19120A : color(R.color.picker_text));
+        button.setTextColor(primary ? 0xFFFFFFFF : color(R.color.picker_text));
         button.setTypeface(mFontBlack != null ? mFontBlack : Typeface.DEFAULT_BOLD);
         button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15 * UI_SCALE);
-        button.setBackground(focusBackground(primary ? ORANGE : 0x24FFFFFF));
+        button.setBackground(focusBackground(primary ? ACCENT : 0x24FFFFFF));
         button.setFocusable(true);
         return button;
     }
@@ -2547,7 +2554,7 @@ public class LauncherActivity extends Activity {
     private StateListDrawable focusBackground(int fill) {
         GradientDrawable normal = rounded(fill, dp(12));
         GradientDrawable focused = rounded(fill, dp(12));
-        focused.setStroke(dp(3), ORANGE);
+        focused.setStroke(dp(3), ACCENT);
         GradientDrawable pressed = rounded(fill == Color.TRANSPARENT ? 0x33FFFFFF : fill, dp(12));
         pressed.setStroke(dp(3), 0xFFFFFFFF);
         StateListDrawable states = new StateListDrawable();
