@@ -170,7 +170,11 @@ jobs:
           export ANDROID_HOME="$(cygpath -u "$ANDROID_HOME")"
           export JAVA_HOME="$(cygpath -u "$JAVA_HOME")"
           git fetch --depth 1 https://github.com/Benjamin-Wegener/ZMOD-Liberty.git 20dc1b2b420c8a64387759bcf23411fe9831a1d9
+          # The cache restore already created usa-src/out/build: put it aside, check
+          # the tree out (git refuses a non-empty directory) and move it back.
+          [ -d usa-src ] && mv usa-src usa-cache
           git worktree add usa-src 20dc1b2b420c8a64387759bcf23411fe9831a1d9
+          if [ -d usa-cache/out/build ]; then mkdir -p usa-src/out && mv usa-cache/out/build usa-src/out/build; fi
           (cd usa-src && python tools/setup_repo.py && bash os/android/scripts/build_native.sh "$(nproc)")
           cp usa-src/os/android/app/src/main/jniLibs/arm64-v8a/libmain.so \
              os/android/app/src/main/jniLibs/arm64-v8a/libmain_usa.so
