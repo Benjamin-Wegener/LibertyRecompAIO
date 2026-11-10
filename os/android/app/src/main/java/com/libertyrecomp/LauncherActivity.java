@@ -552,7 +552,7 @@ public class LauncherActivity extends Activity {
             version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
         } catch (Exception ignored) {
         }
-        version = version.replace("-aio", "").replace("-mali", "").replace("-alpha-", " alpha ");
+        version = version.replace("-aio", " AIO").replace("-mali", "").replace("-alpha-", " alpha ");
         return "Version " + version;
     }
 
@@ -720,6 +720,11 @@ public class LauncherActivity extends Activity {
             new GraphicsSetting("Colour clear folding",
                     "Clears colour targets through the render pass instead of a separate command; saves memory traffic on tile-based GPUs (Adreno)",
                     new String[] {"gta4_native_fold_color_clears"},
+                    new String[] {"Off (Default)", "On"},
+                    new String[] {"true"}),
+            new GraphicsSetting("Frame generation",
+                    "Experimental: the game renders every 2nd image and the GPU draws the one in between (frame limit 30 = game at 15 FPS, 30 images shown). Saves CPU and GPU time, adds about one frame of input delay",
+                    new String[] {"gta4_native_frame_generation_simple"},
                     new String[] {"Off (Default)", "On"},
                     new String[] {"true"}),
             new GraphicsSetting("Audio buffer",

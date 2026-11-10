@@ -5,10 +5,15 @@
 #include <chrono>
 #include <vector>
 
+#include <rex/cvar.h>
 #include <rex/logging.h>
 #include <rex/ui/vulkan/util.h>
 
 #include "simple_frame_generation_spv.h"
+
+REXCVAR_DEFINE_BOOL(gta4_native_frame_generation_debug_generated_only, false,
+                    "GTA IV/Diagnostics",
+                    "Frame generation debug: show the generated image in place of the real one");
 
 namespace rex::graphics::gta4_native::temporal {
 namespace {
@@ -456,6 +461,19 @@ bool SimpleFrameGeneration::Encode(const ui::vulkan::VulkanDevice& device, VkCom
     dispatch(2, extent.width, extent.height);
     barrier(pair->image[0], VK_IMAGE_LAYOUT_GENERAL, kInternalLayout,
             VK_ACCESS_SHADER_WRITE_BIT, kInternalAccess, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+            kInternalStage);
+  }
+  if (s.have_prev && REXCVAR_GET(gta4_native_frame_generation_debug_generated_only)) {
+    barrier(pair->image[0], kInternalLayout, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, kInternalAccess,
+            VK_ACCESS_TRANSFER_READ_BIT, kInternalStage, VK_PIPELINE_STAGE_TRANSFER_BIT);
+    barrier(pair->image[1], kInternalLayout, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, kInternalAccess,
+            VK_ACCESS_TRANSFER_WRITE_BIT, kInternalStage, VK_PIPELINE_STAGE_TRANSFER_BIT);
+    copy(pair->image[0], pair->image[1]);
+    barrier(pair->image[0], VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, kInternalLayout,
+            VK_ACCESS_TRANSFER_READ_BIT, kInternalAccess, VK_PIPELINE_STAGE_TRANSFER_BIT,
+            kInternalStage);
+    barrier(pair->image[1], VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, kInternalLayout,
+            VK_ACCESS_TRANSFER_WRITE_BIT, kInternalAccess, VK_PIPELINE_STAGE_TRANSFER_BIT,
             kInternalStage);
   }
   // The presenter image goes back to the layout its release barrier expects.

@@ -190,3 +190,13 @@ no errors. The two screenshots taken (a still room, a camera pan) show no black
 areas, double edges or smearing; which frame (real or generated) a screenshot
 shows is not known, so a proper look needs a switch that shows only generated
 frames. Not measured yet: the GPU time of the three passes.
+
+### Quality check and menu (v70, v71)
+`gta4_native_frame_generation_debug_generated_only` (diagnostics, off) copies the
+generated image over the real one, so the display shows only interpolated
+frames. Pixel 9a, frame limit 30: a still room and a slow camera pan show no
+double edges, smearing or black borders, and the HUD and minimap stay intact.
+Not yet looked at: fast driving, car headlights, the rotating minimap. The GPU
+time of the three passes is still not measured.
+The launcher has a "Frame generation" row (off by default) and shows the
+version as "0.6.0 AIO alpha 1.6".
