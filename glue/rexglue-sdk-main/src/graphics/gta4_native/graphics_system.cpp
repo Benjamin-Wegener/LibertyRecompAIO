@@ -299,8 +299,8 @@ REXCVAR_DEFINE_BOOL(gta4_native_fold_color_clears, false, "GTA IV/Graphics/Nativ
                     "on a full-target clear, instead of loading the old contents and clearing "
                     "again (saves a tile-memory read on tile-based GPUs)");
 REXCVAR_DEFINE_BOOL(gta4_native_frame_generation_simple, false, "GTA IV/Graphics/Native Renderer",
-                    "Experimental: present a generated frame half a frame before every real frame "
-                    "(phase 1: a copy of the previous frame; needs a FIFO swapchain)");
+                    "Experimental: present a generated frame (the plain mix of the previous and the "
+                    "current frame) half a frame before every real frame; needs a FIFO swapchain");
 REXCVAR_DEFINE_BOOL(gta4_native_drop_inert_blending, true, "GTA IV/Graphics/Native Renderer",
                     "Disable blending on targets where it cannot change the result (no channel "
                     "written, or source*1 + destination*0), so Turnip keeps LRZ on");

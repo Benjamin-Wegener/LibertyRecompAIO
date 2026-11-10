@@ -7,12 +7,11 @@
 
 namespace rex::graphics::gta4_native::temporal {
 
-// Android frame generation that needs no motion vectors from the title: the
-// presenter shows a "generated" image half a frame before the "real" one
-// (VulkanPresenter::SetGeneratedFrame). Phase 1 (this file): the generated image
-// is a copy of the previous final frame, which validates the image contract,
-// the leases and the pacing. A later phase replaces the copy with a motion
-// compensated blend of the previous and the current frame.
+// Cheap Android frame generation: the presenter shows a "generated" image half
+// a frame before the "real" one (VulkanPresenter::SetGeneratedFrame). The
+// generated image is the plain 50 % mix of the previous and the current final
+// frame, computed in one compute pass. (A motion-compensated version was tried
+// and dropped: see docs/PERFORMANCE_ROADMAP.md.)
 class SimpleFrameGeneration {
  public:
   SimpleFrameGeneration();

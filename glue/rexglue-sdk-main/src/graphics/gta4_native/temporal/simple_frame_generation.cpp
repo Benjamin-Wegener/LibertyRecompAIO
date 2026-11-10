@@ -5,15 +5,10 @@
 #include <chrono>
 #include <vector>
 
-#include <rex/cvar.h>
 #include <rex/logging.h>
 #include <rex/ui/vulkan/util.h>
 
 #include "simple_frame_generation_spv.h"
-
-REXCVAR_DEFINE_BOOL(gta4_native_frame_generation_debug_generated_only, false,
-                    "GTA IV/Diagnostics",
-                    "Frame generation debug: show the generated image in place of the real one");
 
 namespace rex::graphics::gta4_native::temporal {
 namespace {
@@ -24,7 +19,6 @@ constexpr VkImageUsageFlags kSharedUsage = VK_IMAGE_USAGE_SAMPLED_BIT |
 // Mailboxes + display submissions in flight + the pair being encoded.
 constexpr size_t kMaximumPairs = 8;
 constexpr uint64_t kMaximumIntervalNs = 100'000'000;
-constexpr uint32_t kBlockPixels = 16;  // pixels per motion block side
 
 bool WaitIdle(const ui::vulkan::VulkanDevice& device) {
   std::vector<ui::vulkan::VulkanDevice::Queue::Acquisition> locks;
@@ -78,7 +72,6 @@ struct ComputeInputs {
   VkDescriptorPool pool = VK_NULL_HANDLE;
   VkSampler sampler = VK_NULL_HANDLE;
   std::array<VkImageView, 2> cur{};   // the two private frame copies, in turn
-  VkImageView luma_prev = VK_NULL_HANDLE, luma_cur = VK_NULL_HANDLE, motion = VK_NULL_HANDLE;
 };
 
 // A generated and a real image, shared with the presenter, and the two
@@ -157,16 +150,10 @@ struct ImagePair {
                                               VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
       const VkDescriptorImageInfo store_generated{VK_NULL_HANDLE, pair->view[0],
                                                   VK_IMAGE_LAYOUT_GENERAL};
-      const VkDescriptorImageInfo store_luma_prev{VK_NULL_HANDLE, inputs.luma_prev,
-                                                  VK_IMAGE_LAYOUT_GENERAL};
-      const VkDescriptorImageInfo store_luma_cur{VK_NULL_HANDLE, inputs.luma_cur,
-                                                 VK_IMAGE_LAYOUT_GENERAL};
-      const VkDescriptorImageInfo store_motion{VK_NULL_HANDLE, inputs.motion,
-                                               VK_IMAGE_LAYOUT_GENERAL};
-      const std::array<const VkDescriptorImageInfo*, 6> infos{&sampled_prev, &sampled_cur,
-          &store_generated, &store_luma_prev, &store_luma_cur, &store_motion};
-      std::array<VkWriteDescriptorSet, 6> writes{};
-      for (uint32_t b = 0; b < 6; ++b) {
+      const std::array<const VkDescriptorImageInfo*, 3> infos{&sampled_prev, &sampled_cur,
+                                                              &store_generated};
+      std::array<VkWriteDescriptorSet, 3> writes{};
+      for (uint32_t b = 0; b < 3; ++b) {
         writes[b].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
         writes[b].dstSet = pair->sets[parity];
         writes[b].dstBinding = b;
@@ -184,16 +171,12 @@ struct ImagePair {
 
 struct PushConstants {
   int32_t full[2];
-  int32_t quarter[2];
-  int32_t grid[2];
-  int32_t pass_index;
-  int32_t pad;
 };
 }  // namespace
 
 struct SimpleFrameGeneration::Impl {
   const ui::vulkan::VulkanDevice* device = nullptr;
-  VkExtent2D extent{}, quarter{}, grid{};
+  VkExtent2D extent{};
   bool failed = false;
   // Compute objects
   VkShaderModule module = VK_NULL_HANDLE;
@@ -203,8 +186,6 @@ struct SimpleFrameGeneration::Impl {
   // Private images: two copies of the final frame in turn, small work images.
   std::array<PrivateImage, 2> cur;
   std::array<VkImageLayout, 2> cur_layout{VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_UNDEFINED};
-  PrivateImage luma_prev, luma_cur, motion;
-  bool work_images_ready = false;
   uint32_t parity = 0;
   bool have_prev = false;
 
@@ -221,9 +202,6 @@ struct SimpleFrameGeneration::Impl {
       const auto& fn = device->functions();
       DestroyPrivateImage(*device, cur[0]);
       DestroyPrivateImage(*device, cur[1]);
-      DestroyPrivateImage(*device, luma_prev);
-      DestroyPrivateImage(*device, luma_cur);
-      DestroyPrivateImage(*device, motion);
       if (inputs.pool) fn.vkDestroyDescriptorPool(device->device(), inputs.pool, nullptr);
       if (inputs.sampler) fn.vkDestroySampler(device->device(), inputs.sampler, nullptr);
       if (inputs.set_layout)
@@ -237,20 +215,14 @@ struct SimpleFrameGeneration::Impl {
     pipeline_layout = VK_NULL_HANDLE;
     module = VK_NULL_HANDLE;
     cur_layout = {VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_UNDEFINED};
-    work_images_ready = false;
     have_prev = false;
     parity = 0;
   }
 
   bool Initialize() {
     const auto& fn = device->functions();
-    quarter = {(extent.width + 3) / 4, (extent.height + 3) / 4};
-    grid = {(quarter.width + 3) / 4, (quarter.height + 3) / 4};
     if (!CreatePrivateImage(*device, extent, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, cur[0]) ||
-        !CreatePrivateImage(*device, extent, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, cur[1]) ||
-        !CreatePrivateImage(*device, quarter, VK_IMAGE_USAGE_STORAGE_BIT, luma_prev) ||
-        !CreatePrivateImage(*device, quarter, VK_IMAGE_USAGE_STORAGE_BIT, luma_cur) ||
-        !CreatePrivateImage(*device, grid, VK_IMAGE_USAGE_STORAGE_BIT, motion)) {
+        !CreatePrivateImage(*device, extent, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, cur[1])) {
       return false;
     }
     VkShaderModuleCreateInfo module_info{VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO};
@@ -258,8 +230,8 @@ struct SimpleFrameGeneration::Impl {
     module_info.pCode = kSimpleFrameGenerationSpirv;
     if (fn.vkCreateShaderModule(device->device(), &module_info, nullptr, &module) != VK_SUCCESS)
       return false;
-    std::array<VkDescriptorSetLayoutBinding, 6> bindings{};
-    for (uint32_t b = 0; b < 6; ++b) {
+    std::array<VkDescriptorSetLayoutBinding, 3> bindings{};
+    for (uint32_t b = 0; b < 3; ++b) {
       bindings[b].binding = b;
       bindings[b].descriptorCount = 1;
       bindings[b].descriptorType = b < 2 ? VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
@@ -298,7 +270,7 @@ struct SimpleFrameGeneration::Impl {
       return false;
     const std::array<VkDescriptorPoolSize, 2> sizes{{
         {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, uint32_t(kMaximumPairs * 2 * 2)},
-        {VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, uint32_t(kMaximumPairs * 2 * 4)}}};
+        {VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, uint32_t(kMaximumPairs * 2)}}};
     VkDescriptorPoolCreateInfo pool_info{VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO};
     pool_info.maxSets = uint32_t(kMaximumPairs * 2);
     pool_info.poolSizeCount = uint32_t(sizes.size());
@@ -306,9 +278,6 @@ struct SimpleFrameGeneration::Impl {
     if (fn.vkCreateDescriptorPool(device->device(), &pool_info, nullptr, &inputs.pool) != VK_SUCCESS)
       return false;
     inputs.cur = {cur[0].view, cur[1].view};
-    inputs.luma_prev = luma_prev.view;
-    inputs.luma_cur = luma_cur.view;
-    inputs.motion = motion.view;
     return true;
   }
 
@@ -386,13 +355,6 @@ bool SimpleFrameGeneration::Encode(const ui::vulkan::VulkanDevice& device, VkCom
     fn.vkCmdCopyImage(commands, from, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, to,
                       VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
   };
-  const auto compute_barrier = [&]() {
-    VkMemoryBarrier m{VK_STRUCTURE_TYPE_MEMORY_BARRIER};
-    m.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT | VK_ACCESS_SHADER_READ_BIT;
-    m.dstAccessMask = VK_ACCESS_SHADER_WRITE_BIT | VK_ACCESS_SHADER_READ_BIT;
-    fn.vkCmdPipelineBarrier(commands, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
-                            VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &m, 0, nullptr, 0, nullptr);
-  };
   constexpr auto kInternalLayout = ui::vulkan::VulkanPresenter::kGuestOutputInternalLayout;
   constexpr auto kInternalStage = ui::vulkan::VulkanPresenter::kGuestOutputInternalStageMask;
   constexpr auto kInternalAccess = ui::vulkan::VulkanPresenter::kGuestOutputInternalAccessMask;
@@ -429,51 +391,18 @@ bool SimpleFrameGeneration::Encode(const ui::vulkan::VulkanDevice& device, VkCom
   s.cur_layout[p] = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
   if (s.have_prev) {
-    if (!s.work_images_ready) {
-      for (VkImage image : {s.luma_prev.image, s.luma_cur.image, s.motion.image}) {
-        barrier(image, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL, 0,
-                VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT,
-                VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT);
-      }
-      s.work_images_ready = true;
-    }
     barrier(pair->image[0], VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL, 0,
             VK_ACCESS_SHADER_WRITE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
             VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT);
-    // The work images are reused every frame: wait for the previous frame's passes.
-    compute_barrier();
     fn.vkCmdBindPipeline(commands, VK_PIPELINE_BIND_POINT_COMPUTE, s.pipeline);
     fn.vkCmdBindDescriptorSets(commands, VK_PIPELINE_BIND_POINT_COMPUTE, s.pipeline_layout, 0, 1,
                                &pair->sets[p], 0, nullptr);
-    PushConstants push{{int32_t(extent.width), int32_t(extent.height)},
-                       {int32_t(s.quarter.width), int32_t(s.quarter.height)},
-                       {int32_t(s.grid.width), int32_t(s.grid.height)}, 0, 0};
-    const auto dispatch = [&](int32_t pass_index, uint32_t width, uint32_t height) {
-      push.pass_index = pass_index;
-      fn.vkCmdPushConstants(commands, s.pipeline_layout, VK_SHADER_STAGE_COMPUTE_BIT, 0,
-                            sizeof(push), &push);
-      fn.vkCmdDispatch(commands, (width + 7) / 8, (height + 7) / 8, 1);
-    };
-    dispatch(0, s.quarter.width, s.quarter.height);
-    compute_barrier();
-    dispatch(1, s.grid.width, s.grid.height);
-    compute_barrier();
-    dispatch(2, extent.width, extent.height);
+    const PushConstants push{{int32_t(extent.width), int32_t(extent.height)}};
+    fn.vkCmdPushConstants(commands, s.pipeline_layout, VK_SHADER_STAGE_COMPUTE_BIT, 0,
+                          sizeof(push), &push);
+    fn.vkCmdDispatch(commands, (extent.width + 7) / 8, (extent.height + 7) / 8, 1);
     barrier(pair->image[0], VK_IMAGE_LAYOUT_GENERAL, kInternalLayout,
             VK_ACCESS_SHADER_WRITE_BIT, kInternalAccess, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
-            kInternalStage);
-  }
-  if (s.have_prev && REXCVAR_GET(gta4_native_frame_generation_debug_generated_only)) {
-    barrier(pair->image[0], kInternalLayout, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, kInternalAccess,
-            VK_ACCESS_TRANSFER_READ_BIT, kInternalStage, VK_PIPELINE_STAGE_TRANSFER_BIT);
-    barrier(pair->image[1], kInternalLayout, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, kInternalAccess,
-            VK_ACCESS_TRANSFER_WRITE_BIT, kInternalStage, VK_PIPELINE_STAGE_TRANSFER_BIT);
-    copy(pair->image[0], pair->image[1]);
-    barrier(pair->image[0], VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, kInternalLayout,
-            VK_ACCESS_TRANSFER_READ_BIT, kInternalAccess, VK_PIPELINE_STAGE_TRANSFER_BIT,
-            kInternalStage);
-    barrier(pair->image[1], VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, kInternalLayout,
-            VK_ACCESS_TRANSFER_WRITE_BIT, kInternalAccess, VK_PIPELINE_STAGE_TRANSFER_BIT,
             kInternalStage);
   }
   // The presenter image goes back to the layout its release barrier expects.

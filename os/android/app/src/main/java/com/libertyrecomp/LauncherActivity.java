@@ -311,6 +311,17 @@ public class LauncherActivity extends Activity {
         banner.setMaxHeight(getResources().getDisplayMetrics().heightPixels / 6);
         left.addView(banner, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        // The banner is an image of the original name: add the AIO mark under it.
+        TextView aio = text("AIO", 14, R.color.picker_text);
+        if (mFontBlack != null) aio.setTypeface(mFontBlack);
+        aio.setTextColor(0xFFFFFFFF);
+        aio.setLetterSpacing(0.15f);
+        aio.setPadding(dp(12), dp(2), dp(12), dp(2));
+        aio.setBackground(rounded(ACCENT, dp(4)));
+        left.addView(aio, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT) {{
+            topMargin = dp(4);
+        }});
         // Clean header: the version on one line, the device on a muted second line.
         TextView version = text(prettyVersion(), 13, R.color.picker_text);
         if (mFontBlack != null) version.setTypeface(mFontBlack);
@@ -388,10 +399,10 @@ public class LauncherActivity extends Activity {
         }
     }
 
-    /** Orange tint with a bar on the left; an orange outline while focused. */
+    /** Blue tint with a bar on the left; a blue outline while focused. */
     private android.graphics.drawable.Drawable menuSelectedBackground() {
-        GradientDrawable fill = rounded(0x33F0A030, dp(10));
-        GradientDrawable focusedFill = rounded(0x33F0A030, dp(10));
+        GradientDrawable fill = rounded(0x332F8CFF, dp(10));
+        GradientDrawable focusedFill = rounded(0x332F8CFF, dp(10));
         focusedFill.setStroke(dp(2), ACCENT);
         GradientDrawable bar = rounded(ACCENT, dp(2));
         StateListDrawable states = new StateListDrawable();
@@ -723,7 +734,7 @@ public class LauncherActivity extends Activity {
                     new String[] {"Off (Default)", "On"},
                     new String[] {"true"}),
             new GraphicsSetting("Frame generation (alpha, not finished)",
-                    "Alpha, not finished: the game renders every 2nd image and the GPU draws the one in between (frame limit 30 = game at 15 FPS, 30 images shown). Saves CPU and GPU time, adds about one frame of input delay",
+                    "Alpha, not finished: the game renders every 2nd image and the in-between image is a plain blend of two frames (frame limit 30 = game at 15 FPS, 30 images shown). Ghosting on fast motion, about one frame of input delay, no measured power saving on the Pixel 9a",
                     new String[] {"gta4_native_frame_generation_simple"},
                     new String[] {"Off (Default)", "On"},
                     new String[] {"true"}),
@@ -2175,7 +2186,7 @@ public class LauncherActivity extends Activity {
         // A pop-up needs a solid background (picker_card is see-through in the
         // GTA-style launcher, made for cards on the glass panel).
         GradientDrawable dialogBackground = rounded(0xF5141518, dp(14));
-        dialogBackground.setStroke(dp(1), 0x66F0A030);
+        dialogBackground.setStroke(dp(1), 0x662F8CFF);
         card.setBackground(dialogBackground);
 
         TextView title = text("Performance test settings", 18, R.color.picker_text);

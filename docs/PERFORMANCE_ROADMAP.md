@@ -175,28 +175,30 @@ scene is admitted only after the generated image was shown, so guest frame and
 render still run one after the other. The generated image is still a copy of the
 previous frame; phase 2 (motion compensated interpolation) makes it smooth.
 
-### Phase 2 (v69): GPU interpolation
-`simple_frame_generation.comp` (glslc, embedded as `simple_frame_generation_spv.h`)
-runs three compute passes on the GPU: luma of both frames at quarter resolution;
-one vector per 16x16 block (full search of +-48 pixels, a small cost on the
-vector length, and a vector is only kept when it clearly beats standing still);
-then the generated image: bilinear blend of the four nearest block vectors, both
-frames sampled half a vector toward the middle in time, with a fallback to the
-plain mix where the two samples disagree (occlusion, transparency). Two private
-copies of the final frame alternate as "previous" and "current"; the pair shared
-with the presenter holds the generated and a copy of the real frame.
-Pixel 9a, frame limit 30 with the compute pass: game 15.1/s, 30.1 images/s shown,
-no errors. The two screenshots taken (a still room, a camera pan) show no black
-areas, double edges or smearing; which frame (real or generated) a screenshot
-shows is not known, so a proper look needs a switch that shows only generated
-frames. Not measured yet: the GPU time of the three passes.
+### Outcome: plain blend only (release decision)
+Phase 2 (v69-v74: three, later four compute passes of block matching and warp,
+an adaptive 16/8 px block size, a per-pixel check against standing still) was
+built and measured, then dropped:
+* Looks: block-matched warps turned thin structures (girders, fences, wires) and
+  the HUD into wobbling smears ("video effect"); the per-pixel check removed the
+  HUD artefacts but not the smearing of structures. Good results need real object
+  motion vectors, which Android does not produce (see below).
+* Power: Pixel 9a, frame limit 30, battery current with generation on and off,
+  alternating, 3 x 15 samples in a street scene: about 5.0 A and 5.0 A (no
+  difference; earlier pairs in other scenes were equal or worse with generation).
+  The Pixel is not at its limit at 30 FPS, so nothing is gained.
+* Not measured: the GPU time of the passes, and a phone that cannot reach 30 FPS.
+Kept: a one-pass blend (`simple_frame_generation.comp`, 50 % of the previous and
+the current frame) behind `gta4_native_frame_generation_simple` (off), shown in
+the launcher as "Frame generation (alpha, not finished)" on the Experimental tab.
+The motion-compensated code and the "generated only" debug switch are gone from
+the tree (history: commits 8983e2e2 and later on this branch).
 
-### Quality check and menu (v70, v71)
-`gta4_native_frame_generation_debug_generated_only` (diagnostics, off) copies the
-generated image over the real one, so the display shows only interpolated
-frames. Pixel 9a, frame limit 30: a still room and a slow camera pan show no
-double edges, smearing or black borders, and the HUD and minimap stay intact.
-Not yet looked at: fast driving, car headlights, the rotating minimap. The GPU
-time of the three passes is still not measured.
-The launcher has a "Frame generation (alpha, not finished)" row (off by default) and shows the
-version as "0.6.0 AIO alpha 1.6".
+Where real motion vectors would come from: the native renderer already writes
+per-object motion and depth (`geometry_history.h`, `vulkan_scene.cpp`, extra
+colour attachments) for the desktop FSR 3 / DLSS path, but only after the guest
+sends a temporal query (`graphics_system.cpp` near `temporal_query_selections_`).
+Nobody sends it on Android, and the Android build has FSR 1 only (no FSR 3 SDK).
+Enabling that path and feeding the vectors to the compute pass (or the FSR 3 SDK)
+is the way to a good result; it costs extra render targets on a tile-based GPU.
+Not started.

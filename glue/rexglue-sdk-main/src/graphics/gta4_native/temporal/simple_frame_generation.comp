@@ -1,97 +1,18 @@
 #version 450
-// Frame interpolation without help from the title: block matching on a quarter
-// resolution luma image, then a warp of both frames to the middle in time.
-//   pass 0: luma of the previous and the current frame at quarter resolution
-//   pass 1: one motion vector per 16x16 block (4x4 blocks of the quarter image)
-//   pass 2: the generated frame
+// Cheap frame generation: the generated image is the plain 50 % mix of the
+// previous and the current final frame (no motion estimation).
 layout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
 
 layout(set = 0, binding = 0) uniform sampler2D prev_frame;
 layout(set = 0, binding = 1) uniform sampler2D cur_frame;
 layout(set = 0, binding = 2, rgba16f) uniform writeonly image2D generated;
-layout(set = 0, binding = 3, rgba16f) uniform image2D luma_prev;
-layout(set = 0, binding = 4, rgba16f) uniform image2D luma_cur;
-layout(set = 0, binding = 5, rgba16f) uniform image2D motion;  // xy: pixels, z: confidence
 
 layout(push_constant) uniform Constants {
-  ivec2 full;      // full resolution
-  ivec2 quarter;   // quarter resolution
-  ivec2 grid;      // blocks
-  int pass_index;
+  ivec2 full;  // full resolution
 } pc;
-
-const int kSearch = 12;      // quarter pixels: +-48 full pixels
-const int kBlock = 4;        // quarter pixels per block side
-const float kLumaR = 0.299, kLumaG = 0.587, kLumaB = 0.114;
-
-float luma(vec3 c) { return dot(c, vec3(kLumaR, kLumaG, kLumaB)); }
-
-float lumaOf(sampler2D s, ivec2 q) {
-  float sum = 0.0;
-  for (int y = 0; y < 4; ++y)
-    for (int x = 0; x < 4; ++x) {
-      ivec2 p = min(q * 4 + ivec2(x, y), pc.full - 1);
-      sum += luma(texelFetch(s, p, 0).rgb);
-    }
-  return sum * (1.0 / 16.0);
-}
-
-float lumaPrevAt(ivec2 q) { return imageLoad(luma_prev, clamp(q, ivec2(0), pc.quarter - 1)).r; }
-float lumaCurAt(ivec2 q) { return imageLoad(luma_cur, clamp(q, ivec2(0), pc.quarter - 1)).r; }
 
 void main() {
   ivec2 id = ivec2(gl_GlobalInvocationID.xy);
-  if (pc.pass_index == 0) {
-    if (any(greaterThanEqual(id, pc.quarter))) return;
-    imageStore(luma_prev, id, vec4(lumaOf(prev_frame, id)));
-    imageStore(luma_cur, id, vec4(lumaOf(cur_frame, id)));
-  } else if (pc.pass_index == 1) {
-    if (any(greaterThanEqual(id, pc.grid))) return;
-    ivec2 origin = id * kBlock;
-    float best = 1e30, zero = 0.0;
-    ivec2 best_d = ivec2(0);
-    for (int dy = -kSearch; dy <= kSearch; ++dy) {
-      for (int dx = -kSearch; dx <= kSearch; ++dx) {
-        float sad = 0.0;
-        for (int y = 0; y < kBlock; ++y)
-          for (int x = 0; x < kBlock; ++x) {
-            ivec2 p = origin + ivec2(x, y);
-            sad += abs(lumaPrevAt(p) - lumaCurAt(p + ivec2(dx, dy)));
-          }
-        if (dx == 0 && dy == 0) zero = sad;
-        // A small cost on the length keeps flat or noisy areas from inventing motion.
-        sad += 0.002 * float(abs(dx) + abs(dy));
-        if (sad < best) { best = sad; best_d = ivec2(dx, dy); }
-      }
-    }
-    // Only trust a vector that is clearly better than standing still.
-    bool moved = best < zero * 0.85 - 0.004 && best_d != ivec2(0);
-    float confidence = moved ? clamp(1.0 - best / max(zero, 1e-4), 0.0, 1.0) : 0.0;
-    imageStore(motion, id, vec4(moved ? vec2(best_d) * 4.0 : vec2(0.0), confidence, 0.0));
-  } else {
-    if (any(greaterThanEqual(id, pc.full))) return;
-    vec2 uv_size = vec2(pc.full);
-    vec2 pos = vec2(id) + 0.5;
-    // Bilinear blend of the four nearest block vectors (block centres at 16 px).
-    vec2 g = pos / 16.0 - 0.5;
-    ivec2 g0 = ivec2(floor(g));
-    vec2 f = g - vec2(g0);
-    vec3 m00 = imageLoad(motion, clamp(g0, ivec2(0), pc.grid - 1)).xyz;
-    vec3 m10 = imageLoad(motion, clamp(g0 + ivec2(1, 0), ivec2(0), pc.grid - 1)).xyz;
-    vec3 m01 = imageLoad(motion, clamp(g0 + ivec2(0, 1), ivec2(0), pc.grid - 1)).xyz;
-    vec3 m11 = imageLoad(motion, clamp(g0 + ivec2(1, 1), ivec2(0), pc.grid - 1)).xyz;
-    vec3 m = mix(mix(m00, m10, f.x), mix(m01, m11, f.x), f.y);
-    vec2 mv = m.xy;
-    vec4 still_prev = texture(prev_frame, pos / uv_size);
-    vec4 still_cur = texture(cur_frame, pos / uv_size);
-    vec4 still = 0.5 * (still_prev + still_cur);
-    vec4 a = texture(prev_frame, (pos - 0.5 * mv) / uv_size);
-    vec4 b = texture(cur_frame, (pos + 0.5 * mv) / uv_size);
-    vec4 warped = 0.5 * (a + b);
-    // Where the two warped samples disagree the vector was wrong (occlusion,
-    // transparency, a repeating pattern): fall back to the plain mix.
-    float disagreement = abs(luma(a.rgb) - luma(b.rgb));
-    float use_motion = (1.0 - smoothstep(0.08, 0.25, disagreement)) * smoothstep(0.0, 0.2, m.z);
-    imageStore(generated, id, mix(still, warped, use_motion));
-  }
+  if (any(greaterThanEqual(id, pc.full))) return;
+  imageStore(generated, id, 0.5 * (texelFetch(prev_frame, id, 0) + texelFetch(cur_frame, id, 0)));
 }
