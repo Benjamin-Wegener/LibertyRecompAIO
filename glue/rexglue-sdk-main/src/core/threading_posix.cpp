@@ -256,12 +256,14 @@ class PosixConditionBase {
     if (predicate()) {
       executed = true;
     } else {
+      ++cond_waiters_;
       if (timeout == std::chrono::milliseconds::max()) {
         cond_.wait(lock, predicate);
         executed = true;  // Did not time out;
       } else {
         executed = cond_.wait_for(lock, timeout, predicate);
       }
+      --cond_waiters_;
     }
     if (executed) {
       post_execution();
@@ -377,6 +379,11 @@ class PosixConditionBase {
 
   // Callers hold mutex_. Wakes every WaitMultiple currently including this
   // handle; lock order is always handle mutex_ then waiter mutex.
+  // Caller holds mutex_.
+  void NotifyLocalWaiters() {
+    if (cond_waiters_) cond_.notify_all();
+  }
+
   void NotifyExternalWaiters() {
     for (ExternalWaiter* waiter : external_waiters_) {
       std::lock_guard<std::mutex> lock(waiter->mutex);
@@ -395,6 +402,10 @@ class PosixConditionBase {
   std::condition_variable cond_;
   std::mutex mutex_;
   std::vector<ExternalWaiter*> external_waiters_;  // guarded by mutex_
+  // Threads blocked in Wait() on cond_ (guarded by mutex_). Bionic's
+  // pthread_cond_broadcast always enters the kernel, so signalling skips it
+  // when nobody waits (the game releases a job semaphore per queued job).
+  uint32_t cond_waiters_ = 0;
 };
 
 // There really is no native POSIX handle for a single wait/signal construct
@@ -414,7 +425,7 @@ class PosixCondition<Event> : public PosixConditionBase {
   bool Signal() override {
     auto lock = std::unique_lock<std::mutex>(mutex_);
     signal_ = true;
-    cond_.notify_all();
+    NotifyLocalWaiters();
     NotifyExternalWaiters();
     return true;
   }
@@ -452,7 +463,7 @@ class PosixCondition<Semaphore> : public PosixConditionBase {
       *out_previous_count = count_;
     }
     count_ += release_count;
-    cond_.notify_all();
+    NotifyLocalWaiters();
     NotifyExternalWaiters();
     return true;
   }
@@ -460,9 +471,7 @@ class PosixCondition<Semaphore> : public PosixConditionBase {
  private:
   inline bool signaled() const override { return count_ > 0; }
   inline void post_execution() override {
-    count_--;
-    cond_.notify_all();
-    NotifyExternalWaiters();
+    count_--;  // a decrement cannot satisfy any waiter: no wake-up
   }
   uint32_t count_;
   const uint32_t maximum_count_;
@@ -486,7 +495,7 @@ class PosixCondition<Mutant> : public PosixConditionBase {
       --count_;
       // Free to be acquired by another thread
       if (count_ == 0) {
-        cond_.notify_all();
+        NotifyLocalWaiters();
         NotifyExternalWaiters();
       }
       return true;
@@ -519,7 +528,7 @@ class PosixCondition<Timer> : public PosixConditionBase {
   bool Signal() override {
     std::lock_guard<std::mutex> lock(mutex_);
     signal_ = true;
-    cond_.notify_all();
+    NotifyLocalWaiters();
     NotifyExternalWaiters();
     return true;
   }
@@ -916,7 +925,7 @@ class PosixCondition<Thread> : public PosixConditionBase {
 
       exit_code_ = exit_code;
       signaled_ = true;
-      cond_.notify_all();
+      NotifyLocalWaiters();
       NotifyExternalWaiters();
     }
     if (is_current_thread) {
@@ -1368,7 +1377,7 @@ void* PosixCondition<Thread>::ThreadStartRoutine(void* parameter) {
     std::unique_lock<std::mutex> lock(thread->handle_.mutex_);
     thread->handle_.exit_code_ = 0;
     thread->handle_.signaled_ = true;
-    thread->handle_.cond_.notify_all();
+    thread->handle_.NotifyLocalWaiters();
     thread->handle_.NotifyExternalWaiters();
   }
 

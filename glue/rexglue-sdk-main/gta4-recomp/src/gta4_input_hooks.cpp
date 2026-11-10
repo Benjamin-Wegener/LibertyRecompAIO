@@ -166,7 +166,7 @@ constexpr uint32_t kLastInputTimeOffset = 4200;
 // controller records before native PC actions are merged. The record geometry
 // and addresses are independently checked by
 // /tmp/verify_controller_record_layout.py.
-constexpr uint32_t kRetailControllerRecordsAddress = 0x83127890;
+constexpr uint32_t kRetailControllerRecordsAddress = 0x82FE7890;
 constexpr uint32_t kRetailControllerRecordStride = 56;
 constexpr uint32_t kRetailControllerRecordCount = 4;
 constexpr uint32_t kRetailControllerFlagsOffset = 4;

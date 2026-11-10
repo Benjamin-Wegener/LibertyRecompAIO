@@ -29,6 +29,7 @@ static_assert(std::is_trivially_copyable_v<GpuPassOrigin> && sizeof(GpuPassOrigi
 inline constexpr uint32_t kGpuPassEnvelopeAbi = 0x47505031;
 inline constexpr uint32_t kGpuPassEnvelopeVersion = 1;
 inline constexpr uint32_t kRetailNewDrawListVtable = 0x82001038;
+inline constexpr uint32_t kRetailNewDrawListVtablePal = 0x82000B38;
 inline constexpr uint32_t kRetailCommandArenaCapacity = 0xFA000;
 inline const char* GpuPassOriginSourceName(GpuPassOriginSource source) {
   switch(source){
@@ -90,7 +91,7 @@ GpuPassOrigin DecodeExecutedGpuDrawList(uint32_t arena, uint32_t offset, uint32_
     if(page && *page && uint64_t(*page)+offset+16<=uint64_t(UINT32_MAX)+1){
       const uint32_t start=*page+offset;
       const auto vtable=at(start,0);
-      if(vtable && *vtable==kRetailNewDrawListVtable){
+      if(vtable && (*vtable==kRetailNewDrawListVtable || *vtable==kRetailNewDrawListVtablePal)){
         header_phase=at(start,12);
         const auto id=at(start,8);if(id)result.list_id=*id;else header_phase.reset();
       }

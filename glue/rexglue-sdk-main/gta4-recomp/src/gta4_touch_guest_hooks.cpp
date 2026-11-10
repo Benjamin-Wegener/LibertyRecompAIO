@@ -23,11 +23,11 @@ namespace {
 constexpr uint32_t kRadarRenderPhaseVtable = 0x82013C9C;
 constexpr uint32_t kViewportCopyVtable = 0x82000C58;
 constexpr uint32_t kCurrentRenderPhase = 0x82F1CE28;
-constexpr uint32_t kCurrentViewport = 0x83124A30;
+constexpr uint32_t kCurrentViewport = 0x82FE4A30;
 constexpr uint32_t kRadarMapMode = 0x82BEC860;
-constexpr uint32_t kTouchLoadingActive = 0x83137BB7;
-constexpr uint32_t kTouchCutsceneState = 0x82CC102C;
-constexpr uint32_t kTouchCutscenePreparing = 0x82CC1038;
+constexpr uint32_t kTouchLoadingActive = 0x82FF7BB7;
+constexpr uint32_t kTouchCutsceneState = 0x82CB102C;
+constexpr uint32_t kTouchCutscenePreparing = 0x82CB1038;
 constexpr uint32_t kPhaseViewportOffset = 176;
 constexpr uint32_t kCopiedViewportOffset = 16;
 constexpr uint32_t kViewportCopySize = 1040;

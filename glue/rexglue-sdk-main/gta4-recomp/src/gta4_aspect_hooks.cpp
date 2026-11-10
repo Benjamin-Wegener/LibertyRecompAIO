@@ -103,8 +103,8 @@ void TraceLoadingMask(const UiContext& layout, const Rect& source, const char* k
       mapped.right, mapped.bottom, layout.transform.sx, layout.transform.sy, layout.transform.ox,
       layout.transform.oy);
 }
-constexpr uint32_t kCurrentViewport = 0x83124A30;
-constexpr uint32_t kStartupViewport = 0x83124A24;
+constexpr uint32_t kCurrentViewport = 0x82FE4A30;
+constexpr uint32_t kStartupViewport = 0x82FE4A24;
 constexpr uint32_t kFontStateIndex = 0x82A23394;
 constexpr uint32_t kFontStates = 0x82B8E5A8;
 // The exact address of the HUD object table is generated below from its PPC lis/addi.
@@ -450,8 +450,8 @@ void DrawQuad(PPCContext& ctx, uint8_t* base, GuestFunction original, bool textu
     bounds.top = std::min(bounds.top, y);
     bounds.bottom = std::max(bounds.bottom, y);
   }
-  const bool solid = !textured && Span(base, 0x83125180, 4) && Span(base, 0x83125590, 4) &&
-                     Read(base, 0x83125180) == Read(base, 0x83125590);
+  const bool solid = !textured && Span(base, 0x82FE5180, 4) && Span(base, 0x82FE5590, 4) &&
+                     Read(base, 0x82FE5180) == Read(base, 0x82FE5590);
   if (solid)
     layout.transform = CoveringBackground(layout.transform, bounds);
   const EmitScope emit({layout.transform, !layout.transform.identity()});
@@ -461,24 +461,21 @@ void DrawRadarSection(PPCContext& ctx, uint8_t* base, GuestFunction original) {
   const DcScope dc(ctx, base);
   const auto current = CurrentUi(base);
   // The pause-menu map draws its blips and route through these emitters too.
-  // Moving them by the minimap's bottom-left layout put them off the map by a
-  // distance growing away from that corner, so on wider-than-16:9 screens they
-  // slid across the map as it scrolled. In the pause menu they follow the
-  // frontend layout like the map itself.
+  // In the pause menu they follow the frontend layout like the map itself.
   constexpr uint32_t kPauseMenuVisibleAddress = 0x82BEC860;
   const bool pause_menu =
       Span(base, kPauseMenuVisibleAddress, 1) &&
       *reinterpret_cast<const uint8_t*>(rex::memory::GuestPtr(base, kPauseMenuVisibleAddress)) != 0;
-  const auto layout = current.active && current.role == UiRole::kRadar ? current
-                      : pause_menu                                     ? current
-                                                                       : RadarUi(base);
-  const auto transform = layout.transform;
-  // These are radar-section emitters, not generic UI sections. Some retail
-  // callers reach them without the enclosing HUD_RADAR scope; falling back to
-  // CurrentUi() in that case centered the route while the radar itself stayed
-  // bottom-left anchored, visibly separating the GPS line from the minimap.
-  const EmitScope emit({transform, layout.active && !transform.identity()});
-  original(ctx, base);
+  if (pause_menu) {
+    const auto transform = current.transform;
+    const EmitScope emit({transform, current.active && !transform.identity()});
+    original(ctx, base);
+  } else {
+    // In-game HUD minimap: the map layer (sub_8218E768) is drawn untransformed.
+    // Keep blips (sub_8218E8E0) and GPS route (sub_8218E900) untransformed as well
+    // so they stay in 1:1 concentric alignment with streets and player arrow.
+    original(ctx, base);
+  }
 }
 void DrawWindow(PPCContext& ctx, uint8_t* base, GuestFunction original) {
   // Generated sub_821F6E38 forwards normalized measured bounds unchanged to

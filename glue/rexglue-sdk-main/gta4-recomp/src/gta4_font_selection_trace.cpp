@@ -73,7 +73,7 @@ uint32_t Owner(uint8_t* base, uint32_t font) {
   return Readable(base, address, 4) ? Read32(base, address) : 0;
 }
 uint32_t Frame(uint8_t* base) {
-  constexpr uint32_t device_slot = 0x83124AF4;
+  constexpr uint32_t device_slot = 0x82FE4AF4;
   if (!Readable(base, device_slot, 4))
     return 0;
   const uint32_t device = Read32(base, device_slot);

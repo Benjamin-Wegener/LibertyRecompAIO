@@ -69,7 +69,7 @@ std::optional<uint32_t> BoundaryWord(uint8_t* base,uint32_t object,uint32_t offs
   return REX_LOAD_U32(uint32_t(address));
 }
 std::pair<uint32_t,uint64_t> BoundaryFrame(uint8_t* base) {
-  const auto device=BoundaryWord(base,0x83124AF4);
+  const auto device=BoundaryWord(base,0x82FE4AF4);
   const auto submitted=device?BoundaryWord(base,*device,16544):std::nullopt;
   return device&&submitted?std::pair{*device,uint64_t(*submitted)+1}:std::pair<uint32_t,uint64_t>{};
 }

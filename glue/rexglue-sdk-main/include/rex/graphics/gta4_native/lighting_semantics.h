@@ -126,7 +126,8 @@ constexpr bool IsLocalStencilSetup(const LightingContext& context) {
   return context.stage == RenderExecutionStage::kDeferredLighting &&
          context.role == LightPassRole::kLocalStencilSetup &&
          context.source == LightSourceKind::kPrimaryRecord &&
-         context.source_function == 0x822B0F08 && context.record_address != 0 &&
+         (context.source_function == 0x822B0F08 || context.source_function == 0x822EA320) &&
+         context.record_address != 0 &&
          context.occurrence_id != 0 && context.requested_selector == 3;
 }
 
