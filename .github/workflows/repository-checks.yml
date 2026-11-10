@@ -62,13 +62,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y clang-18 lld-18 build-essential pkg-config curl zip unzip \
             autoconf automake libtool libgtk-3-dev libx11-dev libxrandr-dev libxcursor-dev \
-            libxi-dev libxinerama-dev libxext-dev libxkbcommon-dev libwayland-dev \
+            libxi-dev libxinerama-dev libxext-dev libxss-dev libxkbcommon-dev libwayland-dev \
             wayland-protocols libdecor-0-dev libasound2-dev libpulse-dev libdbus-1-dev \
             libusb-1.0-0-dev libssl-dev libvulkan-dev nasm
           echo /usr/lib/llvm-18/bin >> "$GITHUB_PATH"
       - name: Install macOS prerequisites
         if: runner.os == 'macOS'
-        run: brew install llvm pkg-config openssl@3 vulkan-loader spirv-cross
+        run: brew install llvm pkg-config openssl@3 vulkan-loader spirv-cross glslang
       - name: Select the Windows C++ development environment
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
@@ -97,7 +97,7 @@ jobs:
       - name: Install Arch prerequisites
         run: |
           pacman -Syu --noconfirm --needed git python cmake ninja clang lld pkgconf curl zip unzip \
-            autoconf automake libtool gtk3 libx11 libxrandr libxcursor libxi libxinerama libxext \
+            autoconf automake libtool gtk3 libx11 libxrandr libxcursor libxi libxinerama libxext libxss \
             libxkbcommon wayland wayland-protocols libdecor alsa-lib libpulse dbus libusb \
             openssl vulkan-icd-loader vulkan-headers nasm
       - uses: actions/checkout@v4
